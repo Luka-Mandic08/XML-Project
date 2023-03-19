@@ -37,17 +37,6 @@ type Therapy struct {
 
 type Patients []*Patient
 
-type Flight struct {
-	ID               primitive.ObjectID `bson:"_id,omitempty" json:"id"`
-	StartDate        time.Time          `bson:"startdate" json:"startdate" gorm:"not null"`
-	ArrivalDate      time.Time          `bson:"arrivaldate" json:"arrivaldate" gorm:"not null"`
-	Destination      string             `bson:"destination" json:"destination" gorm:"not null"`
-	Start            string             `bson:"start" json:"start" gorm:"not null"`
-	Price            float32            `bson:"price" json:"price" gorm:"not null"`
-	RemainingTickets int                `bson:"remainingtickets" json:"remainingtickets" gorm:"not null"`
-	TotalTickets     int                `bson:"totaltickets" json:"totaltickets" gorm:"not null"`
-}
-
 func (p *Patients) ToJSON(w io.Writer) error {
 	e := json.NewEncoder(w)
 	return e.Encode(p)
@@ -89,16 +78,6 @@ func (p *Address) ToJSON(w io.Writer) error {
 }
 
 func (p *Address) FromJSON(r io.Reader) error {
-	d := json.NewDecoder(r)
-	return d.Decode(p)
-}
-
-func (p *Flight) ToJSON(w io.Writer) error {
-	e := json.NewEncoder(w)
-	return e.Encode(p)
-}
-
-func (p *Flight) FromJSON(r io.Reader) error {
 	d := json.NewDecoder(r)
 	return d.Decode(p)
 }

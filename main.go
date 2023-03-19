@@ -2,8 +2,8 @@ package main
 
 import (
 	"Rest/data"
-	"Rest/flights"
 	"Rest/handlers"
+	"Rest/repositories"
 	"context"
 	"log"
 	"net/http"
@@ -42,11 +42,11 @@ func main() {
 	// NoSQL: Checking if the connection was established
 	store.Ping()
 
-	flightstore, err := flights.New(timeoutContext, flightLogger)
+	flightstore, err := repositories.New(timeoutContext, flightLogger)
 	if err != nil {
 		logger.Fatal(err)
 	}
-	defer store.Disconnect(timeoutContext)
+	defer flightstore.Disconnect(timeoutContext)
 
 	// NoSQL: Checking if the connection was established
 	flightstore.Ping()
@@ -65,10 +65,6 @@ func main() {
 	postRouter := router.Methods(http.MethodPost).Subrouter()
 	postRouter.HandleFunc("/", patientsHandler.PostPatient)
 	postRouter.Use(patientsHandler.MiddlewarePatientDeserialization)
-
-	postFlightRouter := router.Methods(http.MethodPost).Subrouter()
-	postFlightRouter.HandleFunc("/addflight", flightHandler.PostFlight)
-	postFlightRouter.Use(flightHandler.MiddlewareFlightDeserialization)
 
 	getByNameRouter := router.Methods(http.MethodGet).Subrouter()
 	getByNameRouter.HandleFunc("/filter", patientsHandler.GetPatientsByName)
@@ -103,6 +99,24 @@ func main() {
 
 	deleteRouter := router.Methods(http.MethodDelete).Subrouter()
 	deleteRouter.HandleFunc("/{id}", patientsHandler.DeletePatient)
+
+	//Flights CRUD
+	getFlightByIdRouter := router.Methods(http.MethodGet).Subrouter()
+	getFlightByIdRouter.HandleFunc("/flight/{id}", flightHandler.GetFlightById)
+
+	getAllFlightsRouter := router.Methods(http.MethodGet).Subrouter()
+	getAllFlightsRouter.HandleFunc("/flights", flightHandler.GetAllFlights)
+
+	postFlightRouter := router.Methods(http.MethodPost).Subrouter()
+	postFlightRouter.HandleFunc("/addflight", flightHandler.InsertFlight)
+	postFlightRouter.Use(flightHandler.MiddlewareFlightDeserialization)
+
+	updateFlightRouter := router.Methods(http.MethodPatch).Subrouter()
+	updateFlightRouter.HandleFunc("/update/flight/{id}", flightHandler.UpdateFlight)
+	updateFlightRouter.Use(flightHandler.MiddlewareFlightDeserialization)
+
+	deleteFlightRouter := router.Methods(http.MethodDelete).Subrouter()
+	deleteFlightRouter.HandleFunc("/flight/{id}", flightHandler.DeleteFlight)
 
 	cors := gorillaHandlers.CORS(gorillaHandlers.AllowedOrigins([]string{"*"}))
 
