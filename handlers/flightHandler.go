@@ -6,6 +6,7 @@ import (
 	"context"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
 )
@@ -70,9 +71,12 @@ func (flightHandler *FlightHandler) GetAllFlights(rw http.ResponseWriter, req *h
 func (flightHandler *FlightHandler) UpdateFlight(rw http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
 	id := vars["id"]
-	amount := req.Context().Value(KeyProduct{}).(int)
 
-	flightHandler.repository.Update(id, amount)
+	amount := req.Header.Get("amount")
+
+	amount_int, _ := strconv.ParseInt(amount, 10, 64)
+
+	flightHandler.repository.Update(id, amount_int)
 	rw.WriteHeader(http.StatusOK)
 }
 

@@ -100,15 +100,19 @@ func (p *PatientsHandler) PatchPatient(rw http.ResponseWriter, h *http.Request) 
 	rw.WriteHeader(http.StatusOK)
 }
 
+type PhoneDto struct {
+	phoneNumber string
+}
+
 func (p *PatientsHandler) AddPhoneNumber(rw http.ResponseWriter, h *http.Request) {
 	vars := mux.Vars(h)
 	id := vars["id"]
 
-	var phoneNumber string
+	var phoneNumber PhoneDto
 	d := json.NewDecoder(h.Body)
 	d.Decode(&phoneNumber)
 
-	p.repo.AddPhoneNumber(id, phoneNumber)
+	p.repo.AddPhoneNumber(id, phoneNumber.phoneNumber)
 	rw.WriteHeader(http.StatusOK)
 }
 

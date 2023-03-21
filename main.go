@@ -42,7 +42,7 @@ func main() {
 	// NoSQL: Checking if the connection was established
 	store.Ping()
 
-	flightstore, err := repositories.New(timeoutContext, flightLogger)
+	flightstore, err := repositories.NewFlightRepository(timeoutContext, flightLogger)
 	if err != nil {
 		logger.Fatal(err)
 	}
@@ -85,7 +85,7 @@ func main() {
 	changePhoneRouter := router.Methods(http.MethodPatch).Subrouter()
 	changePhoneRouter.HandleFunc("/phone/{id}/{index}", patientsHandler.ChangePhone)
 
-	pushPhoneRouter := router.Methods(http.MethodPatch).Subrouter()
+	pushPhoneRouter := router.Methods(http.MethodPut).Subrouter()
 	pushPhoneRouter.HandleFunc("/phone/{id}", patientsHandler.AddPhoneNumber)
 
 	addAnamnesisRouter := router.Methods(http.MethodPatch).Subrouter()
@@ -111,9 +111,8 @@ func main() {
 	postFlightRouter.HandleFunc("/addflight", flightHandler.InsertFlight)
 	postFlightRouter.Use(flightHandler.MiddlewareFlightDeserialization)
 
-	updateFlightRouter := router.Methods(http.MethodPatch).Subrouter()
+	updateFlightRouter := router.Methods(http.MethodPut).Subrouter()
 	updateFlightRouter.HandleFunc("/update/flight/{id}", flightHandler.UpdateFlight)
-	updateFlightRouter.Use(flightHandler.MiddlewareFlightDeserialization)
 
 	deleteFlightRouter := router.Methods(http.MethodDelete).Subrouter()
 	deleteFlightRouter.HandleFunc("/flight/{id}", flightHandler.DeleteFlight)

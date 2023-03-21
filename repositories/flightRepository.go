@@ -20,7 +20,7 @@ type FlightRepository struct {
 	logger *log.Logger
 }
 
-func New(ctx context.Context, logger *log.Logger) (*FlightRepository, error) {
+func NewFlightRepository(ctx context.Context, logger *log.Logger) (*FlightRepository, error) {
 	dburi := os.Getenv("MONGO_DB_URI")
 
 	client, err := mongo.NewClient(options.Client().ApplyURI(dburi))
@@ -121,7 +121,7 @@ func (fr *FlightRepository) GetAll() (model.Flights, error) {
 	return flights, nil
 }
 
-func (fr *FlightRepository) Update(id string, amount int) error {
+func (fr *FlightRepository) Update(id string, amount int64) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -129,9 +129,11 @@ func (fr *FlightRepository) Update(id string, amount int) error {
 
 	objID, _ := primitive.ObjectIDFromHex(id)
 	filter := bson.M{"_id": objID}
-	update := bson.M{"$set": bson.M{
-		"RemainingTickets": -amount,
-	}}
+	update := bson.M{
+		"$inc": bson.M{"remainingtickets": -amount}}
+
+	fr.logger.Println(amount)
+
 	result, err := flightsCollection.UpdateOne(ctx, filter, update)
 	fr.logger.Printf("Documents matched: %v\n", result.MatchedCount)
 	fr.logger.Printf("Documents updated: %v\n", result.ModifiedCount)

@@ -35,3 +35,15 @@ func (f *Flight) FromJSON(r io.Reader) error {
 	d := json.NewDecoder(r)
 	return d.Decode(f)
 }
+
+/*
+{
+    "startdate": "2023-05-05T13:00:00Z",
+    "arrivaldate": "2023-05-05T19:00:00Z",
+    "destination": "Beograd",
+    "start": "Berlin",
+    "price": 200,
+    "remainingtickets": 20,
+    "totaltickets": 100
+}
+*/
