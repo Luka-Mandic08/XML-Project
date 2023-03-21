@@ -1,0 +1,35 @@
+{
+  "workbench.editor.enablePreview": false,
+  //This settings makes all config files unvisible in file explorer, by default.
+  //To make file visible in project tree, appropriate file pattern value should be set to *true*.
+  //There is also extension that quickly toggles excluded (hidden) files visibility in the file explorer.
+  //It is added in extensions.json recommendations, and its id is "amodio.toggle-excluded-files".
+  //This file should not be pushed if it is changed. By default, all config files should be hidden (all values should be set to 'true').
+  "files.exclude": {
+    "**/*.babelrc": true,
+    "**/*.eslintrc.json": true,
+    "**/package.json": true,
+    "**/package-lock.json": true,
+    "**/project.json": true,
+    "**/jest.config.js": true,
+    "**/tsconfig.json": true,
+    "**/tsconfig.lib.json": true,
+    "**/tsconfig.spec.json": true,
+    "**/tsconfig.app.json": true,
+    "**/polyfills.ts": true,
+    "node_modules": true,
+    "**/svgTransform.js": true,
+    ".editorconfig": true,
+    ".gitignore": true,
+    ".prettierignore": true,
+    ".prettierrc": true,
+    "babel.config.json": true,
+    "jest.preset.js": true,
+    "jest.setup.ts": true,
+    "nx.json": true,
+    "package-lock.json": true,
+    "tsconfig.base.json": true,
+    "workspace.json": true,
+    "**/.browserslistrc": true
+  }
+}
