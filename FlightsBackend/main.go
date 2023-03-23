@@ -1,7 +1,6 @@
 package main
 
 import (
-	"Rest/data"
 	"Rest/handlers"
 	"Rest/repositories"
 	"context"
@@ -32,15 +31,15 @@ func main() {
 	storeLogger := log.New(os.Stdout, "[patient-store] ", log.LstdFlags)
 	flightLogger := log.New(os.Stdout, "[flight-store] ", log.LstdFlags)
 
-	// NoSQL: Initialize Patient Repository store
-	store, err := data.New(timeoutContext, storeLogger)
+	// NoSQL: Initialize Repositories
+
+	userstore, err := repositories.NewUserRepository(timeoutContext, storeLogger)
 	if err != nil {
 		logger.Fatal(err)
 	}
-	defer store.Disconnect(timeoutContext)
+	defer userstore.Disconnect(timeoutContext)
 
-	// NoSQL: Checking if the connection was established
-	store.Ping()
+	userstore.Ping()
 
 	flightstore, err := repositories.NewFlightRepository(timeoutContext, flightLogger)
 	if err != nil {
@@ -48,19 +47,23 @@ func main() {
 	}
 	defer flightstore.Disconnect(timeoutContext)
 
-	// NoSQL: Checking if the connection was established
 	flightstore.Ping()
 
 	//Initialize the handler and inject said logger
-	patientsHandler := handlers.NewPatientsHandler(logger, store)
+	userHandler := handlers.NewUserHandler(logger, userstore)
 	flightHandler := handlers.NewFlightHandler(logger, flightstore)
 
 	//Initialize the router and add a middleware for all the requests
 	router := mux.NewRouter()
-	router.Use(patientsHandler.MiddlewareContentTypeSet)
+	router.Use(userHandler.MiddlewareContentTypeSet)
 
-	getRouter := router.Methods(http.MethodGet).Subrouter()
-	getRouter.HandleFunc("/", patientsHandler.GetAllPatients)
+	//Users CRUD
+	postUserRouter := router.Methods(http.MethodPost).Subrouter()
+	postUserRouter.HandleFunc("/user/add", userHandler.InsertUser)
+	postUserRouter.Use(userHandler.MiddlewareUserDeserialization)
+
+	/*getRouter := router.Methods(http.MethodGet).Subrouter()
+	getRouter.HandleFunc("/", userHandler.GetAllUsers)
 
 	postRouter := router.Methods(http.MethodPost).Subrouter()
 	postRouter.HandleFunc("/", patientsHandler.PostPatient)
@@ -98,7 +101,7 @@ func main() {
 	changeAddressRouter.HandleFunc("/address/{id}", patientsHandler.ChangeAddress)
 
 	deleteRouter := router.Methods(http.MethodDelete).Subrouter()
-	deleteRouter.HandleFunc("/{id}", patientsHandler.DeletePatient)
+	deleteRouter.HandleFunc("/{id}", patientsHandler.DeletePatient)*/
 
 	//Flights CRUD
 	getFlightByIdRouter := router.Methods(http.MethodGet).Subrouter()
