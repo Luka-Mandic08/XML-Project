@@ -101,18 +101,18 @@ func main() {
 	deleteRouter.HandleFunc("/{id}", patientsHandler.DeletePatient)
 
 	//Flights CRUD
+	getAllFlightsRouter := router.Methods(http.MethodGet).Subrouter()
+	getAllFlightsRouter.HandleFunc("/flight/all", flightHandler.GetAllFlights)
+
 	getFlightByIdRouter := router.Methods(http.MethodGet).Subrouter()
 	getFlightByIdRouter.HandleFunc("/flight/{id}", flightHandler.GetFlightById)
 
-	getAllFlightsRouter := router.Methods(http.MethodGet).Subrouter()
-	getAllFlightsRouter.HandleFunc("/flights", flightHandler.GetAllFlights)
-
 	postFlightRouter := router.Methods(http.MethodPost).Subrouter()
-	postFlightRouter.HandleFunc("/addflight", flightHandler.InsertFlight)
+	postFlightRouter.HandleFunc("/flight/add", flightHandler.InsertFlight)
 	postFlightRouter.Use(flightHandler.MiddlewareFlightDeserialization)
 
 	updateFlightRouter := router.Methods(http.MethodPut).Subrouter()
-	updateFlightRouter.HandleFunc("/update/flight/{id}", flightHandler.UpdateFlight)
+	updateFlightRouter.HandleFunc("/flight/update/{id}", flightHandler.UpdateFlightRemainingTickets)
 
 	deleteFlightRouter := router.Methods(http.MethodDelete).Subrouter()
 	deleteFlightRouter.HandleFunc("/flight/{id}", flightHandler.DeleteFlight)
