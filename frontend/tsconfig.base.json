@@ -21,6 +21,12 @@
       "@frontend/features/flights/home/data-access": [
         "libs/features/flights/home/data-access/src/index.ts"
       ],
+      "@frontend/features/flights/login/container": [
+        "libs/features/flights/login/container/src/index.ts"
+      ],
+      "@frontend/features/flights/login/data-access": [
+        "libs/features/flights/login/data-access/src/index.ts"
+      ],
       "@frontend/features/flights/single-flight/single-flight-container": [
         "libs/features/flights/single-flight/single-flight-container/src/index.ts"
       ],
