@@ -28,12 +28,12 @@ func main() {
 
 	//Initialize the logger we are going to use, with prefix and datetime for every log
 	logger := log.New(os.Stdout, "[product-api] ", log.LstdFlags)
-	storeLogger := log.New(os.Stdout, "[patient-store] ", log.LstdFlags)
+	userLogger := log.New(os.Stdout, "[user-store] ", log.LstdFlags)
 	flightLogger := log.New(os.Stdout, "[flight-store] ", log.LstdFlags)
 
 	// NoSQL: Initialize Repositories
 
-	userstore, err := repositories.NewUserRepository(timeoutContext, storeLogger)
+	userstore, err := repositories.NewUserRepository(timeoutContext, userLogger)
 	if err != nil {
 		logger.Fatal(err)
 	}
@@ -51,11 +51,11 @@ func main() {
 
 	//Initialize the handler and inject said logger
 	userHandler := handlers.NewUserHandler(logger, userstore)
-	flightHandler := handlers.NewFlightHandler(logger, flightstore)
+	//flightHandler := handlers.NewFlightHandler(logger, flightstore)
 
 	//Initialize the router and add a middleware for all the requests
 	router := mux.NewRouter()
-	router.Use(userHandler.MiddlewareContentTypeSet)
+	//router.Use(userHandler.MiddlewareContentTypeSet) koji je ovo k
 
 	//Users CRUD
 	postUserRouter := router.Methods(http.MethodPost).Subrouter()
@@ -104,6 +104,7 @@ func main() {
 	deleteRouter.HandleFunc("/{id}", patientsHandler.DeletePatient)*/
 
 	//Flights CRUD
+	/*---------------------------------------------------------------------------------------------------------
 	getFlightByIdRouter := router.Methods(http.MethodGet).Subrouter()
 	getFlightByIdRouter.HandleFunc("/flight/{id}", flightHandler.GetFlightById)
 
@@ -119,6 +120,7 @@ func main() {
 
 	deleteFlightRouter := router.Methods(http.MethodDelete).Subrouter()
 	deleteFlightRouter.HandleFunc("/flight/{id}", flightHandler.DeleteFlight)
+	---------------------------------------------------------------------------------------------------------*/
 
 	cors := gorillaHandlers.CORS(gorillaHandlers.AllowedOrigins([]string{"*"}))
 

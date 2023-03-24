@@ -14,26 +14,26 @@ import (
 
 type KeyProduct struct{}
 
-type UsersHandler struct {
+type UserHandler struct {
 	logger *log.Logger
-	// NoSQL: injecting product repository
-	repo *repositories.UserRepository
+	repo   *repositories.UserRepository
 }
 
 // Injecting the logger makes this code much more testable.
-func NewUserHandler(l *log.Logger, r *repositories.UserRepository) *UsersHandler {
-	return &UsersHandler{l, r}
+func NewUserHandler(l *log.Logger, r *repositories.UserRepository) *UserHandler {
+	return &UserHandler{l, r}
 }
 
 // CREATE
-func (p *UsersHandler) InsertUser(rw http.ResponseWriter, h *http.Request) {
+func (userHandler *UserHandler) InsertUser(rw http.ResponseWriter, h *http.Request) {
+	print("radi")
 	user := h.Context().Value(KeyProduct{}).(*model.User)
-	p.repo.Insert(user)
+	userHandler.repo.Insert(user)
 	rw.WriteHeader(http.StatusCreated)
 }
 
 // READ
-func (p *UsersHandler) GetAllUsers(rw http.ResponseWriter, h *http.Request) {
+func (p *UserHandler) GetAllUsers(rw http.ResponseWriter, h *http.Request) {
 	users, err := p.repo.GetAll()
 	if err != nil {
 		p.logger.Print("Database exception: ", err)
@@ -51,7 +51,7 @@ func (p *UsersHandler) GetAllUsers(rw http.ResponseWriter, h *http.Request) {
 	}
 }
 
-func (p *UsersHandler) GetUserById(rw http.ResponseWriter, h *http.Request) {
+func (p *UserHandler) GetUserById(rw http.ResponseWriter, h *http.Request) {
 	vars := mux.Vars(h)
 	id := vars["id"]
 
@@ -74,7 +74,7 @@ func (p *UsersHandler) GetUserById(rw http.ResponseWriter, h *http.Request) {
 	}
 }
 
-func (p *UsersHandler) GetUsersByName(rw http.ResponseWriter, h *http.Request) {
+func (p *UserHandler) GetUsersByName(rw http.ResponseWriter, h *http.Request) {
 	name := h.URL.Query().Get("name")
 
 	users, err := p.repo.GetByName(name)
@@ -95,7 +95,7 @@ func (p *UsersHandler) GetUsersByName(rw http.ResponseWriter, h *http.Request) {
 }
 
 // UPDATE
-func (p *UsersHandler) UpdateUser(rw http.ResponseWriter, h *http.Request) {
+func (p *UserHandler) UpdateUser(rw http.ResponseWriter, h *http.Request) {
 	vars := mux.Vars(h)
 	id := vars["id"]
 	user := h.Context().Value(KeyProduct{}).(*model.User)
@@ -104,7 +104,7 @@ func (p *UsersHandler) UpdateUser(rw http.ResponseWriter, h *http.Request) {
 	rw.WriteHeader(http.StatusOK)
 }
 
-func (p *UsersHandler) UpdateAddress(rw http.ResponseWriter, h *http.Request) {
+func (p *UserHandler) UpdateAddress(rw http.ResponseWriter, h *http.Request) {
 	vars := mux.Vars(h)
 	id := vars["id"]
 	address := h.Context().Value(KeyProduct{}).(*model.Address)
@@ -113,7 +113,7 @@ func (p *UsersHandler) UpdateAddress(rw http.ResponseWriter, h *http.Request) {
 	rw.WriteHeader(http.StatusOK)
 }
 
-func (p *UsersHandler) UpdatePhone(rw http.ResponseWriter, h *http.Request) {
+func (p *UserHandler) UpdatePhone(rw http.ResponseWriter, h *http.Request) {
 	vars := mux.Vars(h)
 	id := vars["id"]
 	index, err := strconv.Atoi(vars["index"])
@@ -132,7 +132,7 @@ func (p *UsersHandler) UpdatePhone(rw http.ResponseWriter, h *http.Request) {
 }
 
 // DELETE
-func (p *UsersHandler) DeleteUser(rw http.ResponseWriter, h *http.Request) {
+func (p *UserHandler) DeleteUser(rw http.ResponseWriter, h *http.Request) {
 	vars := mux.Vars(h)
 	id := vars["id"]
 
@@ -140,7 +140,7 @@ func (p *UsersHandler) DeleteUser(rw http.ResponseWriter, h *http.Request) {
 	rw.WriteHeader(http.StatusNoContent)
 }
 
-func (p *UsersHandler) MiddlewareUserDeserialization(next http.Handler) http.Handler {
+func (p *UserHandler) MiddlewareUserDeserialization(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(rw http.ResponseWriter, h *http.Request) {
 		user := &model.User{}
 		err := user.FromJSON(h.Body)
@@ -157,7 +157,7 @@ func (p *UsersHandler) MiddlewareUserDeserialization(next http.Handler) http.Han
 	})
 }
 
-func (p *UsersHandler) MiddlewareAddressDeserialization(next http.Handler) http.Handler {
+func (p *UserHandler) MiddlewareAddressDeserialization(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(rw http.ResponseWriter, h *http.Request) {
 		address := &model.Address{}
 		err := address.FromJSON(h.Body)
@@ -174,7 +174,7 @@ func (p *UsersHandler) MiddlewareAddressDeserialization(next http.Handler) http.
 	})
 }
 
-func (p *UsersHandler) MiddlewareContentTypeSet(next http.Handler) http.Handler {
+func (p *UserHandler) MiddlewareContentTypeSet(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(rw http.ResponseWriter, h *http.Request) {
 		p.logger.Println("Method [", h.Method, "] - Hit path :", h.URL.Path)
 

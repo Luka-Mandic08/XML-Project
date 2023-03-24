@@ -20,7 +20,6 @@ type UserRepository struct {
 	logger *log.Logger
 }
 
-// NoSQL: Constructor which reads db configuration from environment
 func NewUserRepository(ctx context.Context, logger *log.Logger) (*UserRepository, error) {
 	dburi := os.Getenv("MONGO_DB_URI")
 
@@ -127,12 +126,12 @@ func (pr *UserRepository) GetByName(name string) (model.Users, error) {
 	usersCollection := pr.getCollection()
 
 	var users model.Users
-	patientsCursor, err := usersCollection.Find(ctx, bson.M{"name": name})
+	usersCursor, err := usersCollection.Find(ctx, bson.M{"name": name})
 	if err != nil {
 		pr.logger.Println(err)
 		return nil, err
 	}
-	if err = patientsCursor.All(ctx, &users); err != nil {
+	if err = usersCursor.All(ctx, &users); err != nil {
 		pr.logger.Println(err)
 		return nil, err
 	}
@@ -225,7 +224,7 @@ func (pr *UserRepository) Delete(id string) error {
 
 // BONUS
 func (pr *UserRepository) getCollection() *mongo.Collection {
-	patientDatabase := pr.cli.Database("mongoDemo")
-	patientsCollection := patientDatabase.Collection("users")
-	return patientsCollection
+	userDatabase := pr.cli.Database("mongoDemo")
+	usersCollection := userDatabase.Collection("users")
+	return usersCollection
 }
