@@ -7,9 +7,6 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"strconv"
-
-	"github.com/gorilla/mux"
 )
 
 type KeyProduct struct{}
@@ -26,7 +23,6 @@ func NewUserHandler(l *log.Logger, r *repositories.UserRepository) *UserHandler 
 
 // CREATE
 func (userHandler *UserHandler) InsertUser(rw http.ResponseWriter, h *http.Request) {
-	print("radi")
 	user := h.Context().Value(KeyProduct{}).(*model.User)
 	userHandler.repo.Insert(user)
 	rw.WriteHeader(http.StatusCreated)
@@ -52,8 +48,9 @@ func (p *UserHandler) GetAllUsers(rw http.ResponseWriter, h *http.Request) {
 }
 
 func (p *UserHandler) GetUserById(rw http.ResponseWriter, h *http.Request) {
-	vars := mux.Vars(h)
-	id := vars["id"]
+	//vars := mux.Vars(h)
+	//id := vars["id"]
+	id := h.URL.Query().Get("id")
 
 	patient, err := p.repo.GetById(id)
 	if err != nil {
@@ -61,8 +58,8 @@ func (p *UserHandler) GetUserById(rw http.ResponseWriter, h *http.Request) {
 	}
 
 	if patient == nil {
-		http.Error(rw, "Patient with given id not found", http.StatusNotFound)
-		p.logger.Printf("Patient with id: '%s' not found", id)
+		http.Error(rw, "User with given id not found", http.StatusNotFound)
+		p.logger.Printf("User with id: '%s' not found", id)
 		return
 	}
 
@@ -96,8 +93,7 @@ func (p *UserHandler) GetUsersByName(rw http.ResponseWriter, h *http.Request) {
 
 // UPDATE
 func (p *UserHandler) UpdateUser(rw http.ResponseWriter, h *http.Request) {
-	vars := mux.Vars(h)
-	id := vars["id"]
+	id := h.URL.Query().Get("id")
 	user := h.Context().Value(KeyProduct{}).(*model.User)
 
 	p.repo.Update(id, user)
@@ -105,14 +101,22 @@ func (p *UserHandler) UpdateUser(rw http.ResponseWriter, h *http.Request) {
 }
 
 func (p *UserHandler) UpdateAddress(rw http.ResponseWriter, h *http.Request) {
-	vars := mux.Vars(h)
-	id := vars["id"]
+	id := h.URL.Query().Get("id")
 	address := h.Context().Value(KeyProduct{}).(*model.Address)
 
 	p.repo.UpdateAddress(id, address)
 	rw.WriteHeader(http.StatusOK)
 }
 
+func (p *UserHandler) UpdateCredentials(rw http.ResponseWriter, h *http.Request) {
+	id := h.URL.Query().Get("id")
+	credentials := h.Context().Value(KeyProduct{}).(*model.Credentials)
+
+	p.repo.UpdateCredentials(id, credentials)
+	rw.WriteHeader(http.StatusOK)
+}
+
+/*
 func (p *UserHandler) UpdatePhone(rw http.ResponseWriter, h *http.Request) {
 	vars := mux.Vars(h)
 	id := vars["id"]
@@ -130,15 +134,52 @@ func (p *UserHandler) UpdatePhone(rw http.ResponseWriter, h *http.Request) {
 	p.repo.ChangePhone(id, index, phoneNumber)
 	rw.WriteHeader(http.StatusOK)
 }
+*/
 
 // DELETE
 func (p *UserHandler) DeleteUser(rw http.ResponseWriter, h *http.Request) {
-	vars := mux.Vars(h)
-	id := vars["id"]
+	id := h.URL.Query().Get("id")
 
 	p.repo.Delete(id)
 	rw.WriteHeader(http.StatusNoContent)
 }
+
+// LOGIN/LOGOUT
+func (p *UserHandler) LoginUser(rw http.ResponseWriter, h *http.Request) {
+	credentials := h.Context().Value(KeyProduct{}).(*model.Credentials)
+
+	user, err := p.repo.Login(credentials)
+	if err != nil {
+		p.logger.Println(err)
+		return
+	}
+
+	if user != nil {
+		e := json.NewEncoder(rw)
+		err := e.Encode(user.ID)
+		if err != nil {
+			http.Error(rw, "Unable to convert to json", http.StatusInternalServerError)
+			p.logger.Fatal("Unable to convert to json :", err)
+			return
+		}
+		rw.WriteHeader(http.StatusAccepted)
+	} else {
+		rw.WriteHeader(http.StatusBadRequest)
+	}
+}
+
+func (p *UserHandler) LogoutUser(rw http.ResponseWriter, h *http.Request) {
+	e := json.NewEncoder(rw)
+	err := e.Encode("")
+	if err != nil {
+		http.Error(rw, "Unable to convert to json", http.StatusInternalServerError)
+		p.logger.Fatal("Unable to convert to json :", err)
+		return
+	}
+	rw.WriteHeader(http.StatusOK)
+}
+
+// MIDDLEWARE
 
 func (p *UserHandler) MiddlewareUserDeserialization(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(rw http.ResponseWriter, h *http.Request) {
@@ -168,6 +209,23 @@ func (p *UserHandler) MiddlewareAddressDeserialization(next http.Handler) http.H
 		}
 
 		ctx := context.WithValue(h.Context(), KeyProduct{}, address)
+		h = h.WithContext(ctx)
+
+		next.ServeHTTP(rw, h)
+	})
+}
+
+func (p *UserHandler) MiddlewareCredentialsDeserialization(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(rw http.ResponseWriter, h *http.Request) {
+		credentials := &model.Credentials{}
+		err := credentials.FromJSON(h.Body)
+		if err != nil {
+			http.Error(rw, "Unable to decode json", http.StatusBadRequest)
+			p.logger.Fatal(err)
+			return
+		}
+
+		ctx := context.WithValue(h.Context(), KeyProduct{}, credentials)
 		h = h.WithContext(ctx)
 
 		next.ServeHTTP(rw, h)

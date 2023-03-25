@@ -49,67 +49,64 @@ func main() {
 
 	flightstore.Ping()
 
-	//Initialize the handler and inject said logger
+	// Initialize the handler and inject said logger
 	userHandler := handlers.NewUserHandler(logger, userstore)
-	//flightHandler := handlers.NewFlightHandler(logger, flightstore)
+	flightHandler := handlers.NewFlightHandler(logger, flightstore)
 
-	//Initialize the router and add a middleware for all the requests
+	// Initialize the router and add a middleware for all the requests
 	router := mux.NewRouter()
-	//router.Use(userHandler.MiddlewareContentTypeSet) koji je ovo k
+	router.Use(userHandler.MiddlewareContentTypeSet)
 
-	//Users CRUD
-	postUserRouter := router.Methods(http.MethodPost).Subrouter()
-	postUserRouter.HandleFunc("/user/add", userHandler.InsertUser)
-	postUserRouter.Use(userHandler.MiddlewareUserDeserialization)
+	// Users CREATE
+	addUserRouter := router.Methods(http.MethodPost).Subrouter()
+	addUserRouter.HandleFunc("/user/add", userHandler.InsertUser)
+	addUserRouter.Use(userHandler.MiddlewareUserDeserialization)
 
-	/*getRouter := router.Methods(http.MethodGet).Subrouter()
-	getRouter.HandleFunc("/", userHandler.GetAllUsers)
+	// Users READ
+	getUsersRouter := router.Methods(http.MethodGet).Subrouter()
+	getUsersRouter.HandleFunc("/users", userHandler.GetAllUsers)
 
-	postRouter := router.Methods(http.MethodPost).Subrouter()
-	postRouter.HandleFunc("/", patientsHandler.PostPatient)
-	postRouter.Use(patientsHandler.MiddlewarePatientDeserialization)
+	getUserByIdRouter := router.Methods(http.MethodGet).Subrouter()
+	getUserByIdRouter.HandleFunc("/user/id", userHandler.GetUserById)
 
-	getByNameRouter := router.Methods(http.MethodGet).Subrouter()
-	getByNameRouter.HandleFunc("/filter", patientsHandler.GetPatientsByName)
+	// http://localhost:8082/user/641d92e04d666e40fd539f77
+	// getUserByIdRouter := router.Methods(http.MethodGet).Subrouter()
+	// getUserByIdRouter.HandleFunc("/user/{id}", userHandler.GetUserById)
 
-	receiptRouter := router.Methods(http.MethodGet).Subrouter()
-	receiptRouter.HandleFunc("/receipt/{id}", patientsHandler.Receipt)
+	getUserByNameRouter := router.Methods(http.MethodGet).Subrouter()
+	getUserByNameRouter.HandleFunc("/user/name", userHandler.GetUsersByName)
 
-	reportRouter := router.Methods(http.MethodGet).Subrouter()
-	reportRouter.HandleFunc("/report", patientsHandler.Report)
+	// Users UPDATE
+	updateUserRouter := router.Methods(http.MethodPatch).Subrouter()
+	updateUserRouter.HandleFunc("/user/update", userHandler.UpdateUser)
+	updateUserRouter.Use(userHandler.MiddlewareUserDeserialization)
 
-	getByIdRouter := router.Methods(http.MethodGet).Subrouter()
-	getByIdRouter.HandleFunc("/{id}", patientsHandler.GetPatientById)
+	updateUserAddressRouter := router.Methods(http.MethodPatch).Subrouter()
+	updateUserAddressRouter.HandleFunc("/user/updateAddress", userHandler.UpdateAddress)
+	updateUserAddressRouter.Use(userHandler.MiddlewareAddressDeserialization)
 
-	patchRouter := router.Methods(http.MethodPatch).Subrouter()
-	patchRouter.HandleFunc("/{id}", patientsHandler.PatchPatient)
-	patchRouter.Use(patientsHandler.MiddlewarePatientDeserialization)
+	updateUserCredentialsRouter := router.Methods(http.MethodPatch).Subrouter()
+	updateUserCredentialsRouter.HandleFunc("/user/updateCredentials", userHandler.UpdateCredentials)
+	updateUserCredentialsRouter.Use(userHandler.MiddlewareCredentialsDeserialization)
 
-	changePhoneRouter := router.Methods(http.MethodPatch).Subrouter()
-	changePhoneRouter.HandleFunc("/phone/{id}/{index}", patientsHandler.ChangePhone)
+	// Users DELETE
+	deleteUserRouter := router.Methods(http.MethodDelete).Subrouter()
+	deleteUserRouter.HandleFunc("/user/delete", userHandler.DeleteUser)
 
-	pushPhoneRouter := router.Methods(http.MethodPut).Subrouter()
-	pushPhoneRouter.HandleFunc("/phone/{id}", patientsHandler.AddPhoneNumber)
+	// Users LOGIN/LOGOUT
+	checkUserCredentialsRouter := router.Methods(http.MethodGet).Subrouter()
+	checkUserCredentialsRouter.HandleFunc("/login", userHandler.LoginUser)
+	checkUserCredentialsRouter.Use(userHandler.MiddlewareCredentialsDeserialization)
 
-	addAnamnesisRouter := router.Methods(http.MethodPatch).Subrouter()
-	addAnamnesisRouter.HandleFunc("/anamnesis/{id}", patientsHandler.AddAnamnesis)
-
-	addTherapyRouter := router.Methods(http.MethodPatch).Subrouter()
-	addTherapyRouter.HandleFunc("/therapy/{id}", patientsHandler.AddTherapy)
-
-	changeAddressRouter := router.Methods(http.MethodPatch).Subrouter()
-	changeAddressRouter.HandleFunc("/address/{id}", patientsHandler.ChangeAddress)
-
-	deleteRouter := router.Methods(http.MethodDelete).Subrouter()
-	deleteRouter.HandleFunc("/{id}", patientsHandler.DeletePatient)*/
+	logoutUserRouter := router.Methods(http.MethodGet).Subrouter()
+	logoutUserRouter.HandleFunc("/logout", userHandler.LogoutUser)
 
 	//Flights CRUD
-	/*---------------------------------------------------------------------------------------------------------
 	getFlightByIdRouter := router.Methods(http.MethodGet).Subrouter()
 	getFlightByIdRouter.HandleFunc("/flight/{id}", flightHandler.GetFlightById)
 
 	getAllFlightsRouter := router.Methods(http.MethodGet).Subrouter()
-	getAllFlightsRouter.HandleFunc("/flights", flightHandler.GetAllFlights)
+	getAllFlightsRouter.HandleFunc("/allflights", flightHandler.GetAllFlights)
 
 	postFlightRouter := router.Methods(http.MethodPost).Subrouter()
 	postFlightRouter.HandleFunc("/addflight", flightHandler.InsertFlight)
@@ -120,7 +117,6 @@ func main() {
 
 	deleteFlightRouter := router.Methods(http.MethodDelete).Subrouter()
 	deleteFlightRouter.HandleFunc("/flight/{id}", flightHandler.DeleteFlight)
-	---------------------------------------------------------------------------------------------------------*/
 
 	cors := gorillaHandlers.CORS(gorillaHandlers.AllowedOrigins([]string{"*"}))
 

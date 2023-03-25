@@ -147,8 +147,9 @@ func (pr *UserRepository) Update(id string, user *model.User) error {
 	objID, _ := primitive.ObjectIDFromHex(id)
 	filter := bson.M{"_id": objID}
 	update := bson.M{"$set": bson.M{
-		"name":    user.Name,
-		"surname": user.Surname,
+		"name":        user.Name,
+		"surname":     user.Surname,
+		"phoneNumber": user.PhoneNumber,
 	}}
 	result, err := usersCollection.UpdateOne(ctx, filter, update)
 	pr.logger.Printf("Documents matched: %v\n", result.MatchedCount)
@@ -182,6 +183,28 @@ func (pr *UserRepository) UpdateAddress(id string, address *model.Address) error
 	return nil
 }
 
+func (pr *UserRepository) UpdateCredentials(id string, credentials *model.Credentials) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	usersCollection := pr.getCollection()
+
+	objID, _ := primitive.ObjectIDFromHex(id)
+	filter := bson.D{{Key: "_id", Value: objID}}
+	update := bson.M{"$set": bson.M{
+		"credentials": credentials,
+	}}
+	result, err := usersCollection.UpdateOne(ctx, filter, update)
+	pr.logger.Printf("Documents matched: %v\n", result.MatchedCount)
+	pr.logger.Printf("Documents updated: %v\n", result.ModifiedCount)
+
+	if err != nil {
+		pr.logger.Println(err)
+		return err
+	}
+	return nil
+}
+
+/*
 func (pr *UserRepository) ChangePhone(id string, index int, phoneNumber string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -204,6 +227,7 @@ func (pr *UserRepository) ChangePhone(id string, index int, phoneNumber string) 
 	}
 	return nil
 }
+*/
 
 // CRUD -- DELETE
 func (pr *UserRepository) Delete(id string) error {
@@ -220,6 +244,22 @@ func (pr *UserRepository) Delete(id string) error {
 	}
 	pr.logger.Printf("Documents deleted: %v\n", result.DeletedCount)
 	return nil
+}
+
+// LOGIN/LOGOUT
+func (pr *UserRepository) Login(credentials *model.Credentials) (*model.User, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	usersCollection := pr.getCollection()
+
+	var user model.User
+	err := usersCollection.FindOne(ctx, bson.M{"credentials": credentials}).Decode(&user)
+	if err != nil {
+		pr.logger.Println(err)
+		return nil, err
+	}
+
+	return &user, nil
 }
 
 // BONUS

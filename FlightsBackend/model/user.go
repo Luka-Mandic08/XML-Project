@@ -13,6 +13,7 @@ type User struct {
 	Surname     string             `bson:"surname,omitempty" json:"surname"`
 	PhoneNumber string             `bson:"phoneNumber,omitempty" json:"phoneNumber"`
 	Address     Address            `bson:"address,omitempty" json:"address"`
+	Credentials Credentials        `bson:"credentials,omitempty" json:"credentials"`
 }
 
 type Users []*User
@@ -41,6 +42,10 @@ func (u *User) FromJSON(r io.Reader) error {
 		"street": "Tolstojeva",
 		"city": "Novi Sad",
 		"country": "Srbija"
+	},
+	"credentials":{
+		"username": "galicc",
+		"password": "hcijesranje"
 	}
 }
 */
