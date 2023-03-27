@@ -1,5 +1,6 @@
 import { GetAllFlights } from '@frontend/features/flights/home/data-access';
 import { Flight } from '@frontend/models';
+import { Button, Grid, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import FlightItem from '../flight-item/flight-item';
 import styles from './all-flights.module.css';
@@ -32,13 +33,28 @@ export function AllFlights(props: AllFlightsProps) {
       })
   }, [])
 
+  let welcomeText;
+  let addFlightButton;
+  if(localStorage.getItem('role') === "ADMIN") {
+    addFlightButton = <Button variant="contained" sx={{backgroundColor: "#212121", '&:hover': { backgroundColor: '#ffffff', color:  "#212121" }}}>Add new flight</Button>
+  }
+  if (localStorage.getItem('role') === "USER") {
+    welcomeText = <Typography variant="h4">Welcome to AllFlights! as User</Typography>
+  } else if(localStorage.getItem('role') === "ADMIN") {
+    addFlightButton = <Button variant="contained" sx={{backgroundColor: "#212121", '&:hover': { backgroundColor: '#ffffff', color:  "#212121" }}}>Add new flight</Button>
+    welcomeText = <Typography variant="h4">Welcome to AllFlights! as Admin</Typography>
+  } else {
+    welcomeText = <Typography variant="h4">Welcome to AllFlights! as None</Typography>
+  }
+
   return (
-    <div className={styles['container']}>
-      <h1>Welcome to AllFlights!</h1>
-      {flights?.map((flight, index) =>
+    <Grid container direction="row" justifyContent="center" sx={{ border: "3px solid #212121", margin: "0", padding: "1.25rem"}}>
+      <Grid item xs={5}>{welcomeText}</Grid>
+      <Grid item container justifyContent="flex-end" xs={5}>{addFlightButton}</Grid>
+      <Grid item xs={10}>{flights?.map((flight, index) =>
         <FlightItem key={index} flight={flight} />
-      )}
-    </div>
+      )}</Grid>
+    </Grid>
   );
 }
 
