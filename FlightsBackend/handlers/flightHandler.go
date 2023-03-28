@@ -73,20 +73,6 @@ func (flightHandler *FlightHandler) UpdateFlightRemainingTickets(rw http.Respons
 	flightHandler.logger.Println(buyTicketDto.Amount)
 	flightHandler.logger.Println(buyTicketDto.FlightId)
 
-	/*/ define a var
-	var buyTicketDto model.BuyTicketDto
-
-	// decode input or return error
-	err := json.NewDecoder(req.Body).Decode(&buyTicketDto)
-	flightHandler.logger.Println(buyTicketDto.Amount)
-	flightHandler.logger.Println(buyTicketDto.FlightId)
-
-	if err != nil {
-		http.Error(rw, "Decode error! please check your JSON formating.", http.StatusBadRequest)
-		flightHandler.logger.Fatal("Decode error! please check your JSON formating.")
-		return
-	}*/
-
 	if buyTicketDto.Amount < 1 {
 		http.Error(rw, "Negative or Zero amount of cards. Can not buy.", http.StatusBadRequest)
 		flightHandler.logger.Fatal("Negative or Zero amount of cards: ", buyTicketDto.Amount)
