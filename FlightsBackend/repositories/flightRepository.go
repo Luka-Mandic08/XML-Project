@@ -125,6 +125,34 @@ func (flightRepository *FlightRepository) GetAll() (model.Flights, error) {
 	return flights, nil
 }
 
+func (flightRepository *FlightRepository) GetSearched(dto *model.FlightSearchDTO) (model.Flights, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	flightsCollection := flightRepository.getCollection()
+	helperDate := dto.StartDate.Add(time.Hour * 24)
+
+	var flights model.Flights
+	var flightsCursor *mongo.Cursor
+	var err error
+
+	flightsCursor, err = flightsCollection.Find(ctx, bson.M{"start": bson.M{"$regex": dto.Start, "$options": "i"},
+		"destination":      bson.M{"$regex": dto.Destination, "$options": "i"},
+		"startdate":        bson.M{"$gte": dto.StartDate, "$lt": helperDate},
+		"remainingtickets": bson.M{"$gte": dto.RemainingTickets}})
+
+	if err != nil {
+		flightRepository.logger.Println(err)
+		return nil, err
+	}
+	if err = flightsCursor.All(ctx, &flights); err != nil {
+		flightRepository.logger.Println(err)
+		return nil, err
+	}
+
+	return flights, nil
+}
+
 func (flightRepository *FlightRepository) UpdateFlightRemainingTickets(id string, amount int64) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()

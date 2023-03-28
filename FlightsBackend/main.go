@@ -105,6 +105,10 @@ func main() {
 	getAllFlightsRouter := router.Methods(http.MethodGet).Subrouter()
 	getAllFlightsRouter.HandleFunc("/flight/all", flightHandler.GetAllFlights)
 
+	getSearchedFlightsRouter := router.Methods(http.MethodGet).Subrouter()
+	getSearchedFlightsRouter.HandleFunc("/flight/search", flightHandler.GetSearchedFlights)
+	getSearchedFlightsRouter.Use(flightHandler.MiddlewareFlightSearchDeserialization)
+
 	getFlightByIdRouter := router.Methods(http.MethodGet).Subrouter()
 	getFlightByIdRouter.HandleFunc("/flight/{id}", flightHandler.GetFlightById)
 
