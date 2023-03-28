@@ -6,7 +6,6 @@ import (
 	"context"
 	"log"
 	"net/http"
-	"strconv"
 
 	"github.com/gorilla/mux"
 )
@@ -69,20 +68,32 @@ func (flightHandler *FlightHandler) GetAllFlights(rw http.ResponseWriter, req *h
 }
 
 func (flightHandler *FlightHandler) UpdateFlightRemainingTickets(rw http.ResponseWriter, req *http.Request) {
-	vars := mux.Vars(req)
-	id := vars["id"]
 
-	amount := req.Header.Get("amount")
+	buyTicketDto := req.Context().Value(KeyProduct{}).(*model.BuyTicketDto)
+	flightHandler.logger.Println(buyTicketDto.Amount)
+	flightHandler.logger.Println(buyTicketDto.FlightId)
 
-	amount_int, _ := strconv.ParseInt(amount, 10, 64)
+	/*/ define a var
+	var buyTicketDto model.BuyTicketDto
 
-	if amount_int < 0 {
-		http.Error(rw, "Negative amount of cards.", http.StatusBadRequest)
-		flightHandler.logger.Fatal("Negative amount of cards: ", amount_int)
+	// decode input or return error
+	err := json.NewDecoder(req.Body).Decode(&buyTicketDto)
+	flightHandler.logger.Println(buyTicketDto.Amount)
+	flightHandler.logger.Println(buyTicketDto.FlightId)
+
+	if err != nil {
+		http.Error(rw, "Decode error! please check your JSON formating.", http.StatusBadRequest)
+		flightHandler.logger.Fatal("Decode error! please check your JSON formating.")
+		return
+	}*/
+
+	if buyTicketDto.Amount < 1 {
+		http.Error(rw, "Negative or Zero amount of cards. Can not buy.", http.StatusBadRequest)
+		flightHandler.logger.Fatal("Negative or Zero amount of cards: ", buyTicketDto.Amount)
 		return
 	}
 
-	flightHandler.flightRepository.UpdateFlightRemainingTickets(id, amount_int)
+	flightHandler.flightRepository.UpdateFlightRemainingTickets(buyTicketDto.FlightId, buyTicketDto.Amount)
 	rw.WriteHeader(http.StatusOK)
 }
 
@@ -105,6 +116,27 @@ func (f *FlightHandler) MiddlewareFlightDeserialization(next http.Handler) http.
 		}
 
 		ctx := context.WithValue(req.Context(), KeyProduct{}, flight)
+		req = req.WithContext(ctx)
+
+		next.ServeHTTP(rw, req)
+	})
+}
+
+func (f *FlightHandler) MiddlewareBuyTicketsDeserialization(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
+		f.logger.Println(req.Body)
+		f.logger.Println(req.FormValue("flightId"))
+		f.logger.Println(req.FormValue("amount"))
+
+		buyTicketDto := &model.BuyTicketDto{}
+		err := buyTicketDto.FromJSON(req.Body)
+		if err != nil {
+			http.Error(rw, "Unable to decode json", http.StatusBadRequest)
+			f.logger.Fatal(err)
+			return
+		}
+
+		ctx := context.WithValue(req.Context(), KeyProduct{}, buyTicketDto)
 		req = req.WithContext(ctx)
 
 		next.ServeHTTP(rw, req)

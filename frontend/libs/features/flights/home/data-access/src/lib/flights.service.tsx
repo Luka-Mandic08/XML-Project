@@ -11,7 +11,17 @@ export async function GetAllFlights(){
 }
 
 export async function BuyFlightTickets(flightId : string, amount : number){
-  console.log(amount);
-  //await (await axios.put(BaseURL.URL + "/flight/buyticket/" + flightId));
+  /*
+  NE KORISTITI OVO
+  const buyTicketsDto = {flightId: flightId, amount: amount}
+  MORA SE STAVITI DIREKT U DATA
+  JER GLUPI AXIOS/GO
+  */
+
+  await (axios({
+    method: 'put', 
+    url: BaseURL.URL + "/flight/buyticket",
+    data: {flightId: flightId, amount: amount}
+  }))
 }
 

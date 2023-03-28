@@ -112,13 +112,18 @@ func main() {
 	postFlightRouter.HandleFunc("/flight/add", flightHandler.InsertFlight)
 	postFlightRouter.Use(flightHandler.MiddlewareFlightDeserialization)
 
-	updateFlightRouter := router.Methods(http.MethodPut).Subrouter()
-	updateFlightRouter.HandleFunc("/flight/update/{id}", flightHandler.UpdateFlightRemainingTickets)
+	UpdateFlightRemainingTickets := router.Methods(http.MethodPut).Subrouter()
+	UpdateFlightRemainingTickets.HandleFunc("/flight/buyticket", flightHandler.UpdateFlightRemainingTickets)
+	UpdateFlightRemainingTickets.Use(flightHandler.MiddlewareBuyTicketsDeserialization)
 
 	deleteFlightRouter := router.Methods(http.MethodDelete).Subrouter()
 	deleteFlightRouter.HandleFunc("/flight/{id}", flightHandler.DeleteFlight)
 
-	cors := gorillaHandlers.CORS(gorillaHandlers.AllowedOrigins([]string{"*"}))
+	headersOk := gorillaHandlers.AllowedHeaders([]string{"*", "Content-Type"})
+	originsOk := gorillaHandlers.AllowedOrigins([]string{"*", "http://localhost:4200/"})
+	methodsOk := gorillaHandlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS", "DELETE"})
+
+	cors := gorillaHandlers.CORS(originsOk, headersOk, methodsOk)
 
 	//Initialize the server
 	server := http.Server{
