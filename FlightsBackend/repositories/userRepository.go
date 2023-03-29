@@ -162,7 +162,7 @@ func (pr *UserRepository) Update(id string, user *model.User) error {
 	return nil
 }
 
-func (pr *UserRepository) UpdateAddress(id string, address *model.Address) error {
+func (pr *UserRepository) UpdateAddress(id string, address *model.UserAddress) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	usersCollection := pr.getCollection()
@@ -183,7 +183,7 @@ func (pr *UserRepository) UpdateAddress(id string, address *model.Address) error
 	return nil
 }
 
-func (pr *UserRepository) UpdateCredentials(id string, credentials *model.Credentials) error {
+func (pr *UserRepository) UpdateCredentials(id string, credentials *model.UserCredentials) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	usersCollection := pr.getCollection()
@@ -247,7 +247,7 @@ func (pr *UserRepository) Delete(id string) error {
 }
 
 // LOGIN/LOGOUT
-func (pr *UserRepository) Login(credentials *model.Credentials) (*model.User, error) {
+func (pr *UserRepository) Login(credentials *model.UserCredentials) (*model.User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	usersCollection := pr.getCollection()
@@ -260,6 +260,67 @@ func (pr *UserRepository) Login(credentials *model.Credentials) (*model.User, er
 	}
 
 	return &user, nil
+}
+
+// MANAGE FLIGHTS
+func (pr *UserRepository) AddFlight(userID string, ticketID string, ticketCount int64) error {
+
+	user, err := pr.GetById(userID)
+
+	if err == nil {
+		isModified := false
+		for _, flight := range user.Flights {
+			if flight.FlightID == ticketID {
+				// DODAJEMO KARTE NA VEC POSTOJECE
+				flight.TicketCount += ticketCount
+
+				err := pr.SaveUserFlights(userID, user.Flights)
+				if err != nil {
+					pr.logger.Println(err)
+					return err
+				}
+				return nil
+			}
+		}
+		if !isModified {
+			// DODAJEMO KARTE
+			user.Flights = append(user.Flights, &model.UserFlight{FlightID: ticketID, TicketCount: ticketCount})
+
+			err := pr.SaveUserFlights(userID, user.Flights)
+			if err != nil {
+				pr.logger.Println(err)
+				return err
+			}
+			return nil
+		}
+	} else {
+		// KORISNIK NIJE NADJEN
+		pr.logger.Println(err)
+		return err
+	}
+
+	return err
+}
+
+func (pr *UserRepository) SaveUserFlights(userID string, flights model.UserFlights) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	usersCollection := pr.getCollection()
+
+	objID, _ := primitive.ObjectIDFromHex(userID)
+	filter := bson.D{{Key: "_id", Value: objID}}
+	update := bson.M{"$set": bson.M{
+		"userFlights": flights,
+	}}
+	result, err := usersCollection.UpdateOne(ctx, filter, update)
+	pr.logger.Printf("Documents matched: %v\n", result.MatchedCount)
+	pr.logger.Printf("Documents updated: %v\n", result.ModifiedCount)
+
+	if err != nil {
+		pr.logger.Println(err)
+		return err
+	}
+	return nil
 }
 
 // BONUS
