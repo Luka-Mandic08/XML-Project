@@ -10,3 +10,8 @@ export async function GetAllFlights(){
   return flights;
 }
 
+export async function BuyFlightTickets(flightId : string, amount : number){
+  console.log(amount);
+  //await (await axios.put(BaseURL.URL + "/flight/buyticket/" + flightId));
+}
+
