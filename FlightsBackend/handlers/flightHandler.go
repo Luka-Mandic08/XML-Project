@@ -6,7 +6,6 @@ import (
 	"context"
 	"log"
 	"net/http"
-	"strconv"
 
 	"github.com/gorilla/mux"
 )
@@ -14,11 +13,12 @@ import (
 type FlightHandler struct {
 	logger           *log.Logger
 	flightRepository *repositories.FlightRepository
+	userRepository   *repositories.UserRepository
 }
 
 // Injecting the logger makes this code much more testable.
-func NewFlightHandler(l *log.Logger, r *repositories.FlightRepository) *FlightHandler {
-	return &FlightHandler{l, r}
+func NewFlightHandler(l *log.Logger, r *repositories.FlightRepository, rUser *repositories.UserRepository) *FlightHandler {
+	return &FlightHandler{l, r, rUser}
 }
 
 func (flightHandler *FlightHandler) InsertFlight(rw http.ResponseWriter, req *http.Request) {
@@ -69,7 +69,7 @@ func (flightHandler *FlightHandler) GetAllFlights(rw http.ResponseWriter, req *h
 }
 
 func (flightHandler *FlightHandler) UpdateFlightRemainingTickets(rw http.ResponseWriter, req *http.Request) {
-	vars := mux.Vars(req)
+	/*vars := mux.Vars(req)
 	id := vars["id"]
 
 	amount := req.Header.Get("amount")
@@ -80,10 +80,28 @@ func (flightHandler *FlightHandler) UpdateFlightRemainingTickets(rw http.Respons
 		http.Error(rw, "Negative amount of cards.", http.StatusBadRequest)
 		flightHandler.logger.Fatal("Negative amount of cards: ", amount_int)
 		return
+	}*/
+
+	//flightHandler.flightRepository.UpdateFlightRemainingTickets(id, amount_int)
+	userID := "6424c72be0d1136f9b01a438"
+	flightID := "6424c733e0d1136f9b01a439"
+	_, err := flightHandler.flightRepository.GetById(flightID)
+
+	if err == nil {
+		err := flightHandler.userRepository.AddFlight(userID, flightID, 4) //treba promeniti id i id
+		if err != nil {
+			http.Error(rw, "Adding tickets unsuccessful!", http.StatusBadRequest)
+			return
+		}
+
+		rw.WriteHeader(http.StatusOK)
+	} else {
+		http.Error(rw, "Flight not found!", http.StatusBadRequest)
+		flightHandler.logger.Fatal("Flight not found! ID: ", flightID)
+		return
 	}
 
-	flightHandler.flightRepository.UpdateFlightRemainingTickets(id, amount_int)
-	rw.WriteHeader(http.StatusOK)
+	return
 }
 
 func (flightHandler *FlightHandler) DeleteFlight(rw http.ResponseWriter, req *http.Request) {

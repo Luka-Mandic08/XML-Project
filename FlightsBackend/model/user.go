@@ -9,11 +9,13 @@ import (
 
 type User struct {
 	ID          primitive.ObjectID `bson:"_id,omitempty" json:"id"`
-	Name        string             `bson:"name" json:"name"`
+	Name        string             `bson:"name,omitempty" json:"name"`
 	Surname     string             `bson:"surname,omitempty" json:"surname"`
 	PhoneNumber string             `bson:"phoneNumber,omitempty" json:"phoneNumber"`
-	Address     Address            `bson:"address,omitempty" json:"address"`
-	Credentials Credentials        `bson:"credentials,omitempty" json:"credentials"`
+	Address     UserAddress        `bson:"address,omitempty" json:"address"`
+	Credentials UserCredentials    `bson:"credentials,omitempty" json:"credentials"`
+	Role        UserRole           `bson:"role,omitempty" json:"role"`
+	Flights     UserFlights        `bson:"flights" json:"flights"`
 }
 
 type Users []*User
@@ -46,6 +48,10 @@ func (u *User) FromJSON(r io.Reader) error {
 	"credentials":{
 		"username": "galicc",
 		"password": "hcijesranje"
-	}
+	},
+	"role": "USER",
+	"flights": [
+
+	]
 }
 */

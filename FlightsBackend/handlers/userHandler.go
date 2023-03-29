@@ -102,7 +102,7 @@ func (p *UserHandler) UpdateUser(rw http.ResponseWriter, h *http.Request) {
 
 func (p *UserHandler) UpdateAddress(rw http.ResponseWriter, h *http.Request) {
 	id := h.URL.Query().Get("id")
-	address := h.Context().Value(KeyProduct{}).(*model.Address)
+	address := h.Context().Value(KeyProduct{}).(*model.UserAddress)
 
 	p.repo.UpdateAddress(id, address)
 	rw.WriteHeader(http.StatusOK)
@@ -110,7 +110,7 @@ func (p *UserHandler) UpdateAddress(rw http.ResponseWriter, h *http.Request) {
 
 func (p *UserHandler) UpdateCredentials(rw http.ResponseWriter, h *http.Request) {
 	id := h.URL.Query().Get("id")
-	credentials := h.Context().Value(KeyProduct{}).(*model.Credentials)
+	credentials := h.Context().Value(KeyProduct{}).(*model.UserCredentials)
 
 	p.repo.UpdateCredentials(id, credentials)
 	rw.WriteHeader(http.StatusOK)
@@ -146,26 +146,32 @@ func (p *UserHandler) DeleteUser(rw http.ResponseWriter, h *http.Request) {
 
 // LOGIN/LOGOUT
 func (p *UserHandler) LoginUser(rw http.ResponseWriter, h *http.Request) {
-	credentials := h.Context().Value(KeyProduct{}).(*model.Credentials)
+	credentials := h.Context().Value(KeyProduct{}).(*model.UserCredentials)
 
 	user, err := p.repo.Login(credentials)
 	if err != nil {
 		p.logger.Println(err)
+		rw.WriteHeader(http.StatusBadRequest)
+
 		return
 	}
 
 	if user != nil {
-		e := json.NewEncoder(rw)
-		err := e.Encode(user.ID)
+		session := &model.Session{ID: user.ID, Role: user.Role}
+
+		err = session.ToJSON(rw)
 		if err != nil {
 			http.Error(rw, "Unable to convert to json", http.StatusInternalServerError)
 			p.logger.Fatal("Unable to convert to json :", err)
+
 			return
 		}
 		rw.WriteHeader(http.StatusAccepted)
 	} else {
 		rw.WriteHeader(http.StatusBadRequest)
 	}
+
+	return
 }
 
 func (p *UserHandler) LogoutUser(rw http.ResponseWriter, h *http.Request) {
@@ -178,6 +184,8 @@ func (p *UserHandler) LogoutUser(rw http.ResponseWriter, h *http.Request) {
 	}
 	rw.WriteHeader(http.StatusOK)
 }
+
+// MANAGE FLIGHTS
 
 // MIDDLEWARE
 
@@ -200,7 +208,7 @@ func (p *UserHandler) MiddlewareUserDeserialization(next http.Handler) http.Hand
 
 func (p *UserHandler) MiddlewareAddressDeserialization(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(rw http.ResponseWriter, h *http.Request) {
-		address := &model.Address{}
+		address := &model.UserAddress{}
 		err := address.FromJSON(h.Body)
 		if err != nil {
 			http.Error(rw, "Unable to decode json", http.StatusBadRequest)
@@ -217,7 +225,7 @@ func (p *UserHandler) MiddlewareAddressDeserialization(next http.Handler) http.H
 
 func (p *UserHandler) MiddlewareCredentialsDeserialization(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(rw http.ResponseWriter, h *http.Request) {
-		credentials := &model.Credentials{}
+		credentials := &model.UserCredentials{}
 		err := credentials.FromJSON(h.Body)
 		if err != nil {
 			http.Error(rw, "Unable to decode json", http.StatusBadRequest)
