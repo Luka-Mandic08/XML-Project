@@ -15,6 +15,12 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@frontend/features/flights/add-flight/container": [
+        "libs/features/flights/add-flight/container/src/index.ts"
+      ],
+      "@frontend/features/flights/add-flight/data-access": [
+        "libs/features/flights/add-flight/data-access/src/index.ts"
+      ],
       "@frontend/features/flights/home/container": [
         "libs/features/flights/home/container/src/index.ts"
       ],

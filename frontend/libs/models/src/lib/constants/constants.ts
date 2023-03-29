@@ -1,6 +1,7 @@
 export const AppRoutes = {
   Home: '/',
-  Flights: '/flights'
+  Flights: '/flights',
+  AddFlight: '/add/flight'
 };
 
 export const BaseURL = {

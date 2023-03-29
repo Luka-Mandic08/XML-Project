@@ -1,0 +1,62 @@
+/*
+ * Replace this with your own classes
+ *
+ * e.g.
+ * .container {
+ * }
+*/
+
+
+.box{
+	position:absolute;
+	left:50%;
+	top:50%;
+	transform: translate(-50%,-50%);
+    background-color: #fff;
+	border-radius:5px;
+    border:1px solid #212121;  
+	padding:7rem;
+}
+.inputContainer{
+	position:relative;
+	margin-bottom:1.5rem;
+    width:100%;
+
+}
+.inputContainer input{ 
+    border:1px solid #212121;
+    border-radius:3px;  
+    background:white;
+    width:100%;
+    height:auto;
+    padding:0.5rem;
+    font-size:1.25rem;
+    color:#212121;
+}
+.inputContainer input:focus{ 
+    border: none;
+    outline: none;
+    box-shadow:0 0 3px 3px #212121;	
+}
+.btn{
+	color:#fff;
+	background-color:#e74c3c;
+	outline: none;
+    border: 0;
+    color: #fff;
+	padding:10px 20px;
+	text-transform:uppercase;
+	margin-top:50px;
+	border-radius:2px;
+	cursor:pointer;
+	position:relative;
+}
+/*.btn:after{
+	content:"";
+	position:absolute;
+	background:rgba(0,0,0,0.50);
+	top:0;
+	right:0;
+	width:100%;
+	height:100%;
+}*/
