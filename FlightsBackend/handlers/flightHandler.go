@@ -68,6 +68,25 @@ func (flightHandler *FlightHandler) GetAllFlights(rw http.ResponseWriter, req *h
 	}
 }
 
+func (flightHandler *FlightHandler) GetSearchedFlights(rw http.ResponseWriter, req *http.Request) {
+	flightsearchDTO := req.Context().Value(KeyProduct{}).(*model.FlightSearchDTO)
+	flights, err := flightHandler.flightRepository.GetSearched(flightsearchDTO)
+	if err != nil {
+		flightHandler.logger.Print("Database exception: ", err)
+	}
+
+	if flights == nil {
+		return
+	}
+
+	err = flights.ToJSON(rw)
+	if err != nil {
+		http.Error(rw, "Unable to convert to json", http.StatusInternalServerError)
+		flightHandler.logger.Fatal("Unable to convert to json :", err)
+		return
+	}
+}
+
 func (flightHandler *FlightHandler) UpdateFlightRemainingTickets(rw http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
 	id := vars["id"]
@@ -97,6 +116,23 @@ func (flightHandler *FlightHandler) DeleteFlight(rw http.ResponseWriter, req *ht
 func (f *FlightHandler) MiddlewareFlightDeserialization(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
 		flight := &model.Flight{}
+		err := flight.FromJSON(req.Body)
+		if err != nil {
+			http.Error(rw, "Unable to decode json", http.StatusBadRequest)
+			f.logger.Fatal(err)
+			return
+		}
+
+		ctx := context.WithValue(req.Context(), KeyProduct{}, flight)
+		req = req.WithContext(ctx)
+
+		next.ServeHTTP(rw, req)
+	})
+}
+
+func (f *FlightHandler) MiddlewareFlightSearchDeserialization(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
+		flight := &model.FlightSearchDTO{}
 		err := flight.FromJSON(req.Body)
 		if err != nil {
 			http.Error(rw, "Unable to decode json", http.StatusBadRequest)
