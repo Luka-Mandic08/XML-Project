@@ -6,24 +6,24 @@ import (
 	"context"
 	"log"
 	"net/http"
-	"strconv"
 
 	"github.com/gorilla/mux"
 )
 
 type FlightHandler struct {
-	logger     *log.Logger
-	repository *repositories.FlightRepository
+	logger           *log.Logger
+	flightRepository *repositories.FlightRepository
+	userRepository   *repositories.UserRepository
 }
 
 // Injecting the logger makes this code much more testable.
-func NewFlightHandler(l *log.Logger, r *repositories.FlightRepository) *FlightHandler {
-	return &FlightHandler{l, r}
+func NewFlightHandler(l *log.Logger, r *repositories.FlightRepository, rUser *repositories.UserRepository) *FlightHandler {
+	return &FlightHandler{l, r, rUser}
 }
 
 func (flightHandler *FlightHandler) InsertFlight(rw http.ResponseWriter, req *http.Request) {
 	flight := req.Context().Value(KeyProduct{}).(*model.Flight)
-	flightHandler.repository.Insert(flight)
+	flightHandler.flightRepository.Insert(flight)
 	rw.WriteHeader(http.StatusCreated)
 }
 
@@ -31,18 +31,18 @@ func (flightHandler *FlightHandler) GetFlightById(rw http.ResponseWriter, req *h
 	vars := mux.Vars(req)
 	id := vars["id"]
 
-	patient, err := flightHandler.repository.GetById(id)
+	flight, err := flightHandler.flightRepository.GetById(id)
 	if err != nil {
 		flightHandler.logger.Print("Database exception: ", err)
 	}
 
-	if patient == nil {
-		http.Error(rw, "Patient with given id not found", http.StatusNotFound)
-		flightHandler.logger.Printf("Patient with id: '%s' not found", id)
+	if flight == nil {
+		http.Error(rw, "Flight with given id not found", http.StatusNotFound)
+		flightHandler.logger.Printf("Flight with id: '%s' not found", id)
 		return
 	}
 
-	err = patient.ToJSON(rw)
+	err = flight.ToJSON(rw)
 	if err != nil {
 		http.Error(rw, "Unable to convert to json", http.StatusInternalServerError)
 		flightHandler.logger.Fatal("Unable to convert to json :", err)
@@ -51,16 +51,16 @@ func (flightHandler *FlightHandler) GetFlightById(rw http.ResponseWriter, req *h
 }
 
 func (flightHandler *FlightHandler) GetAllFlights(rw http.ResponseWriter, req *http.Request) {
-	flgihts, err := flightHandler.repository.GetAll()
+	flights, err := flightHandler.flightRepository.GetAll()
 	if err != nil {
 		flightHandler.logger.Print("Database exception: ", err)
 	}
 
-	if flgihts == nil {
+	if flights == nil {
 		return
 	}
 
-	err = flgihts.ToJSON(rw)
+	err = flights.ToJSON(rw)
 	if err != nil {
 		http.Error(rw, "Unable to convert to json", http.StatusInternalServerError)
 		flightHandler.logger.Fatal("Unable to convert to json :", err)
@@ -68,29 +68,91 @@ func (flightHandler *FlightHandler) GetAllFlights(rw http.ResponseWriter, req *h
 	}
 }
 
-func (flightHandler *FlightHandler) UpdateFlight(rw http.ResponseWriter, req *http.Request) {
-	vars := mux.Vars(req)
+func (flightHandler *FlightHandler) GetSearchedFlights(rw http.ResponseWriter, req *http.Request) {
+	flightsearchDTO := req.Context().Value(KeyProduct{}).(*model.FlightSearchDTO)
+	flights, err := flightHandler.flightRepository.GetSearched(flightsearchDTO)
+	if err != nil {
+		flightHandler.logger.Print("Database exception: ", err)
+	}
+
+	if flights == nil {
+		return
+	}
+
+	err = flights.ToJSON(rw)
+	if err != nil {
+		http.Error(rw, "Unable to convert to json", http.StatusInternalServerError)
+		flightHandler.logger.Fatal("Unable to convert to json :", err)
+		return
+	}
+}
+
+func (flightHandler *FlightHandler) UpdateFlightRemainingTickets(rw http.ResponseWriter, req *http.Request) {
+	/*vars := mux.Vars(req)
 	id := vars["id"]
 
 	amount := req.Header.Get("amount")
 
 	amount_int, _ := strconv.ParseInt(amount, 10, 64)
 
-	flightHandler.repository.Update(id, amount_int)
-	rw.WriteHeader(http.StatusOK)
+	if amount_int < 0 {
+		http.Error(rw, "Negative amount of cards.", http.StatusBadRequest)
+		flightHandler.logger.Fatal("Negative amount of cards: ", amount_int)
+		return
+	}*/
+
+	//flightHandler.flightRepository.UpdateFlightRemainingTickets(id, amount_int)
+	userID := "6424c72be0d1136f9b01a438"
+	flightID := "6424c733e0d1136f9b01a439"
+	ticketCount := int64(4)
+
+	_, err := flightHandler.flightRepository.GetById(flightID)
+
+	if err == nil {
+		err := flightHandler.userRepository.AddFlight(userID, flightID, ticketCount) //treba promeniti id i id
+		if err != nil {
+			http.Error(rw, "Adding tickets unsuccessful!", http.StatusBadRequest)
+			return
+		}
+
+		rw.WriteHeader(http.StatusOK)
+	} else {
+		http.Error(rw, "Flight not found!", http.StatusBadRequest)
+		flightHandler.logger.Fatal("Flight not found! ID: ", flightID)
+		return
+	}
+
+	return
 }
 
 func (flightHandler *FlightHandler) DeleteFlight(rw http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
 	id := vars["id"]
 
-	flightHandler.repository.Delete(id)
+	flightHandler.flightRepository.Delete(id)
 	rw.WriteHeader(http.StatusNoContent)
 }
 
 func (f *FlightHandler) MiddlewareFlightDeserialization(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
 		flight := &model.Flight{}
+		err := flight.FromJSON(req.Body)
+		if err != nil {
+			http.Error(rw, "Unable to decode json", http.StatusBadRequest)
+			f.logger.Fatal(err)
+			return
+		}
+
+		ctx := context.WithValue(req.Context(), KeyProduct{}, flight)
+		req = req.WithContext(ctx)
+
+		next.ServeHTTP(rw, req)
+	})
+}
+
+func (f *FlightHandler) MiddlewareFlightSearchDeserialization(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
+		flight := &model.FlightSearchDTO{}
 		err := flight.FromJSON(req.Body)
 		if err != nil {
 			http.Error(rw, "Unable to decode json", http.StatusBadRequest)

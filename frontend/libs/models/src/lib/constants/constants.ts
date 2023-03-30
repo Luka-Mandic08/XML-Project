@@ -1,5 +1,9 @@
 export const AppRoutes = {
-  Login: '/',
-  Home: '/home',
+  Login: '/login',
+  Home: '/',
   Flights: '/flights'
 };
+
+export const BaseURL = {
+  URL : 'http://localhost:8082'
+}

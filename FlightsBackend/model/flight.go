@@ -15,8 +15,8 @@ type Flight struct {
 	Destination      string             `bson:"destination" json:"destination" gorm:"not null"`
 	Start            string             `bson:"start" json:"start" gorm:"not null"`
 	Price            float32            `bson:"price" json:"price" gorm:"not null"`
-	RemainingTickets int                `bson:"remainingtickets" json:"remainingtickets" gorm:"not null"`
-	TotalTickets     int                `bson:"totaltickets" json:"totaltickets" gorm:"not null"`
+	RemainingTickets int64              `bson:"remainingtickets" json:"remainingtickets" gorm:"not null"`
+	TotalTickets     int64              `bson:"totaltickets" json:"totaltickets" gorm:"not null"`
 }
 
 type Flights []*Flight

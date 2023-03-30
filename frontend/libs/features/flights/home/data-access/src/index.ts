@@ -1,1 +1,1 @@
-export * from './lib/features-flights-home-data-access';
+export * from './lib/flights.service';
