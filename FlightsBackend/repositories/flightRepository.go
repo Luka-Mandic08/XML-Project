@@ -136,11 +136,16 @@ func (flightRepository *FlightRepository) GetSearched(dto *model.FlightSearchDTO
 	var flightsCursor *mongo.Cursor
 	var err error
 
-	flightsCursor, err = flightsCollection.Find(ctx, bson.M{"start": bson.M{"$regex": dto.Start, "$options": "i"},
-		"destination":      bson.M{"$regex": dto.Destination, "$options": "i"},
-		"startdate":        bson.M{"$gte": dto.StartDate, "$lt": helperDate},
-		"remainingtickets": bson.M{"$gte": dto.RemainingTickets}})
-
+	if dto.StartDate.Year() != 1970 {
+		flightsCursor, err = flightsCollection.Find(ctx, bson.M{"start": bson.M{"$regex": dto.Start, "$options": "i"},
+			"destination":      bson.M{"$regex": dto.Destination, "$options": "i"},
+			"startdate":        bson.M{"$gte": dto.StartDate, "$lt": helperDate},
+			"remainingtickets": bson.M{"$gte": dto.RemainingTickets}})
+	} else {
+		flightsCursor, err = flightsCollection.Find(ctx, bson.M{"start": bson.M{"$regex": dto.Start, "$options": "i"},
+			"destination":      bson.M{"$regex": dto.Destination, "$options": "i"},
+			"remainingtickets": bson.M{"$gte": dto.RemainingTickets}})
+	}
 	if err != nil {
 		flightRepository.logger.Println(err)
 		return nil, err

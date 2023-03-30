@@ -6,12 +6,9 @@ import { HomeContainer } from '@frontend/features/flights/home/container';
 
 export function App() {
   return (
-    <>
-      <Typography>Hello world!</Typography>
-      <Routes>
-            <Route path={AppRoutes.Home} element={<HomeContainer />} />
-      </Routes>
-    </>
+    <Routes>
+        <Route path={AppRoutes.Home} element={<HomeContainer />} />
+    </Routes>
   );
 }
 

@@ -105,7 +105,7 @@ func main() {
 	getAllFlightsRouter := router.Methods(http.MethodGet).Subrouter()
 	getAllFlightsRouter.HandleFunc("/flight/all", flightHandler.GetAllFlights)
 
-	getSearchedFlightsRouter := router.Methods(http.MethodGet).Subrouter()
+	getSearchedFlightsRouter := router.Methods(http.MethodPut).Subrouter()
 	getSearchedFlightsRouter.HandleFunc("/flight/search", flightHandler.GetSearchedFlights)
 	getSearchedFlightsRouter.Use(flightHandler.MiddlewareFlightSearchDeserialization)
 
@@ -122,7 +122,11 @@ func main() {
 	deleteFlightRouter := router.Methods(http.MethodDelete).Subrouter()
 	deleteFlightRouter.HandleFunc("/flight/{id}", flightHandler.DeleteFlight)
 
-	cors := gorillaHandlers.CORS(gorillaHandlers.AllowedOrigins([]string{"*"}))
+	headersOk := gorillaHandlers.AllowedHeaders([]string{"*", "Content-Type"})
+	originsOk := gorillaHandlers.AllowedOrigins([]string{"*", "http://localhost:4200/"})
+	methodsOk := gorillaHandlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS", "DELETE"})
+
+	cors := gorillaHandlers.CORS(originsOk, headersOk, methodsOk)
 
 	//Initialize the server
 	server := http.Server{
