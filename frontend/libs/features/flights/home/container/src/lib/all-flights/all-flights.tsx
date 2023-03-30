@@ -22,6 +22,7 @@ export function AllFlights(props: AllFlightsProps) {
     fetchData()
       // make sure to catch any error
       .catch(console.error);
+      .catch(console.error);
   }, [flights])*/
   useEffect(() => {
     GetAllFlights()

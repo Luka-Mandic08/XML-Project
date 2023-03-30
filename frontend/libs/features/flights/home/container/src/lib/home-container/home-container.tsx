@@ -4,14 +4,13 @@ import AllFlights from '../all-flights/all-flights';
 /* eslint-disable-next-line */
 export interface FeaturesFlightsHomeContainerProps {}
 
-export function HomeContainer():React.ReactElement {
-
+export function HomeContainer(): React.ReactElement {
   return (
     <>
-    <Typography>Hello from Home!</Typography>
-    <AllFlights></AllFlights>
+      <Typography>Hello from Home!</Typography>
+      <AllFlights></AllFlights>
     </>
   );
-};
+}
 
 export default HomeContainer;
