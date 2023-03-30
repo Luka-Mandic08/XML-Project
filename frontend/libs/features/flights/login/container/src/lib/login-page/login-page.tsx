@@ -22,10 +22,10 @@ export function LoginPage(props: LoginPageProps) {
     if(username !== '' && password !== ''){
       rsp = await login(username, password)
       if(rsp === undefined){
-        console.log(rsp)
         setError("Wrong credentials")
+      }else{
+        navigate(AppRoutes.Home);
       }
-      navigate(AppRoutes.Home);
     }
     else
       setError("Please fill all fields")
