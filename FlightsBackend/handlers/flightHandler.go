@@ -104,10 +104,12 @@ func (flightHandler *FlightHandler) UpdateFlightRemainingTickets(rw http.Respons
 	//flightHandler.flightRepository.UpdateFlightRemainingTickets(id, amount_int)
 	userID := "6424c72be0d1136f9b01a438"
 	flightID := "6424c733e0d1136f9b01a439"
+	ticketCount := int64(4)
+
 	_, err := flightHandler.flightRepository.GetById(flightID)
 
 	if err == nil {
-		err := flightHandler.userRepository.AddFlight(userID, flightID, 4) //treba promeniti id i id
+		err := flightHandler.userRepository.AddFlight(userID, flightID, ticketCount) //treba promeniti id i id
 		if err != nil {
 			http.Error(rw, "Adding tickets unsuccessful!", http.StatusBadRequest)
 			return
