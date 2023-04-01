@@ -310,7 +310,7 @@ func (pr *UserRepository) SaveUserFlights(userID string, flights model.UserFligh
 	objID, _ := primitive.ObjectIDFromHex(userID)
 	filter := bson.D{{Key: "_id", Value: objID}}
 	update := bson.M{"$set": bson.M{
-		"userFlights": flights,
+		"flights": flights,
 	}}
 	result, err := usersCollection.UpdateOne(ctx, filter, update)
 	pr.logger.Printf("Documents matched: %v\n", result.MatchedCount)
