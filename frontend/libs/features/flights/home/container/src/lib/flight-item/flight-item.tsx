@@ -1,8 +1,9 @@
-import { Flight } from '@frontend/models';
+import { AppRoutes, Flight } from '@frontend/models';
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, Grid, TextField, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import FlightIcon from '@mui/icons-material/Flight';
 import { BuyFlightTickets } from '@frontend/features/flights/home/data-access';
+import { useNavigate } from 'react-router-dom';
 
 /* eslint-disable-next-line */
 export interface FlightItemProps {
@@ -12,6 +13,7 @@ export interface FlightItemProps {
 export function FlightItem(props: FlightItemProps) {
   const [amount, setAmount] = useState<number>(1);
   const [amountError, setAmountError] = useState<boolean>();
+  const [isBuyTicketDialogOpen, setIsBuyTicketDialogOpen] = useState(false);
 
   useEffect(() => {
     setAmountError(false);
@@ -21,7 +23,6 @@ export function FlightItem(props: FlightItemProps) {
     }
   }, [amount, props.flight.remainingtickets, setAmount]);
 
-  const [isBuyTicketDialogOpen, setIsBuyTicketDialogOpen] = useState(false);
   const handleBuyTicketClick = () => {
     setIsBuyTicketDialogOpen(true);
     setAmount(1);
@@ -31,10 +32,11 @@ export function FlightItem(props: FlightItemProps) {
     setIsBuyTicketDialogOpen(false);
   };
 
-  function buyTickets(amount: number) {
+  const buyTickets = (amount: number) => {
     setIsBuyTicketDialogOpen(false);
     BuyFlightTickets(props.flight.id, amount);
-  }
+    window.location.reload();
+  };
 
   let customButton;
   if (localStorage.getItem('role') === 'USER') {
@@ -132,9 +134,18 @@ export function FlightItem(props: FlightItemProps) {
         <Grid item>
           {customButton}
           <Dialog open={isBuyTicketDialogOpen} onClose={handleBuyTicketClose}>
-            <DialogTitle>Buy tickets</DialogTitle>
+            <DialogTitle sx={{ minWidth: '20vw' }}>Buy tickets</DialogTitle>
             <DialogContent>
-              <DialogContentText>To subscribe to this website, please enter your email address here. We will send updates occasionally.</DialogContentText>
+              <DialogContentText>
+                Starting Location: {props.flight.start} <br />
+                Date: {props.flight.startdate.toString().split('T')[0]} at: {props.flight.startdate.toString().split('T')[1].substring(0, 5)} <br />
+                <Divider sx={{ my: '0.5rem' }}></Divider>
+                Destination: {props.flight.destination} <br />
+                Date: {props.flight.arrivaldate.toString().split('T')[0]} at: {props.flight.arrivaldate.toString().split('T')[1].substring(0, 5)} <br />
+                <Divider sx={{ my: '0.5rem' }}></Divider>
+                Remaining tickets: {props.flight.remainingtickets} <br />
+                <Divider sx={{ mt: '0.5rem' }}></Divider>
+              </DialogContentText>
               <TextField
                 autoFocus
                 margin="dense"
@@ -145,7 +156,7 @@ export function FlightItem(props: FlightItemProps) {
                 fullWidth
                 variant="standard"
                 error={amountError}
-                helperText="Exceded the number of remaining tickets"
+                helperText={amountError ? 'Exceded the number of remaining tickets' : ' '}
                 onChange={(event) => setAmount(parseInt(event.target.value))}
               />
             </DialogContent>

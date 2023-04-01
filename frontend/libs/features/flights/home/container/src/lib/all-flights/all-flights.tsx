@@ -60,16 +60,16 @@ export function AllFlights(props: AllFlightsProps) {
   let addFlightButton;
 
   if (localStorage.getItem('role') === 'USER') {
-    welcomeText = <Typography variant="h4">Welcome to AllFlights! as User</Typography>;
+    welcomeText = <Typography variant="h4">Buy flight tickets below</Typography>;
   } else if (localStorage.getItem('role') === 'ADMIN') {
     addFlightButton = (
       <Button variant="contained" onClick={goToAddFlight} sx={{ backgroundColor: '#212121', '&:hover': { backgroundColor: '#ffffff', color: '#212121' } }}>
         Add new flight
       </Button>
     );
-    welcomeText = <Typography variant="h4">Welcome to AllFlights! as Admin</Typography>;
+    welcomeText = <Typography variant="h4">Manage flights</Typography>;
   } else {
-    welcomeText = <Typography variant="h4">Welcome to AllFlights! as None</Typography>;
+    welcomeText = <Typography variant="h4">Flight tickets</Typography>;
   }
 
   const currentDate = new Date();
@@ -84,20 +84,53 @@ export function AllFlights(props: AllFlightsProps) {
         {addFlightButton}
       </Grid>
       <Grid item container xs={10} sx={{ padding: '1.25rem' }}>
-        <Grid item xs={2}>
-          <input type="date" min={currentDateString} value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)} />
+        <Grid item xs>
+          <div className={styles.inputContainer}>
+            <input type="date" id="startdate" min={currentDateString} value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)} />
+            <label className={styles.label} htmlFor="startdate" id="label-startdate">
+              <div className={styles.text}>Starting Date</div>
+            </label>
+          </div>
         </Grid>
-        <Grid item xs={2}>
-          <input type="text" value={start} onChange={(e) => setStart(e.target.value)} />
+        <Grid item xs>
+          <div className={styles.inputContainer}>
+            <input type="text" id="startLocation" value={start} onChange={(e) => setStart(e.target.value)} />
+            <label className={styles.label} htmlFor="startLocation" id="label-startLocation">
+              <div className={styles.text}>Start location</div>
+            </label>
+          </div>
         </Grid>
-        <Grid item xs={2}>
-          <input type="text" value={destination} onChange={(e) => setDestination(e.target.value)} />
+        <Grid item xs>
+          <div className={styles.inputContainer}>
+            <input type="text" id="destination" value={destination} onChange={(e) => setDestination(e.target.value)} />
+            <label className={styles.label} htmlFor="destination" id="label-destination">
+              <div className={styles.text}>Destination</div>
+            </label>
+          </div>
         </Grid>
-        <Grid item xs={2}>
-          <input type="number" min={'1'} value={tickets} onChange={(e) => setTickets(e.target.value)} />
+        <Grid item xs>
+          <div className={styles.inputContainer}>
+            <input type="number" id="tickets" min={'1'} value={tickets} onChange={(e) => setTickets(e.target.value)} />
+            <label className={styles.label} htmlFor="tickets" id="label-tickets">
+              <div className={styles.text}>Number of tickets</div>
+            </label>
+          </div>
         </Grid>
-        <Grid item xs={3}>
-          <input type="button" value={'Search'} onClick={search} />
+        <Grid item>
+          <Button
+            variant="contained"
+            onClick={search}
+            sx={{ ml: '0.75rem', height: '48px', backgroundColor: '#212121', '&:hover': { backgroundColor: '#ffffff', color: '#212121' } }}
+          >
+            Search
+          </Button>
+          <Button
+            variant="contained"
+            onClick={search}
+            sx={{ ml: '0.75rem', height: '48px', backgroundColor: '#212121', '&:hover': { backgroundColor: '#ffffff', color: '#212121' } }}
+          >
+            Clear
+          </Button>
         </Grid>
       </Grid>
       <Grid item xs={10}>

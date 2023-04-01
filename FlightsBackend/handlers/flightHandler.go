@@ -89,9 +89,9 @@ func (flightHandler *FlightHandler) GetSearchedFlights(rw http.ResponseWriter, r
 
 func (flightHandler *FlightHandler) UpdateFlightRemainingTickets(rw http.ResponseWriter, req *http.Request) {
 	buyTicketDto := req.Context().Value(KeyProduct{}).(*model.BuyTicketDto)
-	flightHandler.logger.Println(buyTicketDto.FlightId)
-	flightHandler.logger.Println(buyTicketDto.Amount)
-	flightHandler.logger.Println(buyTicketDto.UserId)
+	flightHandler.logger.Println("FlightId: " + buyTicketDto.FlightId)
+	flightHandler.logger.Printf("Amopunt: %d\n", buyTicketDto.Amount)
+	flightHandler.logger.Println("UserId:" + buyTicketDto.UserId)
 
 	if buyTicketDto.Amount < 1 {
 		http.Error(rw, "Can not buy Negative or Zero amount of cards.", http.StatusBadRequest)
@@ -151,10 +151,6 @@ func (f *FlightHandler) MiddlewareFlightDeserialization(next http.Handler) http.
 
 func (f *FlightHandler) MiddlewareBuyTicketsDeserialization(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
-		f.logger.Println(req.Body)
-		f.logger.Println(req.FormValue("flightId") + "FlightId")
-		f.logger.Println(req.FormValue("amount") + "Amount")
-		f.logger.Println(req.FormValue("userId") + "UserId")
 
 		buyTicketDto := &model.BuyTicketDto{}
 		err := buyTicketDto.FromJSON(req.Body)
