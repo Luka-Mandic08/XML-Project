@@ -99,29 +99,29 @@ func (flightHandler *FlightHandler) UpdateFlightRemainingTickets(rw http.Respons
 		return
 	}
 
-	/*_, errUser := flightHandler.userRepository.GetById(buyTicketDto.UserId)
+	_, errUser := flightHandler.userRepository.GetById(buyTicketDto.UserId)
 
-	if errUser != nil {*/
-	err := flightHandler.flightRepository.UpdateFlightRemainingTickets(buyTicketDto.FlightId, buyTicketDto.Amount)
+	if errUser == nil {
+		err := flightHandler.flightRepository.UpdateFlightRemainingTickets(buyTicketDto.FlightId, buyTicketDto.Amount)
 
-	if err == nil {
-		err := flightHandler.userRepository.AddFlight(buyTicketDto.UserId, buyTicketDto.FlightId, buyTicketDto.Amount) //treba promeniti id i id
-		if err != nil {
-			http.Error(rw, "Adding tickets unsuccessful!", http.StatusBadRequest)
+		if err == nil {
+			err := flightHandler.userRepository.AddFlight(buyTicketDto.UserId, buyTicketDto.FlightId, buyTicketDto.Amount) //treba promeniti id i id
+			if err != nil {
+				http.Error(rw, "Adding tickets unsuccessful!", http.StatusBadRequest)
+				return
+			}
+
+			rw.WriteHeader(http.StatusOK)
+			return
+		} else {
+			http.Error(rw, "Flight not found!", http.StatusBadRequest)
+			flightHandler.logger.Fatal("Flight not found! ID: ", buyTicketDto.FlightId)
 			return
 		}
-
-		rw.WriteHeader(http.StatusOK)
-		return
-	} else {
-		http.Error(rw, "Flight not found!", http.StatusBadRequest)
-		flightHandler.logger.Fatal("Flight not found! ID: ", buyTicketDto.FlightId)
-		return
 	}
-	/*}
 
 	http.Error(rw, "User not found", http.StatusBadRequest)
-	flightHandler.logger.Fatal("User not found! ID: ", buyTicketDto.UserId)*/
+	flightHandler.logger.Fatal("User not found! ID: ", buyTicketDto.UserId)
 }
 
 func (flightHandler *FlightHandler) DeleteFlight(rw http.ResponseWriter, req *http.Request) {
