@@ -56,6 +56,20 @@ export function AllFlights(props: AllFlightsProps) {
       });
   }
 
+  function clear() {
+    setSelectedDate('');
+    setStart('');
+    setDestination('');
+    setTickets('');
+    GetAllFlights()
+      .then((result) => {
+        setFlights(result);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }
+
   let welcomeText;
   let addFlightButton;
 
@@ -126,7 +140,7 @@ export function AllFlights(props: AllFlightsProps) {
           </Button>
           <Button
             variant="contained"
-            onClick={search}
+            onClick={clear}
             sx={{ ml: '0.75rem', height: '48px', backgroundColor: '#212121', '&:hover': { backgroundColor: '#ffffff', color: '#212121' } }}
           >
             Clear

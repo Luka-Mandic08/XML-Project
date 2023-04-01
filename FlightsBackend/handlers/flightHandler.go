@@ -50,6 +50,30 @@ func (flightHandler *FlightHandler) GetFlightById(rw http.ResponseWriter, req *h
 	}
 }
 
+func (flightHandler *FlightHandler) GetFlightByUserId(rw http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	id := vars["id"]
+
+	user, _ := flightHandler.userRepository.GetById(id)
+	flight, err := flightHandler.flightRepository.GetByUser(user.Flights)
+	if err != nil {
+		flightHandler.logger.Print("Database exception: ", err)
+	}
+
+	if flight == nil {
+		http.Error(rw, "Flight with given id not found", http.StatusNotFound)
+		flightHandler.logger.Printf("Flight with id: '%s' not found", id)
+		return
+	}
+
+	err = flight.ToJSON(rw)
+	if err != nil {
+		http.Error(rw, "Unable to convert to json", http.StatusInternalServerError)
+		flightHandler.logger.Fatal("Unable to convert to json :", err)
+		return
+	}
+}
+
 func (flightHandler *FlightHandler) GetAllFlights(rw http.ResponseWriter, req *http.Request) {
 	flights, err := flightHandler.flightRepository.GetAll()
 	if err != nil {
