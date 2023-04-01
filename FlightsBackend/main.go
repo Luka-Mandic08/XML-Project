@@ -51,7 +51,7 @@ func main() {
 
 	// Initialize the handler and inject said logger
 	userHandler := handlers.NewUserHandler(logger, userstore)
-	flightHandler := handlers.NewFlightHandler(logger, flightstore)
+	flightHandler := handlers.NewFlightHandler(logger, flightstore, userstore)
 
 	// Initialize the router and add a middleware for all the requests
 	router := mux.NewRouter()
@@ -94,7 +94,7 @@ func main() {
 	deleteUserRouter.HandleFunc("/user/delete", userHandler.DeleteUser)
 
 	// Users LOGIN/LOGOUT
-	checkUserCredentialsRouter := router.Methods(http.MethodGet).Subrouter()
+	checkUserCredentialsRouter := router.Methods(http.MethodPost).Subrouter()
 	checkUserCredentialsRouter.HandleFunc("/login", userHandler.LoginUser)
 	checkUserCredentialsRouter.Use(userHandler.MiddlewareCredentialsDeserialization)
 
@@ -104,6 +104,10 @@ func main() {
 	//Flights CRUD
 	getAllFlightsRouter := router.Methods(http.MethodGet).Subrouter()
 	getAllFlightsRouter.HandleFunc("/flight/all", flightHandler.GetAllFlights)
+
+	getSearchedFlightsRouter := router.Methods(http.MethodPut).Subrouter()
+	getSearchedFlightsRouter.HandleFunc("/flight/search", flightHandler.GetSearchedFlights)
+	getSearchedFlightsRouter.Use(flightHandler.MiddlewareFlightSearchDeserialization)
 
 	getFlightByIdRouter := router.Methods(http.MethodGet).Subrouter()
 	getFlightByIdRouter.HandleFunc("/flight/{id}", flightHandler.GetFlightById)

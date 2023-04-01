@@ -6,6 +6,7 @@ import (
 )
 
 type BuyTicketDto struct {
+	UserId   string `json:"userId"`
 	FlightId string `json:"flightId"`
 	Amount   int64  `json:"amount"`
 }

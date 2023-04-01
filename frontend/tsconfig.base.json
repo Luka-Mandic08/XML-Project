@@ -13,6 +13,7 @@
     "lib": ["es2017", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
     "paths": {
       "@frontend/features/flights/home/container": [
@@ -26,6 +27,9 @@
       ],
       "@frontend/features/flights/login/data-access": [
         "libs/features/flights/login/data-access/src/index.ts"
+      ],
+      "@frontend/features/flights/nav-bar/container": [
+        "libs/features/flights/nav-bar/container/src/index.ts"
       ],
       "@frontend/features/flights/single-flight/single-flight-container": [
         "libs/features/flights/single-flight/single-flight-container/src/index.ts"

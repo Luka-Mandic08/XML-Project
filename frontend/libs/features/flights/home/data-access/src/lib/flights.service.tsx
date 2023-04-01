@@ -1,4 +1,4 @@
-import { BaseURL } from "@frontend/models";
+import { BaseURL, SearchFlightsDTO } from "@frontend/models";
 import axios from "axios";
 
 export async function GetAllFlights(){
@@ -21,7 +21,16 @@ export async function BuyFlightTickets(flightId : string, amount : number){
   await (axios({
     method: 'put', 
     url: BaseURL.URL + "/flight/buyticket",
-    data: {flightId: flightId, amount: amount}
+    data: {flightId: flightId, amount: amount, userId: localStorage.getItem('id')}
   }))
+}
+
+export async function SearchFlights(dto: SearchFlightsDTO){
+  let flights;
+
+  await axios.put(BaseURL.URL + "/flight/search", dto).then((response) => {
+    flights = response.data });
+
+  return flights;
 }
 

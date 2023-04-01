@@ -1,0 +1,18 @@
+{
+  "name": "features-flights-nav-bar-container",
+  "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/features/flights/nav-bar/container/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/features/flights/nav-bar/container/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    }
+  }
+}

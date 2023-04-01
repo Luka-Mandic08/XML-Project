@@ -13,11 +13,12 @@ import (
 type FlightHandler struct {
 	logger           *log.Logger
 	flightRepository *repositories.FlightRepository
+	userRepository   *repositories.UserRepository
 }
 
 // Injecting the logger makes this code much more testable.
-func NewFlightHandler(l *log.Logger, r *repositories.FlightRepository) *FlightHandler {
-	return &FlightHandler{l, r}
+func NewFlightHandler(l *log.Logger, r *repositories.FlightRepository, rUser *repositories.UserRepository) *FlightHandler {
+	return &FlightHandler{l, r, rUser}
 }
 
 func (flightHandler *FlightHandler) InsertFlight(rw http.ResponseWriter, req *http.Request) {
@@ -67,8 +68,26 @@ func (flightHandler *FlightHandler) GetAllFlights(rw http.ResponseWriter, req *h
 	}
 }
 
-func (flightHandler *FlightHandler) UpdateFlightRemainingTickets(rw http.ResponseWriter, req *http.Request) {
+func (flightHandler *FlightHandler) GetSearchedFlights(rw http.ResponseWriter, req *http.Request) {
+	flightsearchDTO := req.Context().Value(KeyProduct{}).(*model.FlightSearchDTO)
+	flights, err := flightHandler.flightRepository.GetSearched(flightsearchDTO)
+	if err != nil {
+		flightHandler.logger.Print("Database exception: ", err)
+	}
 
+	if flights == nil {
+		return
+	}
+
+	err = flights.ToJSON(rw)
+	if err != nil {
+		http.Error(rw, "Unable to convert to json", http.StatusInternalServerError)
+		flightHandler.logger.Fatal("Unable to convert to json :", err)
+		return
+	}
+}
+
+func (flightHandler *FlightHandler) UpdateFlightRemainingTickets(rw http.ResponseWriter, req *http.Request) {
 	buyTicketDto := req.Context().Value(KeyProduct{}).(*model.BuyTicketDto)
 	flightHandler.logger.Println(buyTicketDto.Amount)
 	flightHandler.logger.Println(buyTicketDto.FlightId)
@@ -76,6 +95,26 @@ func (flightHandler *FlightHandler) UpdateFlightRemainingTickets(rw http.Respons
 	if buyTicketDto.Amount < 1 {
 		http.Error(rw, "Negative or Zero amount of cards. Can not buy.", http.StatusBadRequest)
 		flightHandler.logger.Fatal("Negative or Zero amount of cards: ", buyTicketDto.Amount)
+		return
+	}
+
+	userID := buyTicketDto.UserId
+	flightID := buyTicketDto.FlightId
+	ticketCount := buyTicketDto.Amount
+
+	_, err := flightHandler.flightRepository.GetById(flightID)
+
+	if err == nil {
+		err := flightHandler.userRepository.AddFlight(userID, flightID, ticketCount) //treba promeniti id i id
+		if err != nil {
+			http.Error(rw, "Adding tickets unsuccessful!", http.StatusBadRequest)
+			return
+		}
+
+		rw.WriteHeader(http.StatusOK)
+	} else {
+		http.Error(rw, "Flight not found!", http.StatusBadRequest)
+		flightHandler.logger.Fatal("Flight not found! ID: ", flightID)
 		return
 	}
 
@@ -113,6 +152,7 @@ func (f *FlightHandler) MiddlewareBuyTicketsDeserialization(next http.Handler) h
 		f.logger.Println(req.Body)
 		f.logger.Println(req.FormValue("flightId"))
 		f.logger.Println(req.FormValue("amount"))
+		f.logger.Println(req.FormValue("userId"))
 
 		buyTicketDto := &model.BuyTicketDto{}
 		err := buyTicketDto.FromJSON(req.Body)
@@ -123,6 +163,23 @@ func (f *FlightHandler) MiddlewareBuyTicketsDeserialization(next http.Handler) h
 		}
 
 		ctx := context.WithValue(req.Context(), KeyProduct{}, buyTicketDto)
+		req = req.WithContext(ctx)
+
+		next.ServeHTTP(rw, req)
+	})
+}
+
+func (f *FlightHandler) MiddlewareFlightSearchDeserialization(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
+		flight := &model.FlightSearchDTO{}
+		err := flight.FromJSON(req.Body)
+		if err != nil {
+			http.Error(rw, "Unable to decode json", http.StatusBadRequest)
+			f.logger.Fatal(err)
+			return
+		}
+
+		ctx := context.WithValue(req.Context(), KeyProduct{}, flight)
 		req = req.WithContext(ctx)
 
 		next.ServeHTTP(rw, req)

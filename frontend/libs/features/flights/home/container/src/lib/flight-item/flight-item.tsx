@@ -1,7 +1,6 @@
 import { Flight } from '@frontend/models';
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, Grid, TextField, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
-import styles from './flight-item.module.css';
 import FlightIcon from '@mui/icons-material/Flight';
 import { BuyFlightTickets } from '@frontend/features/flights/home/data-access';
 
@@ -17,11 +16,11 @@ export function FlightItem(props: FlightItemProps) {
 
   useEffect(() => {
     setAmountError(false);
-    
+
     if (props.flight.remainingtickets < amount || amount < 1) {
       setAmountError(true);
     }
-    
+
   }, [amount, props.flight.remainingtickets, setAmount]);
 
   const [isBuyTicketDialogOpen, setIsBuyTicketDialogOpen] = useState(false);
@@ -65,7 +64,7 @@ export function FlightItem(props: FlightItemProps) {
 
       <Grid container direction="row" justifyContent="center" alignItems="center" xs={1}>
         <Grid item>
-          <FlightIcon sx={{ fontSize: 35, transform:'rotate(90deg)'}}></FlightIcon> 
+          <FlightIcon sx={{ fontSize: 35, transform:'rotate(90deg)'}}></FlightIcon>
         </Grid>
       </Grid>
 
@@ -91,7 +90,7 @@ export function FlightItem(props: FlightItemProps) {
             <Typography variant="h5">{props.flight.remainingtickets}</Typography>
           </Grid>
         </Grid>
-        <Grid item xs>
+        <Grid item>
           {customButton}
           <Dialog open={isBuyTicketDialogOpen} onClose={handleBuyTicketClose}>
             <DialogTitle>Buy tickets</DialogTitle>
