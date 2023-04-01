@@ -1,7 +1,8 @@
 export const AppRoutes = {
   Login: '/login',
   Home: '/',
-  Flights: '/flights'
+  Flights: '/flights',
+  AddFlight: '/add/flight'
 };
 
 export const BaseURL = {

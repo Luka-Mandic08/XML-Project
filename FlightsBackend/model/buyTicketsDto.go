@@ -6,9 +6,9 @@ import (
 )
 
 type BuyTicketDto struct {
-	UserId   string `json:"userId"`
 	FlightId string `json:"flightId"`
 	Amount   int64  `json:"amount"`
+	UserId   string `json:"userId"`
 }
 
 func (ticket *BuyTicketDto) ToJSON(w io.Writer) error {

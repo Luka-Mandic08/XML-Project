@@ -1,7 +1,6 @@
 import styles from './add-flight-container.module.css';
 import { useForm } from 'react-hook-form';
 import { Container, Typography } from '@mui/material';
-import React from 'react';
 
 type FormValues = {
   startdate: string;

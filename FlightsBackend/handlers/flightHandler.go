@@ -89,37 +89,39 @@ func (flightHandler *FlightHandler) GetSearchedFlights(rw http.ResponseWriter, r
 
 func (flightHandler *FlightHandler) UpdateFlightRemainingTickets(rw http.ResponseWriter, req *http.Request) {
 	buyTicketDto := req.Context().Value(KeyProduct{}).(*model.BuyTicketDto)
-	flightHandler.logger.Println(buyTicketDto.Amount)
 	flightHandler.logger.Println(buyTicketDto.FlightId)
+	flightHandler.logger.Println(buyTicketDto.Amount)
+	flightHandler.logger.Println(buyTicketDto.UserId)
 
 	if buyTicketDto.Amount < 1 {
-		http.Error(rw, "Negative or Zero amount of cards. Can not buy.", http.StatusBadRequest)
+		http.Error(rw, "Can not buy Negative or Zero amount of cards.", http.StatusBadRequest)
 		flightHandler.logger.Fatal("Negative or Zero amount of cards: ", buyTicketDto.Amount)
 		return
 	}
 
-	userID := buyTicketDto.UserId
-	flightID := buyTicketDto.FlightId
-	ticketCount := buyTicketDto.Amount
+	/*_, errUser := flightHandler.userRepository.GetById(buyTicketDto.UserId)
 
-	_, err := flightHandler.flightRepository.GetById(flightID)
+	if errUser != nil {*/
+	err := flightHandler.flightRepository.UpdateFlightRemainingTickets(buyTicketDto.FlightId, buyTicketDto.Amount)
 
 	if err == nil {
-		err := flightHandler.userRepository.AddFlight(userID, flightID, ticketCount) //treba promeniti id i id
+		err := flightHandler.userRepository.AddFlight(buyTicketDto.UserId, buyTicketDto.FlightId, buyTicketDto.Amount) //treba promeniti id i id
 		if err != nil {
 			http.Error(rw, "Adding tickets unsuccessful!", http.StatusBadRequest)
 			return
 		}
 
 		rw.WriteHeader(http.StatusOK)
+		return
 	} else {
 		http.Error(rw, "Flight not found!", http.StatusBadRequest)
-		flightHandler.logger.Fatal("Flight not found! ID: ", flightID)
+		flightHandler.logger.Fatal("Flight not found! ID: ", buyTicketDto.FlightId)
 		return
 	}
+	/*}
 
-	flightHandler.flightRepository.UpdateFlightRemainingTickets(buyTicketDto.FlightId, buyTicketDto.Amount)
-	rw.WriteHeader(http.StatusOK)
+	http.Error(rw, "User not found", http.StatusBadRequest)
+	flightHandler.logger.Fatal("User not found! ID: ", buyTicketDto.UserId)*/
 }
 
 func (flightHandler *FlightHandler) DeleteFlight(rw http.ResponseWriter, req *http.Request) {
@@ -150,9 +152,9 @@ func (f *FlightHandler) MiddlewareFlightDeserialization(next http.Handler) http.
 func (f *FlightHandler) MiddlewareBuyTicketsDeserialization(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
 		f.logger.Println(req.Body)
-		f.logger.Println(req.FormValue("flightId"))
-		f.logger.Println(req.FormValue("amount"))
-		f.logger.Println(req.FormValue("userId"))
+		f.logger.Println(req.FormValue("flightId") + "FlightId")
+		f.logger.Println(req.FormValue("amount") + "Amount")
+		f.logger.Println(req.FormValue("userId") + "UserId")
 
 		buyTicketDto := &model.BuyTicketDto{}
 		err := buyTicketDto.FromJSON(req.Body)
