@@ -1,15 +1,8 @@
 import styles from './add-flight-container.module.css';
 import { useForm } from 'react-hook-form';
 import { Container, Typography } from '@mui/material';
-
-type FormValues = {
-  startdate: string;
-  arrivaldate: string;
-  destination: string;
-  start: string;
-  price: number;
-  totaltickets: number;
-};
+import { NewFlight } from '@frontend/models';
+import { AddNewFlight } from '@frontend/features/flights/add-flight/data-access';
 
 /* eslint-disable-next-line */
 export interface AddFlightContainerProps {}
@@ -22,15 +15,17 @@ export function AddFlightContainer(props: AddFlightContainerProps) {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      startdate: Date.now().toString(),
-      arrivaldate: Date.now.toString(),
+      startdate: Date.now(),
+      arrivaldate: Date.now(),
       destination: '',
       start: '',
       price: 1,
       totaltickets: 1,
     },
   });
-  const onSubmit = (data: FormValues) => console.log(data);
+  const onSubmit = (data: NewFlight) => AddNewFlight(data);
+
+  const currentDate = new Date().toISOString();
 
   return (
     <Container maxWidth="sm">
@@ -40,7 +35,15 @@ export function AddFlightContainer(props: AddFlightContainerProps) {
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className={styles.inputContainer}>
-          <input type="datetime-local" id="startdate" value={watch('startdate')} {...register('startdate', { required: 'This field is required.' })} />
+          <input
+            type="datetime-local"
+            id="startdate"
+            value={watch('startdate')}
+            {...register('startdate', {
+              required: 'This field is required.',
+              min: { value: currentDate, message: 'Selected date is in past' },
+            })}
+          />
           <label className={styles.label} htmlFor="startdate" id="label-startdate">
             <div className={styles.text}>Starting Date</div>
           </label>
@@ -54,6 +57,7 @@ export function AddFlightContainer(props: AddFlightContainerProps) {
             value={watch('arrivaldate')}
             {...register('arrivaldate', {
               required: 'This field is required.',
+              min: { value: watch('startdate'), message: 'Selected date is in past' },
             })}
           />
           <label className={styles.label} htmlFor="arrivaldate" id="label-arrivaldate">
@@ -123,7 +127,7 @@ export function AddFlightContainer(props: AddFlightContainerProps) {
           <label className={styles.errorLabel}>{errors.totaltickets?.message}</label>
         </div>
 
-        <input style={{ width: '50%', marginLeft: '25%', marginRight: '25%' }} type="submit" />
+        <input style={{ width: '50%', marginLeft: '25%', marginRight: '25%' }} type="submit" value="Schedule flight" />
       </form>
     </Container>
   );

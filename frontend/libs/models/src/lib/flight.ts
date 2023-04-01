@@ -8,3 +8,12 @@ export interface Flight {
   remainingtickets: number;
   totaltickets: number;
 }
+
+export interface NewFlight {
+  startdate: number;
+  arrivaldate: number;
+  destination: string;
+  start: string;
+  price: number;
+  totaltickets: number;
+}

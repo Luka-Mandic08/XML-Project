@@ -19,10 +19,6 @@ export async function BuyFlightTickets(flightId: string, amount: number) {
   JER GLUPI AXIOS/GO
   */
 
-  console.log('flightId: ' + flightId);
-  console.log('amount: ' + amount);
-  console.log('userId: ' + localStorage.getItem('id'));
-
   await axios({
     method: 'put',
     url: BaseURL.URL + '/flight/buyticket',
