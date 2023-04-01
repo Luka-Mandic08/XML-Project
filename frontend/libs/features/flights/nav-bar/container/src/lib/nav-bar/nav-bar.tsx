@@ -44,9 +44,14 @@ export function NavBar(props: NavBarProps) {
             </Button>
           )}
           {role === 'USER' && (
-            <Button onClick={() => logout()} color="inherit" sx={{ textTransform: 'none' }}>
-              Log out
-            </Button>
+            <>
+              <Button onClick={() => navigate(AppRoutes.PurchasedTickets)} color="inherit" sx={{ textTransform: 'none', marginRight: '30px' }}>
+                My tickets
+              </Button>
+              <Button onClick={() => logout()} color="inherit" sx={{ textTransform: 'none' }}>
+                Log out
+              </Button>
+            </>
           )}
           {role === 'ADMIN' && (
             <Button onClick={() => logout()} color="inherit" sx={{ textTransform: 'none' }}>

@@ -16,36 +16,19 @@
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
     "paths": {
-      "@frontend/features/flights/add-flight/container": [
-        "libs/features/flights/add-flight/container/src/index.ts"
-      ],
-      "@frontend/features/flights/add-flight/data-access": [
-        "libs/features/flights/add-flight/data-access/src/index.ts"
-      ],
-      "@frontend/features/flights/home/container": [
-        "libs/features/flights/home/container/src/index.ts"
-      ],
-      "@frontend/features/flights/home/data-access": [
-        "libs/features/flights/home/data-access/src/index.ts"
-      ],
-      "@frontend/features/flights/login/container": [
-        "libs/features/flights/login/container/src/index.ts"
-      ],
-      "@frontend/features/flights/login/data-access": [
-        "libs/features/flights/login/data-access/src/index.ts"
-      ],
-      "@frontend/features/flights/nav-bar/container": [
-        "libs/features/flights/nav-bar/container/src/index.ts"
-      ],
-      "@frontend/features/flights/single-flight/single-flight-container": [
-        "libs/features/flights/single-flight/single-flight-container/src/index.ts"
-      ],
-      "@frontend/features/shared/container": [
-        "libs/features/shared/container/src/index.ts"
-      ],
-      "@frontend/features/shared/data-access": [
-        "libs/features/shared/data-access/src/index.ts"
-      ],
+      "@frontend/features/flights/add-flight/container": ["libs/features/flights/add-flight/container/src/index.ts"],
+      "@frontend/features/flights/add-flight/data-access": ["libs/features/flights/add-flight/data-access/src/index.ts"],
+      "@frontend/features/flights/home/container": ["libs/features/flights/home/container/src/index.ts"],
+      "@frontend/features/flights/home/data-access": ["libs/features/flights/home/data-access/src/index.ts"],
+      "@frontend/features/flights/login/container": ["libs/features/flights/login/container/src/index.ts"],
+      "@frontend/features/flights/login/data-access": ["libs/features/flights/login/data-access/src/index.ts"],
+      "@frontend/features/flights/nav-bar/container": ["libs/features/flights/nav-bar/container/src/index.ts"],
+      "@frontend/features/flights/purchased-flights": ["libs/features/flights/purchased-flights/src/index.ts"],
+      "@frontend/features/flights/purchased-tickets/container": ["libs/features/flights/purchased-tickets/container/src/index.ts"],
+      "@frontend/features/flights/purchased-tickets/data-access": ["libs/features/flights/purchased-tickets/data-access/src/index.ts"],
+      "@frontend/features/flights/single-flight/single-flight-container": ["libs/features/flights/single-flight/single-flight-container/src/index.ts"],
+      "@frontend/features/shared/container": ["libs/features/shared/container/src/index.ts"],
+      "@frontend/features/shared/data-access": ["libs/features/shared/data-access/src/index.ts"],
       "@frontend/helpers": ["libs/helpers/src/index.ts"],
       "@frontend/models": ["libs/models/src/index.ts"]
     }

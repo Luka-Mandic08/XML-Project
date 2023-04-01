@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -110,9 +111,9 @@ func (flightRepository *FlightRepository) GetByUser(userFlights model.UserFlight
 	defer cancel()
 
 	flightsCollection := flightRepository.getCollection()
-	var ids []string
+	var ids [100]primitive.ObjectID
 	for i, s := range userFlights {
-		ids[i] = s.FlightID
+		ids[i], _ = primitive.ObjectIDFromHex(s.FlightID)
 	}
 
 	var flights model.Flights
@@ -129,7 +130,7 @@ func (flightRepository *FlightRepository) GetByUser(userFlights model.UserFlight
 
 	for _, s := range flights {
 		for _, q := range userFlights {
-			if s.ID.String() == q.FlightID {
+			if strings.Split(s.ID.String(), "\"")[1] == q.FlightID {
 				s.RemainingTickets = q.TicketCount
 			}
 		}
