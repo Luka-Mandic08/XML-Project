@@ -112,6 +112,9 @@ func main() {
 	getFlightByIdRouter := router.Methods(http.MethodGet).Subrouter()
 	getFlightByIdRouter.HandleFunc("/flight/{id}", flightHandler.GetFlightById)
 
+	getFlightsByUserIdRouter := router.Methods(http.MethodGet).Subrouter()
+	getFlightsByUserIdRouter.HandleFunc("/flight/user/{id}", flightHandler.GetFlightByUserId)
+
 	postFlightRouter := router.Methods(http.MethodPost).Subrouter()
 	postFlightRouter.HandleFunc("/flight/add", flightHandler.InsertFlight)
 	postFlightRouter.Use(flightHandler.MiddlewareFlightDeserialization)

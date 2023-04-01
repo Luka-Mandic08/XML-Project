@@ -105,6 +105,39 @@ func (flightRepository *FlightRepository) GetById(id string) (*model.Flight, err
 	return &flight, nil
 }
 
+func (flightRepository *FlightRepository) GetByUser(userFlights model.UserFlights) (model.Flights, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	flightsCollection := flightRepository.getCollection()
+	var ids []string
+	for i, s := range userFlights {
+		ids[i] = s.FlightID
+	}
+
+	var flights model.Flights
+
+	flightsCursor, err := flightsCollection.Find(ctx, bson.M{"_id": bson.M{"$in": ids}})
+	if err != nil {
+		flightRepository.logger.Println(err)
+		return nil, err
+	}
+	if err = flightsCursor.All(ctx, &flights); err != nil {
+		flightRepository.logger.Println(err)
+		return nil, err
+	}
+
+	for _, s := range flights {
+		for _, q := range userFlights {
+			if s.ID.String() == q.FlightID {
+				s.RemainingTickets = q.TicketCount
+			}
+		}
+	}
+
+	return flights, nil
+}
+
 func (flightRepository *FlightRepository) GetAll() (model.Flights, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
