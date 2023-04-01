@@ -44,6 +44,7 @@ export function FlightItem(props: FlightItemProps) {
         variant="contained"
         onClick={handleBuyTicketClick}
         sx={{ backgroundColor: '#212121', '&:hover': { backgroundColor: '#ffffff', color: '#212121' } }}
+        disabled={props.flight.remainingtickets === 0}
       >
         Buy now: {props.flight.price}$
       </Button>
@@ -60,6 +61,13 @@ export function FlightItem(props: FlightItemProps) {
         Buy now: {props.flight.price}$
       </Button>
     );
+  }
+
+  let buyBtnText;
+  if (amount > 0) {
+    buyBtnText = 'Buy now ' + amount * props.flight.price + '$';
+  } else {
+    buyBtnText = 'Buy now';
   }
 
   return (
@@ -160,7 +168,7 @@ export function FlightItem(props: FlightItemProps) {
                   '&:disabled': { backgroundColor: '#ffffff', color: '#FF6666', outline: '1px solid #FF6666' },
                 }}
               >
-                Buy now {amount * props.flight.price}$
+                {buyBtnText}
               </Button>
             </DialogActions>
           </Dialog>

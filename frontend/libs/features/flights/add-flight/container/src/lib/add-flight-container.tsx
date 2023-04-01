@@ -116,7 +116,6 @@ export function AddFlightContainer(props: AddFlightContainerProps) {
                 message: 'Minimal number of passengers is 1.',
               },
             })}
-            placeholder="Number of passengers"
           />
           <label className={styles.label} htmlFor="totaltickets" id="label-totaltickets">
             <div className={styles.text}>Number of passengers</div>

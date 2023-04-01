@@ -74,7 +74,7 @@ func (flightHandler *FlightHandler) UpdateFlightRemainingTickets(rw http.Respons
 	flightHandler.logger.Println(buyTicketDto.FlightId)
 
 	if buyTicketDto.Amount < 1 {
-		http.Error(rw, "Negative or Zero amount of cards. Can not buy.", http.StatusBadRequest)
+		http.Error(rw, " Can not buy Negative or Zero amount of cards.", http.StatusBadRequest)
 		flightHandler.logger.Fatal("Negative or Zero amount of cards: ", buyTicketDto.Amount)
 		return
 	}
