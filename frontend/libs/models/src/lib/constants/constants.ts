@@ -4,6 +4,7 @@ export const AppRoutes = {
   Flights: '/flights',
   AddFlight: '/add/flight',
   PurchasedTickets: '/mytickets',
+  Register: '/register',
 };
 
 export const BaseURL = {
