@@ -1,8 +1,9 @@
 import styles from './add-flight-container.module.css';
 import { useForm } from 'react-hook-form';
 import { Container, Typography } from '@mui/material';
-import { NewFlight } from '@frontend/models';
+import { AppRoutes, NewFlight } from '@frontend/models';
 import { AddNewFlight } from '@frontend/features/flights/add-flight/data-access';
+import { useNavigate } from 'react-router-dom';
 
 /* eslint-disable-next-line */
 export interface AddFlightContainerProps {}
@@ -23,7 +24,16 @@ export function AddFlightContainer(props: AddFlightContainerProps) {
       totaltickets: 1,
     },
   });
-  const onSubmit = (data: NewFlight) => AddNewFlight(data);
+
+  const navigate = useNavigate();
+  const goToHome = () => {
+    navigate(AppRoutes.Home);
+  };
+
+  const onSubmit = (data: NewFlight) => {
+    AddNewFlight(data);
+    goToHome();
+  };
 
   const currentDate = new Date().toISOString();
 
