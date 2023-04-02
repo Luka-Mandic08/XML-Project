@@ -51,7 +51,7 @@ export function AddFlightContainer(props: AddFlightContainerProps) {
             value={watch('startdate')}
             {...register('startdate', {
               required: 'This field is required.',
-              min: { value: currentDate, message: 'Selected date is in past' },
+              min: { value: currentDate, message: 'Selected date is in past.' },
             })}
           />
           <label className={styles.label} htmlFor="startdate" id="label-startdate">
@@ -67,7 +67,7 @@ export function AddFlightContainer(props: AddFlightContainerProps) {
             value={watch('arrivaldate')}
             {...register('arrivaldate', {
               required: 'This field is required.',
-              min: { value: watch('startdate'), message: 'Selected date is in past' },
+              min: { value: watch('startdate'), message: 'Selected date is before starting date.' },
             })}
           />
           <label className={styles.label} htmlFor="arrivaldate" id="label-arrivaldate">
@@ -108,7 +108,7 @@ export function AddFlightContainer(props: AddFlightContainerProps) {
               required: 'This field is required.',
               min: {
                 value: 1,
-                message: 'Minimal price is 1 .',
+                message: 'Minimal price is 1$.',
               },
             })}
           />
