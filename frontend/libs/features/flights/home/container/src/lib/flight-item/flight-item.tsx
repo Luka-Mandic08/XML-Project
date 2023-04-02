@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import FlightIcon from '@mui/icons-material/Flight';
 import { BuyFlightTickets } from '@frontend/features/flights/home/data-access';
 import { useNavigate } from 'react-router-dom';
+import { DeleteFlight } from '@frontend/features/flights/add-flight/data-access';
 
 /* eslint-disable-next-line */
 export interface FlightItemProps {
@@ -38,6 +39,11 @@ export function FlightItem(props: FlightItemProps) {
     window.location.reload();
   };
 
+  const deleteFlight = () => {
+    DeleteFlight(props.flight.id);
+    window.location.reload();
+  };
+
   let customButton;
   if (localStorage.getItem('role') === 'USER') {
     customButton = (
@@ -52,7 +58,7 @@ export function FlightItem(props: FlightItemProps) {
     );
   } else if (localStorage.getItem('role') === 'ADMIN') {
     customButton = (
-      <Button variant="contained" sx={{ backgroundColor: '#212121', '&:hover': { backgroundColor: '#ffffff', color: '#212121' } }}>
+      <Button variant="contained" onClick={deleteFlight} sx={{ backgroundColor: '#212121', '&:hover': { backgroundColor: '#ffffff', color: '#212121' } }}>
         Delete flight
       </Button>
     );

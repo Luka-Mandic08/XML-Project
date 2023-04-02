@@ -22,7 +22,7 @@ export async function BuyFlightTickets(flightId: string, amount: number) {
   await axios({
     method: 'put',
     url: BaseURL.URL + '/flight/buyticket',
-    data: { flightId: flightId, amount: amount, userId: localStorage.getItem('id') },
+    data: { flightId: flightId, amount: +amount, userId: localStorage.getItem('id') },
   });
 }
 
