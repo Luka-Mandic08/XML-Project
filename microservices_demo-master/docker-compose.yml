@@ -1,0 +1,152 @@
+version: "3.8"
+
+services:
+  catalogue_service:
+    image: catalogue_service
+    container_name: catalogue_service
+    build:
+      context: .
+      dockerfile: ./catalogue_service/Dockerfile
+    restart: on-failure
+    environment:
+      CATALOGUE_DB_HOST: ${CATALOGUE_DB_HOST}
+      CATALOGUE_DB_PORT: ${CATALOGUE_DB_PORT}
+      CATALOGUE_SERVICE_PORT: ${CATALOGUE_SERVICE_PORT}
+    depends_on:
+      - catalogue_db
+    networks:
+      - network
+
+  ordering_service:
+    image: ordering_service
+    container_name: ordering_service
+    build:
+      context: .
+      dockerfile: ./ordering_service/Dockerfile
+    restart: on-failure
+    environment:
+      ORDERING_DB_HOST: ${ORDERING_DB_HOST}
+      ORDERING_DB_PORT: ${ORDERING_DB_PORT}
+      ORDERING_SERVICE_PORT: ${ORDERING_SERVICE_PORT}
+      NATS_HOST: ${NATS_HOST}
+      NATS_PORT: ${NATS_PORT}
+      NATS_USER: ${NATS_USER}
+      NATS_PASS: ${NATS_PASS}
+      CREATE_ORDER_COMMAND_SUBJECT: ${CREATE_ORDER_COMMAND_SUBJECT}
+      CREATE_ORDER_REPLY_SUBJECT: ${CREATE_ORDER_REPLY_SUBJECT}
+    depends_on:
+      - ordering_db
+    networks:
+      - network
+
+  shipping_service:
+    image: shipping_service
+    container_name: shipping_service
+    build:
+      context: .
+      dockerfile: ./shipping_service/Dockerfile
+    restart: on-failure
+    environment:
+      SHIPPING_DB_HOST: ${SHIPPING_DB_HOST}
+      SHIPPING_DB_PORT: ${SHIPPING_DB_PORT}
+      SHIPPING_SERVICE_PORT: ${SHIPPING_SERVICE_PORT}
+      NATS_HOST: ${NATS_HOST}
+      NATS_PORT: ${NATS_PORT}
+      NATS_USER: ${NATS_USER}
+      NATS_PASS: ${NATS_PASS}
+      CREATE_ORDER_COMMAND_SUBJECT: ${CREATE_ORDER_COMMAND_SUBJECT}
+      CREATE_ORDER_REPLY_SUBJECT: ${CREATE_ORDER_REPLY_SUBJECT}
+    depends_on:
+      - shipping_db
+    networks:
+      - network
+
+  inventory_service:
+    image: inventory_service
+    container_name: inventory_service
+    build:
+      context: .
+      dockerfile: ./inventory_service/Dockerfile
+    restart: on-failure
+    environment:
+      INVENTORY_DB_HOST: ${INVENTORY_DB_HOST}
+      INVENTORY_DB_PORT: ${INVENTORY_DB_PORT}
+      INVENTORY_DB_USER: ${INVENTORY_DB_USER}
+      INVENTORY_DB_PASS: ${INVENTORY_DB_PASS}
+      INVENTORY_DB_NAME: ${INVENTORY_DB_NAME}
+      INVENTORY_SERVICE_PORT: ${INVENTORY_SERVICE_PORT}
+      NATS_HOST: ${NATS_HOST}
+      NATS_PORT: ${NATS_PORT}
+      NATS_USER: ${NATS_USER}
+      NATS_PASS: ${NATS_PASS}
+      CREATE_ORDER_COMMAND_SUBJECT: ${CREATE_ORDER_COMMAND_SUBJECT}
+      CREATE_ORDER_REPLY_SUBJECT: ${CREATE_ORDER_REPLY_SUBJECT}
+    depends_on:
+      - inventory_db
+    networks:
+      - network
+
+  api_gateway:
+    image: api_gateway
+    container_name: api_gateway
+    build:
+      context: .
+      dockerfile: ./api_gateway/Dockerfile
+    restart: on-failure
+    ports:
+      - ${GATEWAY_PORT}:${GATEWAY_PORT}
+    environment:
+      GATEWAY_PORT: ${GATEWAY_PORT}
+      CATALOGUE_SERVICE_HOST: ${CATALOGUE_SERVICE_HOST}
+      CATALOGUE_SERVICE_PORT: ${CATALOGUE_SERVICE_PORT}
+      ORDERING_SERVICE_HOST: ${ORDERING_SERVICE_HOST}
+      ORDERING_SERVICE_PORT: ${ORDERING_SERVICE_PORT}
+      SHIPPING_SERVICE_HOST: ${SHIPPING_SERVICE_HOST}
+      SHIPPING_SERVICE_PORT: ${SHIPPING_SERVICE_PORT}
+      INVENTORY_SERVICE_HOST: ${INVENTORY_SERVICE_HOST}
+      INVENTORY_SERVICE_PORT: ${INVENTORY_SERVICE_PORT}
+    networks:
+      - network
+
+  catalogue_db:
+    image: mongo
+    container_name: catalogue_db
+    restart: on-failure
+    networks:
+      - network
+
+  ordering_db:
+    image: mongo
+    container_name: ordering_db
+    restart: on-failure
+    networks:
+      - network
+
+  shipping_db:
+    image: mongo
+    container_name: shipping_db
+    restart: on-failure
+    networks:
+      - network
+
+  inventory_db:
+    image: postgres
+    container_name: inventory_db
+    restart: on-failure
+    environment:
+      POSTGRES_USER: ${INVENTORY_DB_USER}
+      POSTGRES_PASSWORD: ${INVENTORY_DB_PASS}
+      POSTGRES_DB: ${INVENTORY_DB_NAME}
+    networks:
+      - network
+
+  nats:
+    image: nats
+    container_name: nats
+    restart: on-failure
+    networks:
+      - network
+
+networks:
+  network:
+    driver: bridge
