@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+option go_package = "github.com/tamararankovic/microservices_demo/common/inventory";
+
+package inventory;
+
+import "google/api/annotations.proto";
+
+service InventoryService{
+        rpc GetAll(GetAllRequest) returns(GetAllResponse) {
+        	option (google.api.http) = {
+			get: "/inventory"
+		};
+        }
+}
+
+message GetAllRequest {
+}
+
+message GetAllResponse {
+        repeated Product products = 1;
+}
+
+message Product {
+        string id = 1;
+        string colorCode = 2;
+        int64 quantity = 3;
+}

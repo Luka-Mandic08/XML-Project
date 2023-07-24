@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+option go_package = "github.com/tamararankovic/microservices_demo/common/shipping";
+
+package shipping;
+
+import "google/api/annotations.proto";
+
+service ShippingService{
+        rpc Get(GetRequest) returns(GetResponse) {
+        	option (google.api.http) = {
+			get: "/shipping/order/{id}"
+		};
+        }
+        rpc GetAll(GetAllRequest) returns(GetAllResponse) {
+        	option (google.api.http) = {
+			get: "/shipping/order"
+		};
+        }
+}
+
+message GetRequest {
+        string id = 1;
+}
+
+message GetResponse {
+        Order order = 1;
+}
+
+message GetAllRequest {
+}
+
+message GetAllResponse {
+        repeated Order orders = 1;
+}
+
+message Order {
+        string id = 1;
+        enum OrderStatus {
+                Scheduled = 0;
+                InTransport = 1;
+                Delivered = 2;
+                Cancelled = 3;
+        }
+        OrderStatus status = 2;
+        string shippingAddress = 3;
+}
