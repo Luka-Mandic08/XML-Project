@@ -1,4 +1,4 @@
-module github.com/Luka-Mandic08/XML-Project/tree/feature-microservice_setup/microservices_backend/common
+module github.com/Luka-Mandic08/XML-Project/microservices_backend/common
 
 go 1.20
 
