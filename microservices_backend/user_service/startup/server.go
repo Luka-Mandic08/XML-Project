@@ -11,7 +11,7 @@ import (
 	"user_service/infrastructure/persistence"
 	"user_service/startup/config"
 
-	user "github.com/Luka-Mandic08/XML-Project/tree/feature-microservice_setup/microservices_backend/common/proto/user_service"
+	user "github.com/Luka-Mandic08/XML-Project/microservices_backend/common"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"google.golang.org/grpc"
