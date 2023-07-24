@@ -11,7 +11,7 @@ import (
 	"user_service/infrastructure/persistence"
 	"user_service/startup/config"
 
-	userCommon "../common/proto/user_service"
+	user "github.com/Luka-Mandic08/XML-Project/tree/feature-microservice_setup/microservices_backend/common/proto/user_service"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"google.golang.org/grpc"
@@ -72,7 +72,7 @@ func (server *Server) startGrpcServer(userHandler *api.UserHandler) {
 		log.Fatalf("failed to listen: %v", err)
 	}
 	grpcServer := grpc.NewServer()
-	userCommon.RegisterUserServiceServer(grpcServer, userHandler)
+	user.RegisterUserServiceServer(grpcServer, userHandler)
 	if err := grpcServer.Serve(listener); err != nil {
 		log.Fatalf("failed to serve: %s", err)
 	}

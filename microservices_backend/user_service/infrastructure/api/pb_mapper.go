@@ -1,8 +1,9 @@
 package api
 
 import (
-	pb "common/proto/user_service"
 	"user_service/domain"
+
+	pb "github.com/Luka-Mandic08/XML-Project/tree/feature-microservice_setup/microservices_backend/common/proto/user_service"
 )
 
 func mapUser(user *domain.User) *pb.User {

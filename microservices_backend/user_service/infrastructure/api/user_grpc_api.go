@@ -1,9 +1,10 @@
 package api
 
 import (
-	pb "common/proto/user_service"
 	"context"
 	"user_service/application"
+
+	pb "github.com/Luka-Mandic08/XML-Project/tree/feature-microservice_setup/microservices_backend/common/proto/user_service"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
