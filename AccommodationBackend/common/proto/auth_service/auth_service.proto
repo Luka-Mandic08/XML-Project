@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+option go_package = "common/user";
+
+package auth;
+
+service AuthService{
+        rpc Login(LoginRequest) returns(LoginResponse) {}
+        rpc Register(RegisterRequest) returns(RegisterResponse) {}
+}
+
+message LoginRequest {
+        Credentials credentials = 1;
+}
+
+message Credentials {
+        string username = 1;
+        string password = 2;
+}
+
+message LoginResponse{
+}
+
+message RegisterRequest {
+        RegisterDTO dto = 1;
+}
+
+message RegisterDTO{
+        string username = 1;
+        string password = 2;
+        string confirmPassword = 3;
+        string role = 4;
+        string userid = 5;
+}
+
+message RegisterResponse {
+}
+

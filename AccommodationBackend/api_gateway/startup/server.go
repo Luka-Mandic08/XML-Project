@@ -37,6 +37,10 @@ func CreateRoutersAndSetRoutes(config *cfg.Config) *gin.Engine {
 	userClient := grpc_client.NewUserClient(userServiceAddress)
 	userHandler := handler.NewUserHandler(userClient)
 
+	authServiceAddress := fmt.Sprintf("%s:%s", config.AuthHost, config.AuthPort)
+	authClient := grpc_client.NewAuthClient(authServiceAddress)
+	authHandler := handler.NewAuthHandler(authClient)
+
 	corsMiddleware := cors.New(cors.Config{
 		AllowOrigins: []string{"*"},
 		AllowMethods: []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
@@ -45,6 +49,11 @@ func CreateRoutersAndSetRoutes(config *cfg.Config) *gin.Engine {
 
 	router := gin.Default()
 	router.Use(corsMiddleware)
+
+	authGroup := router.Group("/auth")
+	authGroup.POST("/login", authHandler.Login)
+	authGroup.POST("/register", authHandler.Register)
+
 	userGroup := router.Group("/users")
 	userGroup.GET("/:id", userHandler.Get)
 	return router
