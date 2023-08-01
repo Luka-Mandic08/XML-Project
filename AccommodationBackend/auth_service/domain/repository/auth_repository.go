@@ -29,13 +29,13 @@ func (store *AuthMongoDBStore) GetById(id primitive.ObjectID) (*model.Account, e
 	return store.filterOne(filter)
 }
 
-func (store *AuthMongoDBStore) Insert(account *model.Account) error {
+func (store *AuthMongoDBStore) Insert(account *model.Account) (*model.Account, error) {
 	result, err := store.accounts.InsertOne(context.TODO(), account)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	account.Id = result.InsertedID.(primitive.ObjectID)
-	return nil
+	return account, nil
 }
 
 func (store *AuthMongoDBStore) GetByUsername(username string) (*model.Account, error) {

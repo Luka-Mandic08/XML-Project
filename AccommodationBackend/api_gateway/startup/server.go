@@ -2,7 +2,7 @@ package startup
 
 import (
 	handler "api_gateway/infrastructure/api"
-	grpc_client "api_gateway/infrastructure/services"
+	services "api_gateway/infrastructure/services"
 	cfg "api_gateway/startup/config"
 	"fmt"
 	"github.com/gin-contrib/cors"
@@ -34,11 +34,11 @@ func NewServer(config *cfg.Config) *http.Server {
 func CreateRoutersAndSetRoutes(config *cfg.Config) *gin.Engine {
 	//MICROSERVICES
 	userServiceAddress := fmt.Sprintf("%s:%s", config.UserHost, config.UserPort)
-	userClient := grpc_client.NewUserClient(userServiceAddress)
+	userClient := services.NewUserClient(userServiceAddress)
 	userHandler := handler.NewUserHandler(userClient)
 
 	authServiceAddress := fmt.Sprintf("%s:%s", config.AuthHost, config.AuthPort)
-	authClient := grpc_client.NewAuthClient(authServiceAddress)
+	authClient := services.NewAuthClient(authServiceAddress)
 	authHandler := handler.NewAuthHandler(authClient)
 
 	corsMiddleware := cors.New(cors.Config{
@@ -55,6 +55,7 @@ func CreateRoutersAndSetRoutes(config *cfg.Config) *gin.Engine {
 	authGroup.POST("/register", authHandler.Register)
 
 	userGroup := router.Group("/users")
-	userGroup.GET("/:id", userHandler.Get)
+	userGroup.Use(services.ValidateToken())
+	userGroup.GET("/:id", services.Authorize("Host"), userHandler.Get)
 	return router
 }

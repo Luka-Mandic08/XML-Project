@@ -3,15 +3,15 @@ module api_gateway
 go 1.20
 
 require (
+	common v0.0.0-00010101000000-000000000000
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gin-contrib/cors v1.4.0
 	github.com/gin-gonic/gin v1.9.1
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.16.1
-	github.com/tamararankovic/microservices_demo/common v0.0.0-20230404125836-93fe024d2e63
 	google.golang.org/grpc v1.56.2
 )
 
 require (
-	common v0.0.0-00010101000000-000000000000 // indirect
 	github.com/bytedance/sonic v1.9.1 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20221115062448-fe3a3abad311 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.2 // indirect

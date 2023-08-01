@@ -26,5 +26,5 @@ func (service *AuthService) GetByUsername(username string) (*model.Account, erro
 }
 
 func (service *AuthService) Insert(account *model.Account) (*model.Account, error) {
-	return service.Insert(account)
+	return service.store.Insert(account)
 }

@@ -28,9 +28,9 @@ func NewServer(config *Config) *Server {
 
 func (server *Server) Start() {
 	mongoClient := server.initMongoClient()
-	userStore := server.initUserStore(mongoClient)
-	userService := server.initUserService(userStore)
-	userHandler := server.initUserHandler(userService)
+	userStore := server.initAuthStore(mongoClient)
+	userService := server.initAuthService(userStore)
+	userHandler := server.initAuthHandler(userService)
 	server.startGrpcServer(userHandler)
 }
 
@@ -42,10 +42,10 @@ func (server *Server) initMongoClient() *mongo.Client {
 	return client
 }
 
-func (server *Server) initUserStore(client *mongo.Client) repository.AuthStore {
+func (server *Server) initAuthStore(client *mongo.Client) repository.AuthStore {
 	store := repository.NewAuthMongoDBStore(client)
 	for _, user := range accounts {
-		err := store.Insert(user)
+		_, err := store.Insert(user)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -53,11 +53,11 @@ func (server *Server) initUserStore(client *mongo.Client) repository.AuthStore {
 	return store
 }
 
-func (server *Server) initUserService(store repository.AuthStore) *service.AuthService {
+func (server *Server) initAuthService(store repository.AuthStore) *service.AuthService {
 	return service.NewAuthService(store)
 }
 
-func (server *Server) initUserHandler(service *service.AuthService) *api.AuthHandler {
+func (server *Server) initAuthHandler(service *service.AuthService) *api.AuthHandler {
 	return api.NewAuthHandler(service)
 }
 
@@ -68,6 +68,12 @@ func (server *Server) startGrpcServer(authHandler *api.AuthHandler) {
 	}
 	grpcServer := grpc.NewServer()
 	auth.RegisterAuthServiceServer(grpcServer, authHandler)
+	if grpcServer == nil || authHandler == nil {
+		fmt.Println("GRESKA")
+		fmt.Println("GRESKA")
+		fmt.Println("GRESKA")
+		fmt.Println("GRESKA")
+	}
 	if err := grpcServer.Serve(listener); err != nil {
 		log.Fatalf("failed to serve: %s", err)
 	}

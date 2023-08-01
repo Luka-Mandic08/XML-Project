@@ -19,6 +19,13 @@ message Credentials {
 }
 
 message LoginResponse{
+        Account account = 1;
+}
+
+message Account{
+        string username = 1;
+        string role = 2;
+        string userid = 3;
 }
 
 message RegisterRequest {
@@ -34,5 +41,6 @@ message RegisterDTO{
 }
 
 message RegisterResponse {
+        string id = 1;
 }
 

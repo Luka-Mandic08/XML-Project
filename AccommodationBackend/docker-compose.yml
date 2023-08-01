@@ -9,9 +9,9 @@ services:
       dockerfile: ./auth_service/Dockerfile
     restart: on-failure
     environment:
-      USER_DB_HOST: ${AUTH_DB_HOST}
-      USER_DB_PORT: ${AUTH_DB_PORT}
-      USER_SERVICE_PORT: ${AUTH_SERVICE_PORT}
+      AUTH_DB_HOST: ${AUTH_DB_HOST}
+      AUTH_DB_PORT: ${AUTH_DB_PORT}
+      AUTH_SERVICE_PORT: ${AUTH_SERVICE_PORT}
     depends_on:
       - auth_db
     networks:
@@ -46,12 +46,16 @@ services:
       GATEWAY_PORT: ${GATEWAY_PORT}
       USER_SERVICE_HOST: ${USER_SERVICE_HOST}
       USER_SERVICE_PORT: ${USER_SERVICE_PORT}
+      AUTH_SERVICE_HOST: ${AUTH_SERVICE_HOST}
+      AUTH_SERVICE_PORT: ${AUTH_SERVICE_PORT}
     networks:
       - network
 
   user_db:
     image: mongo
     container_name: user_db
+    volumes:
+      - userDb:/data/db
     restart: on-failure
     networks:
       - network
@@ -59,7 +63,11 @@ services:
   auth_db:
     image: mongo
     container_name: auth_db
+    volumes:
+      - authDb:/data/db
     restart: on-failure
+    ports:
+      - 5001:27017
     networks:
       - network
 
@@ -69,6 +77,10 @@ services:
     restart: on-failure
     networks:
       - network
+
+volumes:
+  authDb:
+  userDb:
 
 networks:
   network:

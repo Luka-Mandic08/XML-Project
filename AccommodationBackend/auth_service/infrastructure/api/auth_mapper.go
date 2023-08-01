@@ -15,3 +15,13 @@ func RegisterMapper(request *auth.RegisterRequest) *model.Account {
 	}
 	return &account
 }
+
+func LoginMapper(account *model.Account) *auth.LoginResponse {
+	acc := auth.Account{
+		Username: account.Username,
+		Role:     account.Role,
+		Userid:   account.UserID,
+	}
+	response := auth.LoginResponse{Account: &acc}
+	return &response
+}
