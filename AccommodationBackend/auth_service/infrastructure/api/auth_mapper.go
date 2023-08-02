@@ -3,25 +3,35 @@ package api
 import (
 	"auth_service/domain/model"
 	auth "common/proto/auth_service"
+	"golang.org/x/crypto/bcrypt"
 )
 
 // Func za mapiranje objekata iz modela na proto message
 func RegisterMapper(request *auth.RegisterRequest) *model.Account {
+	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(request.Password), bcrypt.DefaultCost)
 	account := model.Account{
-		Username: request.Dto.Username,
-		Password: request.Dto.Password,
-		Role:     request.Dto.Role,
-		UserID:   request.Dto.Userid,
+		Username: request.Username,
+		Password: string(hashedPassword),
+		Role:     request.Role,
+		UserID:   request.Userid,
 	}
 	return &account
 }
 
 func LoginMapper(account *model.Account) *auth.LoginResponse {
-	acc := auth.Account{
+	acc := auth.LoginResponse{
 		Username: account.Username,
 		Role:     account.Role,
 		Userid:   account.UserID,
 	}
-	response := auth.LoginResponse{Account: &acc}
-	return &response
+	return &acc
+}
+
+func UpdateMapper(req *auth.UpdateRequest) *model.Account {
+	acc := model.Account{
+		Username: req.Username,
+		Password: req.Password,
+		UserID:   req.Userid,
+	}
+	return &acc
 }

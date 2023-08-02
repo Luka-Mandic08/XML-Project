@@ -3,6 +3,7 @@ package service
 import (
 	"auth_service/domain/model"
 	"auth_service/domain/repository"
+	"go.mongodb.org/mongo-driver/mongo"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -27,4 +28,12 @@ func (service *AuthService) GetByUsername(username string) (*model.Account, erro
 
 func (service *AuthService) Insert(account *model.Account) (*model.Account, error) {
 	return service.store.Insert(account)
+}
+
+func (service *AuthService) Update(account *model.Account) (*mongo.UpdateResult, error) {
+	return service.store.Update(account)
+}
+
+func (service *AuthService) Delete(id string) (*mongo.DeleteResult, error) {
+	return service.store.Delete(id)
 }

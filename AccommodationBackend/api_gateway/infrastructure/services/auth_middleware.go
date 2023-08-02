@@ -1,14 +1,14 @@
 package services
 
 import (
-	"api_gateway/domain"
+	"api_gateway/domain/model"
 	"github.com/gin-gonic/gin"
 )
 
 func ValidateToken() gin.HandlerFunc {
 	return func(context *gin.Context) {
 		tokenString := context.Request.Header.Get("Authorization")
-		valid, claims := domain.VerifyToken(tokenString)
+		valid, claims := model.VerifyToken(tokenString)
 		if !valid {
 			context.AbortWithStatus(401)
 		}

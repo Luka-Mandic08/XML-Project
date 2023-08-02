@@ -43,14 +43,7 @@ func (server *Server) initMongoClient() *mongo.Client {
 }
 
 func (server *Server) initAuthStore(client *mongo.Client) repository.AuthStore {
-	store := repository.NewAuthMongoDBStore(client)
-	for _, user := range accounts {
-		_, err := store.Insert(user)
-		if err != nil {
-			log.Fatal(err)
-		}
-	}
-	return store
+	return repository.NewAuthMongoDBStore(client)
 }
 
 func (server *Server) initAuthService(store repository.AuthStore) *service.AuthService {

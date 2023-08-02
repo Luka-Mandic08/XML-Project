@@ -42,6 +42,25 @@ func (store *AuthMongoDBStore) GetByUsername(username string) (*model.Account, e
 	filter := bson.M{"username": username}
 	return store.filterOne(filter)
 }
+
+func (store *AuthMongoDBStore) Update(account *model.Account) (*mongo.UpdateResult, error) {
+	filter := bson.M{"userid": account.UserID}
+	result, err := store.accounts.UpdateOne(context.TODO(), filter, account)
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+func (store *AuthMongoDBStore) Delete(id string) (*mongo.DeleteResult, error) {
+	filter := bson.M{"userid": id}
+	result, err := store.accounts.DeleteOne(context.TODO(), filter)
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
 func (store *AuthMongoDBStore) filter(filter interface{}) ([]*model.Account, error) {
 	cursor, err := store.accounts.Find(context.TODO(), filter)
 	defer cursor.Close(context.TODO())

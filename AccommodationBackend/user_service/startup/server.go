@@ -4,24 +4,22 @@ import (
 	"fmt"
 	"log"
 	"net"
-
-	"user_service/application"
-	"user_service/domain"
-	"user_service/infrastructure/api"
-	"user_service/infrastructure/persistence"
-	"user_service/startup/config"
+	"user_service/domain/repository"
+	"user_service/domain/service"
 
 	user "common/proto/user_service"
+	"user_service/infrastructure/api"
+	"user_service/infrastructure/persistence"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"google.golang.org/grpc"
 )
 
 type Server struct {
-	config *config.Config
+	config *Config
 }
 
-func NewServer(config *config.Config) *Server {
+func NewServer(config *Config) *Server {
 	return &Server{
 		config: config,
 	}
@@ -46,15 +44,15 @@ func (server *Server) initMongoClient() *mongo.Client {
 	return client
 }
 
-func (server *Server) initUserStore(client *mongo.Client) domain.UserStore {
-	return persistence.NewUserMongoDBStore(client)
+func (server *Server) initUserStore(client *mongo.Client) repository.UserStore {
+	return repository.NewUserMongoDBStore(client)
 }
 
-func (server *Server) initUserService(store domain.UserStore) *application.UserService {
-	return application.NewUserService(store)
+func (server *Server) initUserService(store repository.UserStore) *service.UserService {
+	return service.NewUserService(store)
 }
 
-func (server *Server) initUserHandler(service *application.UserService) *api.UserHandler {
+func (server *Server) initUserHandler(service *service.UserService) *api.UserHandler {
 	return api.NewUserHandler(service)
 }
 

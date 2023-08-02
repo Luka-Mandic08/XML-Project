@@ -18,7 +18,6 @@ func NewUserHandler(client user.UserServiceClient) *UserHandler {
 
 func (handler *UserHandler) Get(ctx *gin.Context) {
 	id := ctx.Param("id")
-
 	request := user.GetRequest{Id: id}
 	response, err := handler.client.Get(ctx, &request)
 	if err != nil {
@@ -28,13 +27,30 @@ func (handler *UserHandler) Get(ctx *gin.Context) {
 			case codes.AlreadyExists:
 				ctx.JSON(http.StatusConflict, grpcError.Message())
 				return
-
 			}
 		}
-
 		ctx.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
+	ctx.JSON(http.StatusOK, response)
+}
 
+func (handler *UserHandler) Update(ctx *gin.Context) {
+	var user user.UpdateRequest
+	err := ctx.ShouldBindJSON(&user)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+	response, err := handler.client.Update(ctx, &user)
+	if err != nil {
+		grpcError, ok := status.FromError(err)
+		if ok {
+			ctx.JSON(http.StatusBadRequest, grpcError.Message())
+			return
+		}
+		ctx.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
 	ctx.JSON(http.StatusOK, response)
 }

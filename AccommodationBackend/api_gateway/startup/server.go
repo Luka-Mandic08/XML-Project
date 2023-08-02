@@ -39,7 +39,7 @@ func CreateRoutersAndSetRoutes(config *cfg.Config) *gin.Engine {
 
 	authServiceAddress := fmt.Sprintf("%s:%s", config.AuthHost, config.AuthPort)
 	authClient := services.NewAuthClient(authServiceAddress)
-	authHandler := handler.NewAuthHandler(authClient)
+	authHandler := handler.NewAuthHandler(authClient, userClient)
 
 	corsMiddleware := cors.New(cors.Config{
 		AllowOrigins: []string{"*"},
@@ -53,9 +53,13 @@ func CreateRoutersAndSetRoutes(config *cfg.Config) *gin.Engine {
 	authGroup := router.Group("/auth")
 	authGroup.POST("/login", authHandler.Login)
 	authGroup.POST("/register", authHandler.Register)
+	authGroup.Use(services.ValidateToken())
+	authGroup.PUT("/update")
+	authGroup.DELETE("/delete/:id")
 
 	userGroup := router.Group("/users")
 	userGroup.Use(services.ValidateToken())
 	userGroup.GET("/:id", services.Authorize("Host"), userHandler.Get)
+	userGroup.PUT("/update", userHandler.Update)
 	return router
 }

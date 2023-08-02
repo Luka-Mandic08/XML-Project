@@ -1,6 +1,24 @@
 version: "3.8"
 
 services:
+  api_gateway:
+    image: api_gateway
+    container_name: api_gateway
+    build:
+      context: .
+      dockerfile: ./api_gateway/Dockerfile
+    restart: on-failure
+    ports:
+      - ${GATEWAY_PORT}:${GATEWAY_PORT}
+    environment:
+      GATEWAY_PORT: ${GATEWAY_PORT}
+      USER_SERVICE_HOST: ${USER_SERVICE_HOST}
+      USER_SERVICE_PORT: ${USER_SERVICE_PORT}
+      AUTH_SERVICE_HOST: ${AUTH_SERVICE_HOST}
+      AUTH_SERVICE_PORT: ${AUTH_SERVICE_PORT}
+    networks:
+      - network
+
   auth_service:
     image: auth_service
     container_name: auth_service
@@ -33,21 +51,14 @@ services:
     networks:
       - network
 
-  api_gateway:
-    image: api_gateway
-    container_name: api_gateway
-    build:
-      context: .
-      dockerfile: ./api_gateway/Dockerfile
+  auth_db:
+    image: mongo
+    container_name: auth_db
+    volumes:
+      - authDb:/data/db
     restart: on-failure
     ports:
-      - ${GATEWAY_PORT}:${GATEWAY_PORT}
-    environment:
-      GATEWAY_PORT: ${GATEWAY_PORT}
-      USER_SERVICE_HOST: ${USER_SERVICE_HOST}
-      USER_SERVICE_PORT: ${USER_SERVICE_PORT}
-      AUTH_SERVICE_HOST: ${AUTH_SERVICE_HOST}
-      AUTH_SERVICE_PORT: ${AUTH_SERVICE_PORT}
+      - 5001:27017
     networks:
       - network
 
@@ -57,17 +68,8 @@ services:
     volumes:
       - userDb:/data/db
     restart: on-failure
-    networks:
-      - network
-
-  auth_db:
-    image: mongo
-    container_name: auth_db
-    volumes:
-      - authDb:/data/db
-    restart: on-failure
     ports:
-      - 5001:27017
+      - 5002:27017
     networks:
       - network
 

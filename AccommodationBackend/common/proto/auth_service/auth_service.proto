@@ -7,40 +7,47 @@ package auth;
 service AuthService{
         rpc Login(LoginRequest) returns(LoginResponse) {}
         rpc Register(RegisterRequest) returns(RegisterResponse) {}
+        rpc Update(UpdateRequest) returns(UpdateResponse) {}
+        rpc Delete(DeleteRequest) returns(DeleteResponse) {}
 }
 
 message LoginRequest {
-        Credentials credentials = 1;
-}
-
-message Credentials {
         string username = 1;
         string password = 2;
 }
 
 message LoginResponse{
-        Account account = 1;
-}
-
-message Account{
         string username = 1;
         string role = 2;
         string userid = 3;
 }
 
 message RegisterRequest {
-        RegisterDTO dto = 1;
-}
-
-message RegisterDTO{
         string username = 1;
         string password = 2;
-        string confirmPassword = 3;
-        string role = 4;
-        string userid = 5;
+        string role = 3;
+        string userid = 4;
 }
 
 message RegisterResponse {
         string id = 1;
+}
+
+message UpdateRequest {
+        string userid = 1;
+        string username = 2;
+        string password = 3;
+}
+
+message UpdateResponse{
+        string message = 1;
+}
+
+message DeleteRequest {
+        string id = 1;
+}
+
+message DeleteResponse {
+        string message = 1;
 }
 

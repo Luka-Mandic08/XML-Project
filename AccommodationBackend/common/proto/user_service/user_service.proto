@@ -4,15 +4,11 @@ option go_package = "common/user";
 
 package user;
 
-import "google/api/annotations.proto";
-
 service UserService{
-        rpc Get(GetRequest) returns(GetResponse) {
-
-        }
-        rpc GetAll(GetAllRequest) returns(GetAllResponse) {
-
-        }
+        rpc Get(GetRequest) returns(GetResponse) {}
+        rpc Create(CreateRequest) returns(GetResponse) {}
+        rpc Update(UpdateRequest) returns(GetResponse) {}
+        rpc Delete(GetRequest) returns(DeleteResponse) {}
 }
 
 message GetRequest {
@@ -20,18 +16,34 @@ message GetRequest {
 }
 
 message GetResponse {
-        User user = 1;
-}
-
-message GetAllRequest {
-}
-
-message GetAllResponse {
-        repeated User users = 1;
-}
-
-message User {
         string id = 1;
         string name = 2;
         string surname = 3;
+        string email = 4;
+        Address address = 5;
+}
+
+message Address {
+        string street = 1;
+        string city = 2;
+        string country = 3;
+}
+
+message CreateRequest{
+        string name = 1;
+        string surname = 2;
+        string email = 3;
+        Address address = 4;
+}
+
+message UpdateRequest{
+        string id = 1;
+        string name = 2;
+        string surname = 3;
+        string email = 4;
+        Address address = 5;
+}
+
+message DeleteResponse {
+        string message = 1;
 }
