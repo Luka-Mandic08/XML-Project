@@ -1,6 +1,7 @@
 package api
 
 import (
+	"api_gateway/infrastructure/services"
 	user "common/proto/user_service"
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc/codes"
@@ -40,6 +41,10 @@ func (handler *UserHandler) Update(ctx *gin.Context) {
 	err := ctx.ShouldBindJSON(&user)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+	if services.AuthorizeId(user.Id, ctx) {
+		ctx.JSON(http.StatusUnauthorized, "Not allowed")
 		return
 	}
 	response, err := handler.client.Update(ctx, &user)

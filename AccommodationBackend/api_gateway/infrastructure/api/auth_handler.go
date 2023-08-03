@@ -3,6 +3,7 @@ package api
 import (
 	dto "api_gateway/domain/dto"
 	"api_gateway/domain/model"
+	"api_gateway/infrastructure/services"
 	auth "common/proto/auth_service"
 	user "common/proto/user_service"
 	"github.com/dgrijalva/jwt-go"
@@ -87,7 +88,7 @@ func (handler *AuthHandler) Register(ctx *gin.Context) {
 
 	response, err := handler.authClient.Register(ctx, dto.RegisterDtoToAccount(&registerDto, userResponse.Id))
 	if err != nil {
-		_, err := handler.userClient.Delete(ctx, &user.GetRequest{Id: userResponse.Id})
+		handler.userClient.Delete(ctx, &user.GetRequest{Id: userResponse.Id})
 		grpcError, ok := status.FromError(err)
 		if ok {
 			switch grpcError.Code() {
@@ -112,6 +113,10 @@ func (handler *AuthHandler) Update(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
+	if services.AuthorizeId(account.Userid, ctx) {
+		ctx.JSON(http.StatusUnauthorized, "Not allowed")
+		return
+	}
 	response, err := handler.authClient.Update(ctx, &account)
 	if err != nil {
 		grpcError, ok := status.FromError(err)
@@ -128,6 +133,10 @@ func (handler *AuthHandler) Update(ctx *gin.Context) {
 func (handler *AuthHandler) Delete(ctx *gin.Context) {
 	//TODO izvrsiti provere da li se nalog sme obrisati
 	id := ctx.Param("id")
+	if services.AuthorizeId(id, ctx) {
+		ctx.JSON(http.StatusUnauthorized, "Not allowed")
+		return
+	}
 	request := user.GetRequest{Id: id}
 	_, err := handler.userClient.Delete(ctx, &request)
 	if err != nil {

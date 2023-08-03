@@ -43,14 +43,22 @@ func (store *UserMongoDBStore) Insert(user *model.User) (*model.User, error) {
 	return user, nil
 }
 
-func (store *UserMongoDBStore) Delete(id string) (*mongo.DeleteResult, error) {
+func (store *UserMongoDBStore) Delete(id primitive.ObjectID) (*mongo.DeleteResult, error) {
 	filter := bson.M{"_id": id}
 	result, error := store.users.DeleteOne(context.TODO(), filter)
 	return result, error
 }
 
 func (store *UserMongoDBStore) Update(user *model.User) (*mongo.UpdateResult, error) {
-	result, err := store.users.UpdateByID(context.TODO(), user.Id, user)
+	update := bson.D{{"$set",
+		bson.D{
+			{"name", user.Name},
+			{"surname", user.Surname},
+			{"email", user.Email},
+			{"address", user.Address},
+		},
+	}}
+	result, err := store.users.UpdateByID(context.TODO(), user.Id, update)
 	if err != nil {
 		return nil, err
 	}

@@ -50,11 +50,11 @@ func (handler *UserHandler) Create(ctx context.Context, request *pb.CreateReques
 func (handler *UserHandler) Update(ctx context.Context, request *pb.UpdateRequest) (*pb.GetResponse, error) {
 	user := MapUpdateRequestToUser(request)
 	result, error := handler.service.Update(user)
-	if result.MatchedCount == 0 {
-		return nil, status.Error(codes.NotFound, "Unable to find user")
-	}
 	if error != nil {
 		return nil, status.Error(codes.Unknown, "Unable to update user")
+	}
+	if result.MatchedCount == 0 {
+		return nil, status.Error(codes.NotFound, "Unable to find user")
 	}
 	response := MapUserToGetResponse(user)
 	return response, nil
@@ -62,11 +62,11 @@ func (handler *UserHandler) Update(ctx context.Context, request *pb.UpdateReques
 
 func (handler *UserHandler) Delete(ctx context.Context, request *pb.GetRequest) (*pb.DeleteResponse, error) {
 	result, error := handler.service.Delete(request.Id)
-	if result.DeletedCount == 0 {
-		return nil, status.Error(codes.NotFound, "Unable to find user")
-	}
 	if error != nil {
 		return nil, status.Error(codes.Unknown, "Unable to delete user")
+	}
+	if result.DeletedCount == 0 {
+		return nil, status.Error(codes.NotFound, "Unable to find user")
 	}
 	return &pb.DeleteResponse{Message: "User successfully deleted"}, nil
 }

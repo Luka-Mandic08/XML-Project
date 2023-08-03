@@ -53,13 +53,13 @@ func CreateRoutersAndSetRoutes(config *cfg.Config) *gin.Engine {
 	authGroup := router.Group("/auth")
 	authGroup.POST("/login", authHandler.Login)
 	authGroup.POST("/register", authHandler.Register)
-	authGroup.Use(services.ValidateToken())
-	authGroup.PUT("/update")
-	authGroup.DELETE("/delete/:id")
+	authGroup.Use(services.ValidateToken()) //Login i register su navedeni pre ove linije, pa se za njih ne koristi validateToken
+	authGroup.PUT("/update", authHandler.Update)
+	authGroup.DELETE("/delete/:id", authHandler.Delete)
 
 	userGroup := router.Group("/users")
 	userGroup.Use(services.ValidateToken())
-	userGroup.GET("/:id", services.Authorize("Host"), userHandler.Get)
+	userGroup.GET("/:id", services.AuthorizeRole("Host"), userHandler.Get)
 	userGroup.PUT("/update", userHandler.Update)
 	return router
 }

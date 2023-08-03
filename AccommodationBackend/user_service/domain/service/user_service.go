@@ -35,5 +35,6 @@ func (service *UserService) Update(user *model.User) (*mongo.UpdateResult, error
 }
 
 func (service *UserService) Delete(id string) (*mongo.DeleteResult, error) {
-	return service.store.Delete(id)
+	uuid, _ := primitive.ObjectIDFromHex(id)
+	return service.store.Delete(uuid)
 }

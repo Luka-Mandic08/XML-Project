@@ -52,22 +52,22 @@ func (handler *AuthHandler) Register(ctx context.Context, request *pb.RegisterRe
 func (handler *AuthHandler) Update(ctx context.Context, request *pb.UpdateRequest) (*pb.UpdateResponse, error) {
 	account := UpdateMapper(request)
 	result, err := handler.service.Update(account)
-	if result.MatchedCount == 0 {
-		return nil, status.Error(codes.NotFound, "Unable to find account")
-	}
 	if err != nil {
 		return nil, status.Error(codes.Unknown, "Unable to update account")
+	}
+	if result.MatchedCount == 0 {
+		return nil, status.Error(codes.NotFound, "Unable to find account")
 	}
 	return &pb.UpdateResponse{Message: "Account successfully updated"}, nil
 }
 
 func (handler *AuthHandler) Delete(ctx context.Context, request *pb.DeleteRequest) (*pb.DeleteResponse, error) {
 	result, err := handler.service.Delete(request.Id)
-	if result.DeletedCount == 0 {
-		return nil, status.Error(codes.NotFound, "Unable to find account")
-	}
 	if err != nil {
 		return nil, status.Error(codes.Unknown, "Unable to delete account")
+	}
+	if result.DeletedCount == 0 {
+		return nil, status.Error(codes.NotFound, "Unable to find account")
 	}
 	return &pb.DeleteResponse{Message: "Account successfully deleted"}, nil
 }

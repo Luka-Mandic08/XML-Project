@@ -6,6 +6,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"golang.org/x/crypto/bcrypt"
 )
 
 const (
@@ -45,7 +46,14 @@ func (store *AuthMongoDBStore) GetByUsername(username string) (*model.Account, e
 
 func (store *AuthMongoDBStore) Update(account *model.Account) (*mongo.UpdateResult, error) {
 	filter := bson.M{"userid": account.UserID}
-	result, err := store.accounts.UpdateOne(context.TODO(), filter, account)
+	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(account.Password), bcrypt.DefaultCost)
+	update := bson.D{{"$set",
+		bson.D{
+			{"username", account.Username},
+			{"password", string(hashedPassword)},
+		},
+	}}
+	result, err := store.accounts.UpdateOne(context.TODO(), filter, update)
 	if err != nil {
 		return nil, err
 	}

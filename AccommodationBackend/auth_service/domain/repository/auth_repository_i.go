@@ -11,5 +11,5 @@ type AuthStore interface {
 	Insert(user *model.Account) (*model.Account, error)
 	GetByUsername(username string) (*model.Account, error)
 	Update(*model.Account) (*mongo.UpdateResult, error)
-	Delete(username string) (*mongo.DeleteResult, error)
+	Delete(id string) (*mongo.DeleteResult, error)
 }

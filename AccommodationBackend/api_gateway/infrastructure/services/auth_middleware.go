@@ -17,12 +17,12 @@ func ValidateToken() gin.HandlerFunc {
 		}
 		context.Keys["Username"] = claims.Username
 		context.Keys["Role"] = claims.Role
-		context.Keys["userId"] = claims.UserId
+		context.Keys["UserId"] = claims.UserId
 
 	}
 }
 
-func Authorize(allowedRole string) gin.HandlerFunc {
+func AuthorizeRole(allowedRole string) gin.HandlerFunc {
 	return func(context *gin.Context) {
 		if len(context.Keys) == 0 {
 			context.AbortWithStatus(403)
@@ -33,4 +33,15 @@ func Authorize(allowedRole string) gin.HandlerFunc {
 			context.AbortWithStatus(403)
 		}
 	}
+}
+
+func AuthorizeId(id string, context *gin.Context) bool {
+	if len(context.Keys) == 0 {
+		return true
+	}
+	UserId := context.Keys["UserId"]
+	if id != UserId {
+		return true
+	}
+	return false
 }
