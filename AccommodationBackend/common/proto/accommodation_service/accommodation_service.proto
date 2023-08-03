@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+option go_package = "common/accommodation";
+
+package accommodation;
+
+service AccommodationService{
+        rpc Get(GetRequest) returns(GetResponse) {}
+}
+
+message GetRequest{
+        string id = 1;
+}
+
+message GetResponse{
+        string id = 1;
+}

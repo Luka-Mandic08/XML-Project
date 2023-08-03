@@ -7,5 +7,5 @@ type Account struct {
 	Username string             `bson:"username"`
 	Password string             `bson:"password"`
 	Role     string             `bson:"role"`
-	UserID   string             `bson:"userid"`
+	UserId   string             `bson:"userid"`
 }

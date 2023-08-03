@@ -61,12 +61,6 @@ func (server *Server) startGrpcServer(authHandler *api.AuthHandler) {
 	}
 	grpcServer := grpc.NewServer()
 	auth.RegisterAuthServiceServer(grpcServer, authHandler)
-	if grpcServer == nil || authHandler == nil {
-		fmt.Println("GRESKA")
-		fmt.Println("GRESKA")
-		fmt.Println("GRESKA")
-		fmt.Println("GRESKA")
-	}
 	if err := grpcServer.Serve(listener); err != nil {
 		log.Fatalf("failed to serve: %s", err)
 	}

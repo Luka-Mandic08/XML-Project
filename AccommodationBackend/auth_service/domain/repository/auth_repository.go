@@ -45,7 +45,7 @@ func (store *AuthMongoDBStore) GetByUsername(username string) (*model.Account, e
 }
 
 func (store *AuthMongoDBStore) Update(account *model.Account) (*mongo.UpdateResult, error) {
-	filter := bson.M{"userid": account.UserID}
+	filter := bson.M{"userid": account.UserId}
 	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(account.Password), bcrypt.DefaultCost)
 	update := bson.D{{"$set",
 		bson.D{
