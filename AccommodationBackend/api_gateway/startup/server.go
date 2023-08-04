@@ -3,7 +3,6 @@ package startup
 import (
 	handler "api_gateway/infrastructure/api"
 	services "api_gateway/infrastructure/services"
-	cfg "api_gateway/startup/config"
 	"fmt"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -13,11 +12,11 @@ import (
 )
 
 type Server struct {
-	config *cfg.Config
+	config *Config
 	mux    *runtime.ServeMux
 }
 
-func NewServer(config *cfg.Config) *http.Server {
+func NewServer(config *Config) *http.Server {
 	publicAddress := fmt.Sprintf("%s:%s", config.Host, config.Port)
 	router := CreateRoutersAndSetRoutes(config)
 	publicServer := &http.Server{
@@ -31,7 +30,7 @@ func NewServer(config *cfg.Config) *http.Server {
 	return publicServer
 }
 
-func CreateRoutersAndSetRoutes(config *cfg.Config) *gin.Engine {
+func CreateRoutersAndSetRoutes(config *Config) *gin.Engine {
 	//MICROSERVICES
 	userServiceAddress := fmt.Sprintf("%s:%s", config.UserHost, config.UserPort)
 	userClient := services.NewUserClient(userServiceAddress)
@@ -40,6 +39,10 @@ func CreateRoutersAndSetRoutes(config *cfg.Config) *gin.Engine {
 	authServiceAddress := fmt.Sprintf("%s:%s", config.AuthHost, config.AuthPort)
 	authClient := services.NewAuthClient(authServiceAddress)
 	authHandler := handler.NewAuthHandler(authClient, userClient)
+
+	accommodationServiceAddress := fmt.Sprintf("%s:%s", config.AuthHost, config.AuthPort)
+	accommodationClient := services.NewAccommodationClient(accommodationServiceAddress)
+	accommodationHandler := handler.NewAccommodationHandler(accommodationClient)
 
 	corsMiddleware := cors.New(cors.Config{
 		AllowOrigins: []string{"*"},
@@ -61,5 +64,9 @@ func CreateRoutersAndSetRoutes(config *cfg.Config) *gin.Engine {
 	userGroup.Use(services.ValidateToken())
 	userGroup.GET("/:id", services.AuthorizeRole("Host"), userHandler.Get)
 	userGroup.PUT("/update", userHandler.Update)
+
+	accommodationGroup := router.Group("/accommodation")
+	accommodationGroup.Use(services.ValidateToken())
+	accommodationGroup.POST("/create", services.AuthorizeRole("Host"), accommodationHandler.Create)
 	return router
 }

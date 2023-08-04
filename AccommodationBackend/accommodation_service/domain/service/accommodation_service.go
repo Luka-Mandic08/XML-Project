@@ -3,6 +3,7 @@ package service
 import (
 	"accommodation_service/domain/model"
 	"accommodation_service/domain/repository"
+	"errors"
 	"go.mongodb.org/mongo-driver/mongo"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -22,11 +23,11 @@ func (service *AccommodationService) Get(id primitive.ObjectID) (*model.Accommod
 	return service.store.GetById(id)
 }
 
-func (service *AccommodationService) GetByUsername(username string) (*model.Accommodation, error) {
-	return service.store.GetByUsername(username)
-}
-
 func (service *AccommodationService) Insert(accommodation *model.Accommodation) (*model.Accommodation, error) {
+	acc, _ := service.store.GetByAddress(accommodation.Address)
+	if acc != nil {
+		return nil, errors.New("an accommodation already exists in this location")
+	}
 	return service.store.Insert(accommodation)
 }
 

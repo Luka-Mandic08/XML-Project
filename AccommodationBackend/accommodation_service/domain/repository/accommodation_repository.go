@@ -38,8 +38,8 @@ func (store *AccommodationMongoDBStore) Insert(accommodation *model.Accommodatio
 	return accommodation, nil
 }
 
-func (store *AccommodationMongoDBStore) GetByUsername(username string) (*model.Accommodation, error) {
-	filter := bson.M{"username": username}
+func (store *AccommodationMongoDBStore) GetByAddress(address model.Address) (*model.Accommodation, error) {
+	filter := bson.M{"address": address}
 	return store.filterOne(filter)
 }
 

@@ -9,7 +9,7 @@ import (
 type AccommodationStore interface {
 	GetById(id primitive.ObjectID) (*model.Accommodation, error)
 	Insert(user *model.Accommodation) (*model.Accommodation, error)
-	GetByUsername(username string) (*model.Accommodation, error)
+	GetByAddress(username model.Address) (*model.Accommodation, error)
 	Update(*model.Accommodation) (*mongo.UpdateResult, error)
 	Delete(id string) (*mongo.DeleteResult, error)
 }
