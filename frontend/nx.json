@@ -41,8 +41,8 @@
       "application": {
         "style": "css",
         "linter": "eslint",
-        "unitTestRunner": "none",
         "bundler": "webpack",
+        "unitTestRunner": "none",
         "babel": true
       },
       "component": {

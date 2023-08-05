@@ -16,6 +16,8 @@
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
     "paths": {
+      "@frontend/features/booking/login/container": ["libs/features/booking/login/container/src/index.ts"],
+      "@frontend/features/booking/login/data-access": ["libs/features/booking/login/data-access/src/index.ts"],
       "@frontend/features/flights/add-flight/container": ["libs/features/flights/add-flight/container/src/index.ts"],
       "@frontend/features/flights/add-flight/data-access": ["libs/features/flights/add-flight/data-access/src/index.ts"],
       "@frontend/features/flights/home/container": ["libs/features/flights/home/container/src/index.ts"],
