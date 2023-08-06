@@ -4,7 +4,6 @@ import (
 	"accommodation_service/domain/model"
 	"context"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"time"
@@ -44,18 +43,41 @@ func (store *AvailabilityStore) Upsert(availability *model.Availability) error {
 	return nil
 }
 
-func (store *AvailabilityStore) GetByDate(date primitive.DateTime) (*model.Availability, error) {
-	filter := bson.M{"date": date}
-	return store.filterOne(filter)
-}
-
-func (store *AvailabilityStore) Delete(date primitive.DateTime) (*mongo.DeleteResult, error) {
-	filter := bson.M{"date": date}
-	result, err := store.availabilities.DeleteOne(context.TODO(), filter)
-	if err != nil {
-		return nil, err
+func (store *AvailabilityStore) FindAndGroupAvailableDates(dateFrom, dateTo time.Time, numberOfDays int) ([]string, []float64, error) {
+	pipeline := []bson.M{
+		{
+			"$match": bson.M{
+				"date":        bson.M{"$gte": dateFrom, "$lte": dateTo},
+				"isAvailable": true,
+			},
+		},
+		{
+			"$group": bson.M{
+				"_id":         "$accommodationid",
+				"sumQuantity": bson.M{"$sum": 1},
+				"totalPrice":  bson.M{"$sum": "$price"},
+			},
+		},
+		{
+			"$match": bson.M{
+				"sumQuantity": numberOfDays,
+			},
+		},
 	}
-	return result, nil
+
+	cursor, err := store.availabilities.Aggregate(context.TODO(), pipeline)
+	if err != nil {
+		return nil, nil, err
+	}
+	results := []bson.M{}
+	cursor.All(context.TODO(), &results)
+	var ids []string
+	var prices []float64
+	for _, result := range results {
+		ids = append(ids, result["_id"].(string))
+		prices = append(prices, result["totalPrice"].(float64))
+	}
+	return ids, prices, nil
 }
 
 func (store *AvailabilityStore) filter(filter interface{}) ([]*model.Availability, error) {
@@ -74,14 +96,14 @@ func (store *AvailabilityStore) filterOne(filter interface{}) (availability *mod
 	return
 }
 
-func decodeAvailabilities(cursor *mongo.Cursor) (availabilitys []*model.Availability, err error) {
+func decodeAvailabilities(cursor *mongo.Cursor) (availabilities []*model.Availability, err error) {
 	for cursor.Next(context.TODO()) {
 		var availability model.Availability
 		err = cursor.Decode(&availability)
 		if err != nil {
 			return
 		}
-		availabilitys = append(availabilitys, &availability)
+		availabilities = append(availabilities, &availability)
 	}
 	err = cursor.Err()
 	return

@@ -11,6 +11,7 @@ service AccommodationService{
         rpc Create(CreateRequest) returns(Response){}
         rpc UpdateAvailability(UpdateAvailabilityRequest) returns(Response) {}
         rpc CheckAvailability(CheckAvailabilityRequest) returns(CheckAvailabilityResponse){}
+        rpc Search(SearchRequest) returns(SearchResponse) {}
 }
 
 message GetRequest{
@@ -60,4 +61,26 @@ message CheckAvailabilityRequest{
 message CheckAvailabilityResponse{
         bool shouldCreateAutomaticReservation = 2;
         float totalPrice = 3;
+}
+
+message SearchRequest{
+        string city = 1;
+        string country = 2;
+        google.protobuf.Timestamp dateFrom = 3;
+        google.protobuf.Timestamp dateTo = 4;
+        int32 numberOfGuests = 5;
+}
+
+message SearchResponse{
+        repeated SearchResultAccommodation accommodations = 1;
+}
+
+message SearchResultAccommodation{
+        string id = 1;
+        string name = 2;
+        Address address = 3;
+        repeated string amenities = 4;
+        repeated string images = 5;
+        float unitPrice = 6;
+        float totalPrice = 7;
 }

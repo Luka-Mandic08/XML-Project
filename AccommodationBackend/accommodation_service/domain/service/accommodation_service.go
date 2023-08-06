@@ -6,6 +6,7 @@ import (
 	accommodation "common/proto/accommodation_service"
 	"errors"
 	"go.mongodb.org/mongo-driver/mongo"
+	"strings"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -122,4 +123,31 @@ func (service *AccommodationService) ChangeAvailability(availabilities []*model.
 		}
 	}
 	return nil
+}
+
+func (service *AccommodationService) Search(req *accommodation.SearchRequest) ([]*model.Accommodation, []float64, int, error) {
+	dateFrom := req.DateFrom.AsTime()
+	dateTo := req.DateTo.AsTime()
+	numberOfDays := 0
+	for date := dateFrom; !date.After(dateTo); date = date.Add(time.Hour * 24) {
+		numberOfDays++
+	}
+	ids, prices, err := service.availabilityStore.FindAndGroupAvailableDates(dateFrom, dateTo, numberOfDays)
+	if err != nil {
+		return nil, nil, 0, err
+	}
+	var accommodations []*model.Accommodation
+	for _, id := range ids {
+		id, _ := primitive.ObjectIDFromHex(id)
+		acc, _ := service.accommodationStore.GetById(id)
+		if acc.MaxGuests >= req.NumberOfGuests && acc.MinGuests <= req.NumberOfGuests {
+			if strings.Contains(strings.ToLower(acc.Address.City), strings.ToLower(req.City)) && strings.Contains(strings.ToLower(acc.Address.Country), strings.ToLower(req.Country)) {
+				accommodations = append(accommodations, acc)
+			}
+		}
+	}
+	if len(accommodations) == 0 {
+		return nil, nil, 0, errors.New("no accommodations found")
+	}
+	return accommodations, prices, numberOfDays, nil
 }

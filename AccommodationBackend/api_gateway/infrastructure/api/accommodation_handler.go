@@ -95,3 +95,25 @@ func (handler *AccommodationHandler) CheckAvailability(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, response)
 	return
 }
+
+func (handler *AccommodationHandler) Search(ctx *gin.Context) {
+	var acc accommodation.SearchRequest
+	num, _ := ctx.GetRawData()
+	err := protojson.Unmarshal(num, &acc)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+	response, err := handler.accommodationClient.Search(ctx, &acc)
+	if err != nil {
+		grpcError, ok := status.FromError(err)
+		if ok {
+			ctx.JSON(http.StatusBadRequest, grpcError.Message())
+			return
+		}
+		ctx.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+	ctx.JSON(http.StatusCreated, response)
+	return
+}
