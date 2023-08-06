@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/encoding/protojson"
 	"net/http"
 )
 
@@ -42,6 +43,51 @@ func (handler *AccommodationHandler) Create(ctx *gin.Context) {
 				ctx.JSON(http.StatusBadRequest, grpcError.Message())
 				return
 			}
+		}
+		ctx.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+	ctx.JSON(http.StatusCreated, response)
+	return
+}
+
+func (handler *AccommodationHandler) UpdateAvailability(ctx *gin.Context) {
+	var acc accommodation.UpdateAvailabilityRequest
+	num, _ := ctx.GetRawData()
+	err := protojson.Unmarshal(num, &acc)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+	//TODO provera da li postoje zahtevi/rezervacije za ovaj period
+	response, err := handler.accommodationClient.UpdateAvailability(ctx, &acc)
+	if err != nil {
+		grpcError, ok := status.FromError(err)
+		if ok {
+			ctx.JSON(http.StatusBadRequest, grpcError.Message())
+			return
+		}
+		ctx.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+	ctx.JSON(http.StatusCreated, response)
+	return
+}
+
+func (handler *AccommodationHandler) CheckAvailability(ctx *gin.Context) {
+	var acc accommodation.CheckAvailabilityRequest
+	num, _ := ctx.GetRawData()
+	err := protojson.Unmarshal(num, &acc)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+	response, err := handler.accommodationClient.CheckAvailability(ctx, &acc)
+	if err != nil {
+		grpcError, ok := status.FromError(err)
+		if ok {
+			ctx.JSON(http.StatusBadRequest, grpcError.Message())
+			return
 		}
 		ctx.JSON(http.StatusBadRequest, err.Error())
 		return

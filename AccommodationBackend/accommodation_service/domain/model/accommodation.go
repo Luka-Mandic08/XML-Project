@@ -8,8 +8,8 @@ type Accommodation struct {
 	Address                  Address            `bson:"address"`
 	Amenities                []string           `bson:"amenities"`
 	Images                   []string           `bson:"image"`
-	minGuests                int                `bson:"minGuests"`
-	maxGuests                int                `bson:"maxGuests"`
+	MinGuests                int32              `bson:"minGuests"`
+	MaxGuests                int32              `bson:"maxGuests"`
 	HostId                   string             `bson:"hostid"`
 	PriceIsPerGuest          bool               `bson:"priceIsPerGuest"`
 	HasAutomaticReservations bool               `bson:"hasAutomaticReservations"`

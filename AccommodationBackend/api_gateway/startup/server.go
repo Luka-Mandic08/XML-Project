@@ -40,7 +40,7 @@ func CreateRoutersAndSetRoutes(config *Config) *gin.Engine {
 	authClient := services.NewAuthClient(authServiceAddress)
 	authHandler := handler.NewAuthHandler(authClient, userClient)
 
-	accommodationServiceAddress := fmt.Sprintf("%s:%s", config.AuthHost, config.AuthPort)
+	accommodationServiceAddress := fmt.Sprintf("%s:%s", config.AccommodationHost, config.AccommodationPort)
 	accommodationClient := services.NewAccommodationClient(accommodationServiceAddress)
 	accommodationHandler := handler.NewAccommodationHandler(accommodationClient)
 
@@ -68,5 +68,7 @@ func CreateRoutersAndSetRoutes(config *Config) *gin.Engine {
 	accommodationGroup := router.Group("/accommodation")
 	accommodationGroup.Use(services.ValidateToken())
 	accommodationGroup.POST("/create", services.AuthorizeRole("Host"), accommodationHandler.Create)
+	accommodationGroup.POST("/updateAvailability", services.AuthorizeRole("Host"), accommodationHandler.UpdateAvailability)
+	accommodationGroup.POST("/checkAvailability", accommodationHandler.CheckAvailability)
 	return router
 }

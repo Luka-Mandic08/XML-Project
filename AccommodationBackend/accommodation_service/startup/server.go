@@ -28,10 +28,11 @@ func NewServer(config *Config) *Server {
 
 func (server *Server) Start() {
 	mongoClient := server.initMongoClient()
-	userStore := server.initAccommodationStore(mongoClient)
-	userService := server.initAccommodationService(userStore)
-	userHandler := server.initAccommodationHandler(userService)
-	server.startGrpcServer(userHandler)
+	accommodationStore := server.initAccommodationStore(mongoClient)
+	availabilityStore := server.initAvailabilityStore(mongoClient)
+	accommodationService := server.initAccommodationService(accommodationStore, *availabilityStore)
+	accommodationHandler := server.initAccommodationHandler(accommodationService)
+	server.startGrpcServer(accommodationHandler)
 }
 
 func (server *Server) initMongoClient() *mongo.Client {
@@ -46,8 +47,12 @@ func (server *Server) initAccommodationStore(client *mongo.Client) repository.Ac
 	return repository.NewAccommodationMongoDBStore(client)
 }
 
-func (server *Server) initAccommodationService(store repository.AccommodationStore) *service.AccommodationService {
-	return service.NewAccommodationService(store)
+func (server *Server) initAvailabilityStore(client *mongo.Client) *repository.AvailabilityStore {
+	return repository.NewAvailabilityStore(client)
+}
+
+func (server *Server) initAccommodationService(accommodationStore repository.AccommodationStore, availabilityStore repository.AvailabilityStore) *service.AccommodationService {
+	return service.NewAccommodationService(accommodationStore, availabilityStore)
 }
 
 func (server *Server) initAccommodationHandler(service *service.AccommodationService) *api.AccommodationHandler {
@@ -61,12 +66,6 @@ func (server *Server) startGrpcServer(accommodationHandler *api.AccommodationHan
 	}
 	grpcServer := grpc.NewServer()
 	accommodation.RegisterAccommodationServiceServer(grpcServer, accommodationHandler)
-	if grpcServer == nil || accommodationHandler == nil {
-		fmt.Println("GRESKA")
-		fmt.Println("GRESKA")
-		fmt.Println("GRESKA")
-		fmt.Println("GRESKA")
-	}
 	if err := grpcServer.Serve(listener); err != nil {
 		log.Fatalf("failed to serve: %s", err)
 	}

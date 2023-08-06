@@ -24,11 +24,27 @@ func (handler *AccommodationHandler) Get(ctx context.Context, request *accommoda
 	return nil, nil
 }
 
-func (handler *AccommodationHandler) Create(ctx context.Context, request *accommodation.CreateRequest) (*accommodation.CreateResponse, error) {
+func (handler *AccommodationHandler) Create(ctx context.Context, request *accommodation.CreateRequest) (*accommodation.Response, error) {
 	acc := MapCreateRequestToAccommodation(request)
 	acc, err := handler.service.Insert(acc)
 	if err != nil {
-		return nil, status.Error(codes.AlreadyExists, "Unable to find user")
+		return nil, status.Error(codes.AlreadyExists, "An accommodation already exists at this location")
 	}
-	return &accommodation.CreateResponse{Message: "Accommodation successfully created"}, nil
+	return &accommodation.Response{Message: "Accommodation successfully created"}, nil
+}
+
+func (handler *AccommodationHandler) UpdateAvailability(ctx context.Context, request *accommodation.UpdateAvailabilityRequest) (*accommodation.Response, error) {
+	err := handler.service.UpdateAvailability(*request)
+	if err != nil {
+		return nil, status.Error(codes.AlreadyExists, err.Error())
+	}
+	return &accommodation.Response{Message: "Accommodation availability successfully updated"}, nil
+}
+
+func (handler *AccommodationHandler) CheckAvailability(ctx context.Context, request *accommodation.CheckAvailabilityRequest) (*accommodation.CheckAvailabilityResponse, error) {
+	response, err := handler.service.CheckAccommodationAvailability(request)
+	if err != nil {
+		return nil, status.Error(codes.Aborted, err.Error())
+	}
+	return response, nil
 }

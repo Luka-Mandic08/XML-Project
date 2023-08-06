@@ -17,6 +17,8 @@ func MapCreateRequestToAccommodation(req *accommodation.CreateRequest) *model.Ac
 		Address:                  address,
 		Amenities:                req.Amenities,
 		Images:                   req.Images,
+		MinGuests:                req.MinGuests,
+		MaxGuests:                req.MaxGuests,
 		HostId:                   req.HostId,
 		PriceIsPerGuest:          req.PriceIsPerGuest,
 		HasAutomaticReservations: req.HasAutomaticReservations,

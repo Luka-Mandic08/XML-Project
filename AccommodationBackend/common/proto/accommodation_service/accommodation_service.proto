@@ -4,9 +4,13 @@ option go_package = "common/accommodation";
 
 package accommodation;
 
+import "google/protobuf/timestamp.proto";
+
 service AccommodationService{
         rpc Get(GetRequest) returns(GetResponse) {}
-        rpc Create(CreateRequest) returns(CreateResponse){}
+        rpc Create(CreateRequest) returns(Response){}
+        rpc UpdateAvailability(UpdateAvailabilityRequest) returns(Response) {}
+        rpc CheckAvailability(CheckAvailabilityRequest) returns(CheckAvailabilityResponse){}
 }
 
 message GetRequest{
@@ -35,6 +39,25 @@ message Address {
         string country = 3;
 }
 
-message CreateResponse{
+message Response{
         string message = 1;
+}
+
+message UpdateAvailabilityRequest{
+        string accommodationid = 1;
+        google.protobuf.Timestamp dateFrom = 2;
+        google.protobuf.Timestamp dateTo = 3;
+        float price = 4;
+}
+
+message CheckAvailabilityRequest{
+        string accommodationid = 1;
+        google.protobuf.Timestamp dateFrom = 2;
+        google.protobuf.Timestamp dateTo = 3;
+        int32 numberOfGuests = 4;
+}
+
+message CheckAvailabilityResponse{
+        bool shouldCreateAutomaticReservation = 2;
+        float totalPrice = 3;
 }
