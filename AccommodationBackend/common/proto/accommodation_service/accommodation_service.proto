@@ -1,0 +1,86 @@
+syntax = "proto3";
+
+option go_package = "common/accommodation";
+
+package accommodation;
+
+import "google/protobuf/timestamp.proto";
+
+service AccommodationService{
+        rpc Get(GetRequest) returns(GetResponse) {}
+        rpc Create(CreateRequest) returns(Response){}
+        rpc UpdateAvailability(UpdateAvailabilityRequest) returns(Response) {}
+        rpc CheckAvailability(CheckAvailabilityRequest) returns(CheckAvailabilityResponse){}
+        rpc Search(SearchRequest) returns(SearchResponse) {}
+}
+
+message GetRequest{
+        string id = 1;
+}
+
+message GetResponse{
+        string id = 1;
+}
+
+message CreateRequest{
+        string name = 1;
+        Address address = 2;
+        repeated string amenities = 3;
+        repeated string images = 4;
+        int32 minGuests = 5;
+        int32 maxGuests = 6;
+        bool priceIsPerGuest = 7;
+        bool hasAutomaticReservations = 8;
+        string hostId = 9;
+}
+
+message Address {
+        string street = 1;
+        string city = 2;
+        string country = 3;
+}
+
+message Response{
+        string message = 1;
+}
+
+message UpdateAvailabilityRequest{
+        string accommodationid = 1;
+        google.protobuf.Timestamp dateFrom = 2;
+        google.protobuf.Timestamp dateTo = 3;
+        float price = 4;
+}
+
+message CheckAvailabilityRequest{
+        string accommodationid = 1;
+        google.protobuf.Timestamp dateFrom = 2;
+        google.protobuf.Timestamp dateTo = 3;
+        int32 numberOfGuests = 4;
+}
+
+message CheckAvailabilityResponse{
+        bool shouldCreateAutomaticReservation = 2;
+        float totalPrice = 3;
+}
+
+message SearchRequest{
+        string city = 1;
+        string country = 2;
+        google.protobuf.Timestamp dateFrom = 3;
+        google.protobuf.Timestamp dateTo = 4;
+        int32 numberOfGuests = 5;
+}
+
+message SearchResponse{
+        repeated SearchResultAccommodation accommodations = 1;
+}
+
+message SearchResultAccommodation{
+        string id = 1;
+        string name = 2;
+        Address address = 3;
+        repeated string amenities = 4;
+        repeated string images = 5;
+        float unitPrice = 6;
+        float totalPrice = 7;
+}

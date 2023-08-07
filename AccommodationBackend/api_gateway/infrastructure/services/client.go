@@ -1,6 +1,7 @@
 package services
 
 import (
+	accommodation "common/proto/accommodation_service"
 	auth "common/proto/auth_service"
 	user "common/proto/user_service"
 	"google.golang.org/grpc"
@@ -22,6 +23,14 @@ func NewUserClient(address string) user.UserServiceClient {
 		log.Fatalf("Failed to start gRPC connection to Catalogue service: %v", err)
 	}
 	return user.NewUserServiceClient(conn)
+}
+
+func NewAccommodationClient(address string) accommodation.AccommodationServiceClient {
+	conn, err := getConnection(address)
+	if err != nil {
+		log.Fatalf("Failed to start gRPC connection to Catalogue service: %v", err)
+	}
+	return accommodation.NewAccommodationServiceClient(conn)
 }
 
 func getConnection(address string) (*grpc.ClientConn, error) {

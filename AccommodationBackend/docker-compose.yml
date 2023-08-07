@@ -12,10 +12,12 @@ services:
       - ${GATEWAY_PORT}:${GATEWAY_PORT}
     environment:
       GATEWAY_PORT: ${GATEWAY_PORT}
-      USER_SERVICE_HOST: ${USER_SERVICE_HOST}
-      USER_SERVICE_PORT: ${USER_SERVICE_PORT}
       AUTH_SERVICE_HOST: ${AUTH_SERVICE_HOST}
       AUTH_SERVICE_PORT: ${AUTH_SERVICE_PORT}
+      USER_SERVICE_HOST: ${USER_SERVICE_HOST}
+      USER_SERVICE_PORT: ${USER_SERVICE_PORT}
+      ACCOMMODATION_SERVICE_HOST: ${ACCOMMODATION_SERVICE_HOST}
+      ACCOMMODATION_SERVICE_PORT: ${ACCOMMODATION_SERVICE_PORT}
     networks:
       - network
 
@@ -51,6 +53,22 @@ services:
     networks:
       - network
 
+  accommodation_service:
+    image: accommodation_service
+    container_name: accommodation_service
+    build:
+      context: .
+      dockerfile: ./accommodation_service/Dockerfile
+    restart: on-failure
+    environment:
+      ACCOMMODATION_DB_HOST: ${ACCOMMODATION_DB_HOST}
+      ACCOMMODATION_DB_PORT: ${ACCOMMODATION_DB_PORT}
+      ACCOMMODATION_SERVICE_PORT: ${ACCOMMODATION_SERVICE_PORT}
+    depends_on:
+      - accommodation_db
+    networks:
+      - network
+
   auth_db:
     image: mongo
     container_name: auth_db
@@ -73,6 +91,17 @@ services:
     networks:
       - network
 
+  accommodation_db:
+    image: mongo
+    container_name: accommodation_db
+    volumes:
+      - accommodationDb:/data/db
+    restart: on-failure
+    ports:
+      - 5003:27017
+    networks:
+      - network
+
   nats:
     image: nats
     container_name: nats
@@ -83,6 +112,7 @@ services:
 volumes:
   authDb:
   userDb:
+  accommodationDb:
 
 networks:
   network:

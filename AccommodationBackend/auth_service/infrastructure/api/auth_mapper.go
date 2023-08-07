@@ -13,7 +13,7 @@ func RegisterMapper(request *auth.RegisterRequest) *model.Account {
 		Username: request.Username,
 		Password: string(hashedPassword),
 		Role:     request.Role,
-		UserID:   request.Userid,
+		UserId:   request.Userid,
 	}
 	return &account
 }
@@ -22,7 +22,7 @@ func LoginMapper(account *model.Account) *auth.LoginResponse {
 	acc := auth.LoginResponse{
 		Username: account.Username,
 		Role:     account.Role,
-		Userid:   account.UserID,
+		Userid:   account.UserId,
 	}
 	return &acc
 }
@@ -31,7 +31,7 @@ func UpdateMapper(req *auth.UpdateRequest) *model.Account {
 	acc := model.Account{
 		Username: req.Username,
 		Password: req.Password,
-		UserID:   req.Userid,
+		UserId:   req.Userid,
 	}
 	return &acc
 }
