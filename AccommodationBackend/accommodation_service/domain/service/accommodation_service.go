@@ -6,6 +6,7 @@ import (
 	accommodation "common/proto/accommodation_service"
 	"errors"
 	"go.mongodb.org/mongo-driver/mongo"
+	"strconv"
 	"strings"
 	"time"
 
@@ -69,10 +70,10 @@ func (service *AccommodationService) CheckAccommodationAvailability(request *acc
 		return nil, errors.New("this accommodation does not exist")
 	}
 	if acc.MinGuests > request.NumberOfGuests {
-		return nil, errors.New("this accommodation accepts a minimum of " + string(acc.MinGuests) + " guests")
+		return nil, errors.New("this accommodation accepts a minimum of " + strconv.Itoa(int(acc.MinGuests)) + " guests")
 	}
 	if acc.MaxGuests < request.NumberOfGuests {
-		return nil, errors.New("this accommodation accepts a maximum of " + string(acc.MaxGuests) + " guests")
+		return nil, errors.New("this accommodation accepts a maximum of " + strconv.Itoa(int(acc.MaxGuests)) + " guests")
 	}
 
 	totalPrice, availabilitiesToUpdate, err := service.CheckDateAvailability(request, acc)
@@ -137,17 +138,19 @@ func (service *AccommodationService) Search(req *accommodation.SearchRequest) ([
 		return nil, nil, 0, err
 	}
 	var accommodations []*model.Accommodation
-	for _, id := range ids {
+	var realPrices []float64
+	for i, id := range ids {
 		id, _ := primitive.ObjectIDFromHex(id)
 		acc, _ := service.accommodationStore.GetById(id)
 		if acc.MaxGuests >= req.NumberOfGuests && acc.MinGuests <= req.NumberOfGuests {
 			if strings.Contains(strings.ToLower(acc.Address.City), strings.ToLower(req.City)) && strings.Contains(strings.ToLower(acc.Address.Country), strings.ToLower(req.Country)) {
 				accommodations = append(accommodations, acc)
+				realPrices = append(realPrices, prices[i])
 			}
 		}
 	}
 	if len(accommodations) == 0 {
 		return nil, nil, 0, errors.New("no accommodations found")
 	}
-	return accommodations, prices, numberOfDays, nil
+	return accommodations, realPrices, numberOfDays, nil
 }

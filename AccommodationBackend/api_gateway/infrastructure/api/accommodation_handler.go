@@ -70,7 +70,7 @@ func (handler *AccommodationHandler) UpdateAvailability(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
-	ctx.JSON(http.StatusCreated, response)
+	ctx.JSON(http.StatusOK, response)
 	return
 }
 
@@ -92,7 +92,7 @@ func (handler *AccommodationHandler) CheckAvailability(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
-	ctx.JSON(http.StatusCreated, response)
+	ctx.JSON(http.StatusOK, response)
 	return
 }
 
@@ -114,6 +114,6 @@ func (handler *AccommodationHandler) Search(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
-	ctx.JSON(http.StatusCreated, response)
+	ctx.JSON(http.StatusOK, response)
 	return
 }

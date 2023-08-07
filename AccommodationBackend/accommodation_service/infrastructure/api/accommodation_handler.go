@@ -50,9 +50,9 @@ func (handler *AccommodationHandler) CheckAvailability(ctx context.Context, requ
 }
 
 func (handler *AccommodationHandler) Search(ctx context.Context, request *accommodation.SearchRequest) (*accommodation.SearchResponse, error) {
-	accommodations, prices, numberofDays, err := handler.service.Search(request)
+	accommodations, prices, numberOfDays, err := handler.service.Search(request)
 	if err != nil {
 		return nil, status.Error(codes.Aborted, err.Error())
 	}
-	return MapAccommodationsToSearchRequest(accommodations, prices, numberofDays), nil
+	return MapAccommodationsToSearchRequest(accommodations, prices, numberOfDays, int(request.NumberOfGuests)), nil
 }

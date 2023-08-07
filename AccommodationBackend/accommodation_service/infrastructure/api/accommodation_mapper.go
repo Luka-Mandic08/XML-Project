@@ -26,7 +26,7 @@ func MapCreateRequestToAccommodation(req *accommodation.CreateRequest) *model.Ac
 	return &acc
 }
 
-func MapAccommodationsToSearchRequest(accs []*model.Accommodation, prices []float64, numberOfDays int) *accommodation.SearchResponse {
+func MapAccommodationsToSearchRequest(accs []*model.Accommodation, prices []float64, numberOfDays, numberOfGuests int) *accommodation.SearchResponse {
 	var searchAccommodations = []*accommodation.SearchResultAccommodation{}
 	for i, acc := range accs {
 		address := accommodation.Address{
@@ -42,6 +42,10 @@ func MapAccommodationsToSearchRequest(accs []*model.Accommodation, prices []floa
 			Images:     acc.Images,
 			UnitPrice:  float32(prices[i] / float64(numberOfDays)),
 			TotalPrice: float32(prices[i]),
+		}
+		if acc.PriceIsPerGuest {
+			searchAccommodation.TotalPrice *= float32(numberOfGuests)
+			searchAccommodation.UnitPrice *= float32(numberOfGuests)
 		}
 		searchAccommodations = append(searchAccommodations, &searchAccommodation)
 	}
