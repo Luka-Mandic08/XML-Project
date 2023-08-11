@@ -1,86 +1,101 @@
-import { login } from '@frontend/features/flights/login/data-access';
-import { AppRoutes } from '@frontend/models';
-import { Grid, Typography, TextField, Button, Divider, Link } from '@mui/material';
+import { LoginToBookingApp, LoginToFlightsApp } from '@frontend/features/flights/login/data-access';
+import { AppRoutes, BookingAppRoutes } from '@frontend/models';
+import { Container, Typography } from '@mui/material';
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
+import styles from './login-page.module.css';
 
 /* eslint-disable-next-line */
-export interface LoginPageProps {}
+export interface LoginPageProps {
+  isBookingApp?: boolean;
+}
 
 export function LoginPage(props: LoginPageProps) {
-  const [username, setUsername] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
   const [error, setError] = useState<string>('');
+
   const navigate = useNavigate();
+  const {
+    register,
+    getValues,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      username: '',
+      password: '',
+    },
+  });
 
-  const onUsernameChange = (e: any) => setUsername(e.target.value);
-  const onPasswordChange = (e: any) => setPassword(e.target.value);
-
-  const handleSubmit = async () => {
-    let rsp;
-    if (username !== '' && password !== '') {
-      rsp = await login(username, password);
+  const onSubmit = async (data: any) => {
+    if (props.isBookingApp === true) {
+      await LoginToBookingApp(data.username, data.password);
+      if (localStorage.getItem('role') === 'Guest') {
+        navigate(BookingAppRoutes.HomeGuest);
+      } else if (localStorage.getItem('role') === 'Host') {
+        navigate(BookingAppRoutes.HomeHost);
+      } else {
+        setError('Wrong credentials');
+      }
+    } else {
+      const rsp = await LoginToFlightsApp(data.username, data.password);
       if (rsp === undefined) {
         setError('Wrong credentials');
       } else {
         navigate(AppRoutes.Home);
       }
-    } else setError('Please fill all fields');
+    }
   };
 
   return (
-    <Grid container direction="row" justifyContent="center" alignItems="center" sx={{ marginTop: '10%', width: '100%' }}>
-      <Grid xs={4}></Grid>
-      <Grid container direction="column" justifyContent="start" alignItems="center" xs={3} sx={{ border: '3px solid #212121', height: 400 }}>
-        <Grid item sx={{ mb: 4, mt: 6 }}>
-          <Typography variant="h4">Login</Typography>
-        </Grid>
-        <Grid item sx={{ mb: 1 }}>
-          <TextField
-            onChange={onUsernameChange}
-            value={username}
+    <Container maxWidth="sm" className={styles.loginContainer}>
+      <Typography variant="h4" sx={{ mb: '2rem' }} align="center">
+        Log in
+      </Typography>
+
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className={styles.inputContainer}>
+          <input
+            type="text"
             id="username"
-            label="username"
-            variant="outlined"
-            sx={{ width: 290 }}
-            inputProps={{ style: { height: 15 } }}
+            value={watch('username')}
+            {...register('username', {
+              required: 'This field is required.',
+            })}
           />
-        </Grid>
-        <Grid item sx={{ mb: 3 }}>
-          <TextField
+          <label className={styles.label} htmlFor="username" id="label-username">
+            <div className={styles.text}>Username</div>
+          </label>
+          <label className={styles.errorLabel}>{errors.username?.message}</label>
+        </div>
+
+        <div className={styles.inputContainer}>
+          <input
             type="password"
-            onChange={onPasswordChange}
-            value={password}
             id="password"
-            label="password"
-            variant="outlined"
-            sx={{ width: 290 }}
-            inputProps={{ style: { height: 15 } }}
+            value={watch('password')}
+            {...register('password', {
+              required: 'This field is required.',
+            })}
           />
-          <Typography color="red">{error}</Typography>
-        </Grid>
-        <Grid item sx={{ mb: 1 }}>
-          <Button
-            onClick={handleSubmit}
-            variant="contained"
-            sx={{ width: 290, backgroundColor: '#212121', '&:hover': { backgroundColor: '#ffffff', color: '#212121' } }}
-          >
-            Login
-          </Button>
-        </Grid>
-        <Divider sx={{ backgroundColor: '#212121', width: 280, mb: 1 }} />
-        <Grid item sx={{ mb: 1 }}>
-          <Button
-            onClick={() => navigate(AppRoutes.Register)}
-            variant="contained"
-            sx={{ width: 290, backgroundColor: '#212121', '&:hover': { backgroundColor: '#ffffff', color: '#212121' } }}
-          >
-            Register
-          </Button>
-        </Grid>
-      </Grid>
-      <Grid xs={4}></Grid>
-    </Grid>
+          <label className={styles.label} htmlFor="password" id="label-password">
+            <div className={styles.text}>Password</div>
+          </label>
+          <label className={styles.errorLabel}>{errors.password?.message}</label>
+        </div>
+
+        <input
+          style={{ width: '50%', marginLeft: '25%', marginRight: '25%', marginTop: '1rem' }}
+          type="submit"
+          value={props.isBookingApp ? 'Login to Booking App' : 'Login to Flights App'}
+        />
+      </form>
+
+      <Typography variant="subtitle1" color={'red'} align="center" sx={{ mt: '0.5rem' }}>
+        {error}
+      </Typography>
+    </Container>
   );
 }
 

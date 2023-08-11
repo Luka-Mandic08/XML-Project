@@ -58,7 +58,8 @@ func CreateRoutersAndSetRoutes(config *Config) *gin.Engine {
 	authGroup.POST("/register", authHandler.Register)
 	authGroup.Use(services.ValidateToken()) //Login i register su navedeni pre ove linije, pa se za njih ne koristi validateToken
 	authGroup.PUT("/update", authHandler.Update)
-	authGroup.DELETE("/delete/:id", authHandler.Delete)
+	authGroup.DELETE("/delete/:userId", authHandler.Delete)
+	authGroup.GET("/get/:userId", authHandler.GetByUserId)
 
 	userGroup := router.Group("/users")
 	userGroup.Use(services.ValidateToken())

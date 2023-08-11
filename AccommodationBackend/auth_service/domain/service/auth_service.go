@@ -26,6 +26,10 @@ func (service *AuthService) GetByUsername(username string) (*model.Account, erro
 	return service.store.GetByUsername(username)
 }
 
+func (service *AuthService) GetByUserId(userId string) (*model.Account, error) {
+	return service.store.GetByUserId(userId)
+}
+
 func (service *AuthService) Insert(account *model.Account) (*model.Account, error) {
 	return service.store.Insert(account)
 }

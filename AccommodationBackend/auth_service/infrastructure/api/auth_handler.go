@@ -71,3 +71,11 @@ func (handler *AuthHandler) Delete(ctx context.Context, request *pb.DeleteReques
 	}
 	return &pb.DeleteResponse{Message: "Account successfully deleted"}, nil
 }
+
+func (handler *AuthHandler) GetByUserId(ctx context.Context, request *pb.GetByUserIdRequest) (*pb.GetByUserIdResponse, error) {
+	result, err := handler.service.GetByUserId(request.UserId)
+	if err != nil {
+		return nil, status.Error(codes.Unknown, "Unable to get account")
+	}
+	return GetMapper(result), nil
+}

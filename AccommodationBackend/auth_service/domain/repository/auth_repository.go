@@ -44,6 +44,11 @@ func (store *AuthMongoDBStore) GetByUsername(username string) (*model.Account, e
 	return store.filterOne(filter)
 }
 
+func (store *AuthMongoDBStore) GetByUserId(userId string) (*model.Account, error) {
+	filter := bson.M{"userid": userId}
+	return store.filterOne(filter)
+}
+
 func (store *AuthMongoDBStore) Update(account *model.Account) (*mongo.UpdateResult, error) {
 	filter := bson.M{"userid": account.UserId}
 	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(account.Password), bcrypt.DefaultCost)

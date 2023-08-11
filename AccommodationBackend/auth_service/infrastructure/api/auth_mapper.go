@@ -35,3 +35,11 @@ func UpdateMapper(req *auth.UpdateRequest) *model.Account {
 	}
 	return &acc
 }
+
+func GetMapper(acc *model.Account) *auth.GetByUserIdResponse {
+	res := auth.GetByUserIdResponse{
+		Username: acc.Username,
+		Password: acc.Password,
+	}
+	return &res
+}

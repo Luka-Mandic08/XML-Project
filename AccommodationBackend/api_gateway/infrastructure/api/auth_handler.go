@@ -132,7 +132,7 @@ func (handler *AuthHandler) Update(ctx *gin.Context) {
 
 func (handler *AuthHandler) Delete(ctx *gin.Context) {
 	//TODO izvrsiti provere da li se nalog sme obrisati
-	id := ctx.Param("id")
+	id := ctx.Param("userId")
 	if services.AuthorizeId(id, ctx) {
 		ctx.JSON(http.StatusUnauthorized, "Not allowed")
 		return
@@ -150,6 +150,26 @@ func (handler *AuthHandler) Delete(ctx *gin.Context) {
 	}
 	req := auth.DeleteRequest{Id: id}
 	response, err := handler.authClient.Delete(ctx, &req)
+	if err != nil {
+		grpcError, ok := status.FromError(err)
+		if ok {
+			ctx.JSON(http.StatusBadRequest, grpcError.Message())
+			return
+		}
+		ctx.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+	ctx.JSON(http.StatusOK, response)
+}
+
+func (handler *AuthHandler) GetByUserId(ctx *gin.Context) {
+	userId := ctx.Param("userId")
+	if services.AuthorizeId(userId, ctx) {
+		ctx.JSON(http.StatusUnauthorized, "Not allowed")
+		return
+	}
+	request := auth.GetByUserIdRequest{UserId: userId}
+	response, err := handler.authClient.GetByUserId(ctx, &request)
 	if err != nil {
 		grpcError, ok := status.FromError(err)
 		if ok {

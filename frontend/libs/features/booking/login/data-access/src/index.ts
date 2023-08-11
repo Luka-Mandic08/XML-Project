@@ -1,1 +1,1 @@
-export * from './lib/features-booking-login-data-access';
+export * from './lib/register.service';

@@ -1,1 +1,1 @@
-export * from './lib/features-booking-login-container';
+export * from './lib/register-page/register-page';
