@@ -44,6 +44,10 @@ func CreateRoutersAndSetRoutes(config *Config) *gin.Engine {
 	accommodationClient := services.NewAccommodationClient(accommodationServiceAddress)
 	accommodationHandler := handler.NewAccommodationHandler(accommodationClient)
 
+	reservationServiceAddress := fmt.Sprintf("%s:%s", config.ReservationHost, config.ReservationPort)
+	reservationClient := services.NewReservationClient(reservationServiceAddress)
+	reservationHandler := handler.NewReservationHandler(reservationClient)
+
 	corsMiddleware := cors.New(cors.Config{
 		AllowOrigins: []string{"*"},
 		AllowMethods: []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
@@ -68,8 +72,30 @@ func CreateRoutersAndSetRoutes(config *Config) *gin.Engine {
 	accommodationGroup := router.Group("/accommodation")
 	accommodationGroup.Use(services.ValidateToken())
 	accommodationGroup.POST("/create", services.AuthorizeRole("Host"), accommodationHandler.Create)
+	/*{
+	    "name":"Vila detelinara",
+	    "address":{
+	        "street":"Moja ulica",
+	        "city":"Ns",
+	        "country":"Srbija"
+	    },
+	    "amenities":["Klima","Bazen"],
+	    "images":["a","b"],
+	    "minGuests":2,
+	    "maxGuests":5,
+	    "hostId":"64d4fdddddf5b55946ce909f",
+	    "priceIsPerGuest":true,
+	    "hasAutomaticReservations":false
+	}*/
 	accommodationGroup.POST("/updateAvailability", services.AuthorizeRole("Host"), accommodationHandler.UpdateAvailability)
 	accommodationGroup.POST("/checkAvailability", accommodationHandler.CheckAvailability)
 	accommodationGroup.POST("/search", accommodationHandler.Search)
+
+	reservationGroup := router.Group("/reservation")
+	reservationGroup.Use(services.ValidateToken())
+	reservationGroup.GET("/test", reservationHandler.Test)
+	reservationGroup.GET("/get/:id", services.AuthorizeRole("Host"), reservationHandler.Get)
+	reservationGroup.POST("/create", services.AuthorizeRole("Host"), reservationHandler.Create)
+
 	return router
 }

@@ -18,6 +18,8 @@ services:
       USER_SERVICE_PORT: ${USER_SERVICE_PORT}
       ACCOMMODATION_SERVICE_HOST: ${ACCOMMODATION_SERVICE_HOST}
       ACCOMMODATION_SERVICE_PORT: ${ACCOMMODATION_SERVICE_PORT}
+      RESERVATION_SERVICE_HOST: ${RESERVATION_SERVICE_HOST}
+      RESERVATION_SERVICE_PORT: ${RESERVATION_SERVICE_PORT}
     networks:
       - network
 
@@ -69,6 +71,22 @@ services:
     networks:
       - network
 
+  reservation_service:
+    image: reservation_service
+    container_name: reservation_service
+    build:
+      context: .
+      dockerfile: ./reservation_service/Dockerfile
+    restart: on-failure
+    environment:
+      ACCOMMODATION_DB_HOST: ${RESERVATION_DB_HOST}
+      ACCOMMODATION_DB_PORT: ${RESERVATION_DB_PORT}
+      ACCOMMODATION_SERVICE_PORT: ${RESERVATION_SERVICE_PORT}
+    depends_on:
+      - reservation_db
+    networks:
+      - network
+
   auth_db:
     image: mongo
     container_name: auth_db
@@ -102,6 +120,17 @@ services:
     networks:
       - network
 
+  reservation_db:
+    image: mongo
+    container_name: reservation_db
+    volumes:
+      - reservationDb:/data/db
+    restart: on-failure
+    ports:
+      - 5004:27017
+    networks:
+      - network
+
   nats:
     image: nats
     container_name: nats
@@ -113,6 +142,7 @@ volumes:
   authDb:
   userDb:
   accommodationDb:
+  reservationDb:
 
 networks:
   network:

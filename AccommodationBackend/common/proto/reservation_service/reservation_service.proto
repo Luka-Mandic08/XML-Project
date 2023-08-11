@@ -1,0 +1,60 @@
+syntax = "proto3";
+
+option go_package = "common/reservation";
+
+package reservation;
+
+service ReservationService{
+        rpc Get(GetRequest) returns(GetResponse) {}
+        rpc Create(CreateRequest) returns(GetResponse) {}
+        rpc Update(UpdateRequest) returns(GetResponse) {}
+        rpc Delete(GetRequest) returns(DeleteResponse) {}
+        rpc Test(TestRequest) returns(TestResponse) {}
+}
+
+message GetRequest {
+        string id = 1;
+}
+
+message GetResponse {
+        string id = 1;
+        string accommodation = 2;
+        string start = 3;
+        string end = 4;
+        string user = 5;
+}
+
+message CreateRequest{
+        string id = 1;
+        string accommodation = 2;
+        string start = 3;
+        string end = 4;
+        string user = 5;
+}
+
+message UpdateRequest{
+        string id = 1;
+        string accommodation = 2;
+        string start = 3;
+        string end = 4;
+        string user = 5;
+}
+
+message DeleteResponse {
+        string message = 1;
+}
+
+message TestRequest {
+        string id = 1;
+}
+
+message TestResponse {
+        string id = 1;
+}
+/*type Reservation struct {
+	Id              primitive.ObjectID `bson:"_id,omitempty"`
+	AccommodationId string             `bson:"accommodation,omitempty"`
+	Start           time.Time          `bson:"start,omitempty"`
+	End             time.Time          `bson:"end,omitempty"`
+	UserId          string             `bson:"user,omitempty"`
+}*/
