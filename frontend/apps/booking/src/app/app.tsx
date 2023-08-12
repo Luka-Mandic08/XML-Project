@@ -6,6 +6,7 @@ import { RegisterPage } from '@frontend/features/booking/login/container';
 import { BookingNavBar } from '@frontend/features/booking/navigation/container';
 import { ProfileInfo } from '@frontend/features/booking/profiles/container';
 import { HostAccomodation } from '@frontend/features/booking/accomodation/container';
+import { ReservationPageContainer } from '@frontend/features/booking/reservation/container';
 
 export function App() {
   return (
@@ -17,6 +18,8 @@ export function App() {
         <Route path={BookingAppRoutes.HomeGuest} element={<LoginPage isBookingApp={true} />} />
         <Route path={BookingAppRoutes.HomeHost} element={<HostAccomodation />} />
         <Route path={BookingAppRoutes.Profile} element={<ProfileInfo />} />
+        <Route path={BookingAppRoutes.MyReservations} element={<ReservationPageContainer />} />
+        <Route path={BookingAppRoutes.AccomodationReservation} element={<MyReservationsPage />} />
       </Routes>
     </>
   );
