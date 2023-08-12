@@ -49,7 +49,7 @@ func (store *AuthMongoDBStore) GetByUserId(userId string) (*model.Account, error
 	return store.filterOne(filter)
 }
 
-func (store *AuthMongoDBStore) Update(account *model.Account) (*mongo.UpdateResult, error) {
+func (store *AuthMongoDBStore) Update(account *model.Account) (*mongo.UpdateResult, *model.Account, error) {
 	filter := bson.M{"userid": account.UserId}
 	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(account.Password), bcrypt.DefaultCost)
 	update := bson.D{{"$set",
@@ -59,10 +59,11 @@ func (store *AuthMongoDBStore) Update(account *model.Account) (*mongo.UpdateResu
 		},
 	}}
 	result, err := store.accounts.UpdateOne(context.TODO(), filter, update)
+	account, _ = store.filterOne(filter)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
-	return result, nil
+	return result, account, nil
 }
 
 func (store *AuthMongoDBStore) Delete(id string) (*mongo.DeleteResult, error) {

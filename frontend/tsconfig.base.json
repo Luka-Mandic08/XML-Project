@@ -16,6 +16,8 @@
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
     "paths": {
+      "@frontend/features/booking/accomodation/container": ["libs/features/booking/accomodation/container/src/index.ts"],
+      "@frontend/features/booking/accomodation/data": ["libs/features/booking/accomodation/data/src/index.ts"],
       "@frontend/features/booking/login/container": ["libs/features/booking/login/container/src/index.ts"],
       "@frontend/features/booking/login/data-access": ["libs/features/booking/login/data-access/src/index.ts"],
       "@frontend/features/booking/navigation/container": ["libs/features/booking/navigation/container/src/index.ts"],

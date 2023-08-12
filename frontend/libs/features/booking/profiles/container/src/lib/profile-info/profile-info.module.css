@@ -101,3 +101,11 @@ input[type='submit']:hover {
   background-color: whitesmoke;
   padding: 30px 50px 30px 50px !important;
 }
+
+.buttonTopContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: fit-content;
+  gap: 1rem;
+}

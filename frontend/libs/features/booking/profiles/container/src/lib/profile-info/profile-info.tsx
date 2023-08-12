@@ -1,9 +1,15 @@
 import { UpdatePersonalData, UpdateCredentials } from '@frontend/models';
 import { Button, Grid, Typography } from '@mui/material';
-import { useForm } from 'react-hook-form';
+import { set, useForm } from 'react-hook-form';
 import styles from './profile-info.module.css';
 import { useState, useEffect } from 'react';
-import { GetAccountInformation, GetProfileInformation } from '@frontend/features/booking/profiles/data-access';
+import {
+  DeleteAccount,
+  GetAccountInformation,
+  GetProfileInformation,
+  UpdateAccountInformation,
+  UpdateProfileInformation,
+} from '@frontend/features/booking/profiles/data-access';
 
 /* eslint-disable-next-line */
 export interface ProfileInfoProps {}
@@ -42,7 +48,11 @@ export function ProfileInfo(props: ProfileInfoProps) {
   }, [userInfo]);
 
   useEffect(() => {
-    resetAccount(accountInfo);
+    resetAccount({
+      username: accountInfo.username,
+      password: '',
+      confirmPassword: '',
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accountInfo]);
 
@@ -80,13 +90,23 @@ export function ProfileInfo(props: ProfileInfoProps) {
     },
   });
 
-  const onSubmitProfile = (data: UpdatePersonalData) => {
-    /*RegisterNewUser(data);
-    navigate(AppRoutes.Login);*/
+  const onSubmitProfile = async (data: UpdatePersonalData) => {
+    setUserInfo(await UpdateProfileInformation(data));
   };
-  const onSubmitAccount = (data: UpdateCredentials) => {
-    /*RegisterNewUser(data);
-    navigate(AppRoutes.Login);*/
+  const onSubmitAccount = async (data: UpdateCredentials) => {
+    const res: any = await UpdateAccountInformation(data);
+    const updatedAccountInfo: UpdateCredentials = {
+      username: res.username,
+      password: '',
+    };
+    resetAccount(updatedAccountInfo);
+    setAccountInfo(updatedAccountInfo);
+  };
+
+  const deleteAccount = async () => {
+    await DeleteAccount();
+    localStorage.clear();
+    window.location.href = '/';
   };
 
   return (
@@ -95,18 +115,32 @@ export function ProfileInfo(props: ProfileInfoProps) {
         <Grid item sx={{ marginBottom: '1rem' }}>
           <Typography variant="h4">{accountInfo.username}'s Profile</Typography>
         </Grid>
-        <Grid item sx={{ marginBottom: '1rem' }}>
-          <Button
-            variant="contained"
-            size="large"
-            onClick={() => {
-              setIsDisabled(!isDisabled);
-            }}
-            sx={{ color: 'white', background: '#212121', ':hover': { background: 'white', color: '#212121' } }}
-          >
-            {isDisabled ? 'Enable editing' : 'Disable editing'}
-          </Button>
-        </Grid>
+        <div className={styles.buttonTopContainer}>
+          <Grid item sx={{ marginBottom: '1rem' }}>
+            <Button
+              variant="contained"
+              size="large"
+              onClick={() => {
+                setIsDisabled(!isDisabled);
+              }}
+              sx={{ color: 'white', background: '#212121', ':hover': { background: 'white', color: '#212121' } }}
+            >
+              {isDisabled ? 'Enable editing' : 'Disable editing'}
+            </Button>
+          </Grid>
+          <Grid item sx={{ marginBottom: '1rem' }}>
+            <Button
+              variant="contained"
+              size="large"
+              onClick={() => {
+                deleteAccount();
+              }}
+              sx={{ color: 'white', background: 'red', ':hover': { background: 'white', color: '#212121' } }}
+            >
+              Delete account
+            </Button>
+          </Grid>
+        </div>
       </Grid>
       <Grid item xs={12} md={5} sx={{ marginY: '1rem' }}>
         <form onSubmit={handleSubmitProfile(onSubmitProfile)}>
@@ -223,16 +257,9 @@ export function ProfileInfo(props: ProfileInfoProps) {
             </div>
 
             <div className={styles.inputContainer}>
-              <input
-                type="password"
-                id="password"
-                value={watchAccount('password')}
-                {...registerAccount('password', {
-                  required: 'This field is required.',
-                })}
-              />
+              <input type="password" id="password" value={watchAccount('password')} {...registerAccount('password', {})} />
               <label className={styles.label} htmlFor="password" id="label-password">
-                <div className={styles.text}>Password</div>
+                <div className={styles.text}>New password</div>
               </label>
               <label className={styles.errorLabel}>{errorsAccount.password?.message}</label>
             </div>
@@ -243,7 +270,6 @@ export function ProfileInfo(props: ProfileInfoProps) {
                 id="confirmPassword"
                 value={watchAccount('confirmPassword')}
                 {...registerAccount('confirmPassword', {
-                  required: 'This field is required.',
                   validate: {
                     isSameAsPassword: (v) => v === getValuesAccount('password') || 'Passwords do not match',
                   },

@@ -16,10 +16,7 @@ export function BookingNavBar(props: BookingNavBarProps) {
   }, [role, navigate]);
 
   const logout = () => {
-    localStorage.removeItem('role');
-    localStorage.removeItem('userId');
-    localStorage.removeItem('jwt');
-    localStorage.removeItem('username');
+    localStorage.clear();
 
     navigate(BookingAppRoutes.HomeGuest);
     window.location.reload();

@@ -34,7 +34,7 @@ func (service *AuthService) Insert(account *model.Account) (*model.Account, erro
 	return service.store.Insert(account)
 }
 
-func (service *AuthService) Update(account *model.Account) (*mongo.UpdateResult, error) {
+func (service *AuthService) Update(account *model.Account) (*mongo.UpdateResult, *model.Account, error) {
 	return service.store.Update(account)
 }
 

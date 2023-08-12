@@ -42,6 +42,7 @@ message UpdateRequest {
 
 message UpdateResponse{
         string message = 1;
+        string username = 2;
 }
 
 message DeleteRequest {
@@ -58,5 +59,4 @@ message GetByUserIdRequest{
 
 message GetByUserIdResponse{
         string username = 1;
-        string password = 2;
 }
