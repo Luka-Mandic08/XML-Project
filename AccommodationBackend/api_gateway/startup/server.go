@@ -72,5 +72,6 @@ func CreateRoutersAndSetRoutes(config *Config) *gin.Engine {
 	accommodationGroup.POST("/updateAvailability", services.AuthorizeRole("Host"), accommodationHandler.UpdateAvailability)
 	accommodationGroup.POST("/checkAvailability", accommodationHandler.CheckAvailability)
 	accommodationGroup.POST("/search", accommodationHandler.Search)
+	accommodationGroup.GET("/all/host/:hostId", accommodationHandler.GetAllByHostId)
 	return router
 }

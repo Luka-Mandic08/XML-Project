@@ -1,0 +1,25 @@
+import { Address } from './bookingUser';
+
+export interface AccommodationInfo {
+  id: string;
+  hostId: string;
+  name: string;
+  address: Address;
+  amenities: string[];
+  images: string[];
+  minGuests: number;
+  maxGuests: number;
+  priceIsPerGuest: boolean;
+  hasAutomaticReservations: boolean;
+}
+
+export interface AccommodationCreateUpdateDTO {
+  id: string;
+  hostId: string;
+  name: string;
+  address: Address;
+  minGuests: number;
+  maxGuests: number;
+  priceIsPerGuest: boolean;
+  hasAutomaticReservations: boolean;
+}

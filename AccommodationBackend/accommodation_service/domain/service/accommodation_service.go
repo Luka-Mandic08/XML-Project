@@ -154,3 +154,7 @@ func (service *AccommodationService) Search(req *accommodation.SearchRequest) ([
 	}
 	return accommodations, realPrices, numberOfDays, nil
 }
+
+func (service *AccommodationService) GetAllByHostId(hostId string) ([]*model.Accommodation, error) {
+	return service.accommodationStore.GetAllByHostId(hostId)
+}

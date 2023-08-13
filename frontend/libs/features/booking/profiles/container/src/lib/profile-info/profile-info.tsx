@@ -142,10 +142,12 @@ export function ProfileInfo(props: ProfileInfoProps) {
           </Grid>
         </div>
       </Grid>
-      <Grid item xs={12} md={5} sx={{ marginY: '1rem' }}>
+      <Grid item xs={12} md={5} className={styles.formContainer}>
         <form onSubmit={handleSubmitProfile(onSubmitProfile)}>
-          <fieldset disabled={isDisabled} style={{ border: 'none' }}>
-            <Typography variant="h6">Peronal information</Typography>
+          <fieldset disabled={isDisabled}>
+            <Typography variant="h6" marginBottom={'1rem'}>
+              Peronal information
+            </Typography>
             <div className={styles.inputContainer}>
               <input
                 type="text"
@@ -190,7 +192,9 @@ export function ProfileInfo(props: ProfileInfoProps) {
               </label>
               <label className={styles.errorLabel}>{errorsProfile.email?.message}</label>
             </div>
-            <Typography variant="h6">Address information</Typography>
+            <Typography variant="h6" marginBottom={'1rem'}>
+              Address information
+            </Typography>
             <div className={styles.inputContainer}>
               <input
                 type="text"
@@ -237,10 +241,12 @@ export function ProfileInfo(props: ProfileInfoProps) {
           </fieldset>
         </form>
       </Grid>
-      <Grid item xs={12} md={5} sx={{ marginY: '1rem' }}>
+      <Grid item xs={12} md={5} className={styles.formContainer}>
         <form onSubmit={handleSubmitAccount(onSubmitAccount)}>
-          <fieldset disabled={isDisabled} style={{ border: 'none' }}>
-            <Typography variant="h6">Account information</Typography>
+          <fieldset disabled={isDisabled}>
+            <Typography variant="h6" marginBottom={'1rem'}>
+              Account information
+            </Typography>
             <div className={styles.inputContainer}>
               <input
                 type="text"

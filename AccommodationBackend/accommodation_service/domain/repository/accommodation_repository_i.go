@@ -12,4 +12,5 @@ type AccommodationStore interface {
 	GetByAddress(username model.Address) (*model.Accommodation, error)
 	Update(*model.Accommodation) (*mongo.UpdateResult, error)
 	Delete(id string) (*mongo.DeleteResult, error)
+	GetAllByHostId(hostId string) ([]*model.Accommodation, error)
 }

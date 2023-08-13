@@ -56,3 +56,11 @@ func (handler *AccommodationHandler) Search(ctx context.Context, request *accomm
 	}
 	return MapAccommodationsToSearchRequest(accommodations, prices, numberOfDays, int(request.NumberOfGuests)), nil
 }
+
+func (handler *AccommodationHandler) GetAllByHostId(ctx context.Context, request *accommodation.GetAllByHostIdRequest) (*accommodation.GetAllByHostIdResponse, error) {
+	accommodations, err := handler.service.GetAllByHostId(request.HostId)
+	if err != nil {
+		return nil, status.Error(codes.Aborted, err.Error())
+	}
+	return MapAccommodations(accommodations), nil
+}

@@ -1,6 +1,7 @@
 .inputContainer {
   position: relative;
   margin-bottom: 2rem;
+  width: 100%;
 }
 
 input,
@@ -90,24 +91,30 @@ input[type='submit']:hover {
   height: auto;
 }
 
-.formContainer {
-  border: #212121 solid 3px;
-  border-radius: 5px;
-  background-color: whitesmoke;
-  padding: 20px 40px 20px 40px !important;
-  margin: 0 1rem !important;
-}
-
-.buttonTopContainer {
+.lineContainer {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
-  width: fit-content;
-  gap: 1rem;
+  width: 100%;
+  gap: 2rem;
 }
 
-fieldset {
-  border: none;
-  padding: 0;
-  margin: 0;
+.amenitiesContainer {
+  justify-content: space-between;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 100%;
+  gap: 1.5rem;
+}
+
+.amenityCard {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  min-width: 130px;
+  border: 1px solid #c0c0c0;
+  border-radius: 4px;
+  box-sizing: border-box;
+  padding: 16px;
 }

@@ -12,6 +12,7 @@ export const BookingAppRoutes = {
   HomeGuest: '/',
   HomeHost: '/myaccomodations',
   Profile: '/profile',
+  CreateAccommodation: '/create/accommodation',
 };
 
 export const SharedRoutes = {

@@ -12,6 +12,7 @@ service AccommodationService{
         rpc UpdateAvailability(UpdateAvailabilityRequest) returns(Response) {}
         rpc CheckAvailability(CheckAvailabilityRequest) returns(CheckAvailabilityResponse){}
         rpc Search(SearchRequest) returns(SearchResponse) {}
+        rpc GetAllByHostId(GetAllByHostIdRequest) returns(GetAllByHostIdResponse) {}
 }
 
 message GetRequest{
@@ -83,4 +84,25 @@ message SearchResultAccommodation{
         repeated string images = 5;
         float unitPrice = 6;
         float totalPrice = 7;
+}
+
+message GetAllByHostIdRequest{
+        string hostId = 1;
+}
+
+message Accommodation{
+        string name = 1;
+        Address address = 2;
+        repeated string amenities = 3;
+        repeated string images = 4;
+        int32 minGuests = 5;
+        int32 maxGuests = 6;
+        bool priceIsPerGuest = 7;
+        bool hasAutomaticReservations = 8;
+        string hostId = 9;
+        string id = 10;
+}
+
+message GetAllByHostIdResponse{
+        repeated Accommodation accommodations = 1;
 }
