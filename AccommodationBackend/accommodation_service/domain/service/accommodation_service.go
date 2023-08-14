@@ -70,10 +70,10 @@ func (service *AccommodationService) CheckAccommodationAvailability(request *acc
 		return nil, errors.New("this accommodation does not exist")
 	}
 	if acc.MinGuests > request.NumberOfGuests {
-		return nil, errors.New("this accommodation accepts a minimum of " + strconv.Itoa(int(acc.MinGuests)) + " guests")
+		return nil, errors.New("this accommodation accepts a minimum of " + strconv.Itoa(int(acc.MinGuests)) + " guests, requested " + strconv.Itoa(int(request.NumberOfGuests)))
 	}
 	if acc.MaxGuests < request.NumberOfGuests {
-		return nil, errors.New("this accommodation accepts a maximum of " + strconv.Itoa(int(acc.MaxGuests)) + " guests")
+		return nil, errors.New("this accommodation accepts a maximum of " + strconv.Itoa(int(acc.MaxGuests)) + " guests, requested " + strconv.Itoa(int(request.NumberOfGuests)))
 	}
 
 	totalPrice, availabilitiesToUpdate, err := service.CheckDateAvailability(request, acc)
@@ -153,4 +153,43 @@ func (service *AccommodationService) Search(req *accommodation.SearchRequest) ([
 		return nil, nil, 0, errors.New("no accommodations found")
 	}
 	return accommodations, realPrices, numberOfDays, nil
+}
+
+func (service *AccommodationService) CheckAccommodationExists(id primitive.ObjectID) error {
+	_, err := service.accommodationStore.GetById(id)
+	return err
+}
+
+func (service *AccommodationService) GetAllAvailability(dateFrom time.Time, dateTo time.Time, accommodationId string) []*model.Availability {
+	// TODO Price?
+	var availabilitiesToUpdate []*model.Availability
+	for date := dateFrom; !date.After(dateTo); date = date.Add(time.Hour * 24) {
+		av, _ := service.availabilityStore.GetByDateAndAccommodation(accommodationId, date)
+		availabilitiesToUpdate = append(availabilitiesToUpdate, av)
+	}
+	return availabilitiesToUpdate
+}
+
+func (service *AccommodationService) CheckAccommodationAvailable(request *accommodation.CheckAvailabilityRequest) (*accommodation.CheckAvailabilityResponse, error) {
+	id, _ := primitive.ObjectIDFromHex(request.Accommodationid)
+	acc, _ := service.accommodationStore.GetById(id)
+	if acc == nil {
+		return nil, errors.New("this accommodation does not exist")
+	}
+	if acc.MinGuests > request.NumberOfGuests {
+		return nil, errors.New("this accommodation accepts a minimum of " + strconv.Itoa(int(acc.MinGuests)) + " guests, requested " + strconv.Itoa(int(request.NumberOfGuests)))
+	}
+	if acc.MaxGuests < request.NumberOfGuests {
+		return nil, errors.New("this accommodation accepts a maximum of " + strconv.Itoa(int(acc.MaxGuests)) + " guests, requested " + strconv.Itoa(int(request.NumberOfGuests)))
+	}
+
+	totalPrice, _, err := service.CheckDateAvailability(request, acc)
+	if err != nil {
+		return nil, err
+	}
+
+	return &accommodation.CheckAvailabilityResponse{
+		ShouldCreateAutomaticReservation: acc.HasAutomaticReservations,
+		TotalPrice:                       totalPrice,
+	}, nil
 }

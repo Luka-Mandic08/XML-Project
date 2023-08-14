@@ -38,3 +38,8 @@ func (service *UserService) Delete(id string) (*mongo.DeleteResult, error) {
 	uuid, _ := primitive.ObjectIDFromHex(id)
 	return service.store.Delete(uuid)
 }
+
+func (service *UserService) CheckUserExists(id primitive.ObjectID) error {
+	_, err := service.store.Get(id)
+	return err
+}

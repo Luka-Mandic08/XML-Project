@@ -59,7 +59,25 @@ func CreateRoutersAndSetRoutes(config *Config) *gin.Engine {
 
 	authGroup := router.Group("/auth")
 	authGroup.POST("/login", authHandler.Login)
+	/*{
+	    "username": "marko1",
+	    "password": "sifra"
+	}*/
 	authGroup.POST("/register", authHandler.Register)
+	/*{
+	    "name":"Marko",
+	    "surname":"Mihajlovic",
+	    "email":"marko@gmail.com",
+	    "address":{
+	        "street":"Moja ulica",
+	        "city":"Ns",
+	        "country":"Srbija"
+	    },
+
+	    "username":"marko1",
+	    "password": "sifra",
+	    "role":"Host"
+	}*/
 	authGroup.Use(services.ValidateToken()) //Login i register su navedeni pre ove linije, pa se za njih ne koristi validateToken
 	authGroup.PUT("/update", authHandler.Update)
 	authGroup.DELETE("/delete/:id", authHandler.Delete)
@@ -88,14 +106,26 @@ func CreateRoutersAndSetRoutes(config *Config) *gin.Engine {
 	    "hasAutomaticReservations":false
 	}*/
 	accommodationGroup.POST("/updateAvailability", services.AuthorizeRole("Host"), accommodationHandler.UpdateAvailability)
+	/*{
+	    "accommodationid":"64ce8316903c974f5743bc7b",
+	    "dateFrom":"2023-08-15T00:00:00.00Z",
+	    "dateTo":"2023-08-18T00:00:00.00Z",
+	    "price":1500.00
+	}*/
 	accommodationGroup.POST("/checkAvailability", accommodationHandler.CheckAvailability)
 	accommodationGroup.POST("/search", accommodationHandler.Search)
 
 	reservationGroup := router.Group("/reservation")
 	reservationGroup.Use(services.ValidateToken())
-	reservationGroup.GET("/test", reservationHandler.Test)
-	reservationGroup.GET("/get/:id", services.AuthorizeRole("Host"), reservationHandler.Get)
-	reservationGroup.POST("/create", services.AuthorizeRole("Host"), reservationHandler.Create)
+	reservationGroup.GET("/getAllByUserId/:id", reservationHandler.GetAllByUserId)
+	reservationGroup.POST("/request", services.AuthorizeRole("Guest"), reservationHandler.Request)
+	/*{
+	    "accommodationId": "1",
+	    "start": "2023-08-15T00:00:00.00Z",
+	    "end": "2023-01-15T15:04:05.00Z",
+	    "userId": "1",
+		"numberOfGuests": 6
+	}*/
 
 	return router
 }

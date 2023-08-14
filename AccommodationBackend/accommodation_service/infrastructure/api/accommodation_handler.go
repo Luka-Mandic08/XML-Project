@@ -24,13 +24,16 @@ func (handler *AccommodationHandler) Get(ctx context.Context, request *accommoda
 	return nil, nil
 }
 
-func (handler *AccommodationHandler) Create(ctx context.Context, request *accommodation.CreateRequest) (*accommodation.Response, error) {
+func (handler *AccommodationHandler) Create(ctx context.Context, request *accommodation.CreateRequest) (*accommodation.CreateResponse, error) {
 	acc := MapCreateRequestToAccommodation(request)
 	acc, err := handler.service.Insert(acc)
 	if err != nil {
 		return nil, status.Error(codes.AlreadyExists, "An accommodation already exists at this location")
 	}
-	return &accommodation.Response{Message: "Accommodation successfully created"}, nil
+	return &accommodation.CreateResponse{
+		Id:      acc.Id.Hex(),
+		Message: "Accommodation successfully created",
+	}, nil
 }
 
 func (handler *AccommodationHandler) UpdateAvailability(ctx context.Context, request *accommodation.UpdateAvailabilityRequest) (*accommodation.Response, error) {

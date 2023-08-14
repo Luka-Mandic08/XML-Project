@@ -6,55 +6,91 @@ package reservation;
 
 service ReservationService{
         rpc Get(GetRequest) returns(GetResponse) {}
-        rpc Create(CreateRequest) returns(GetResponse) {}
-        rpc Update(UpdateRequest) returns(GetResponse) {}
-        rpc Delete(GetRequest) returns(DeleteResponse) {}
-        rpc Test(TestRequest) returns(TestResponse) {}
+        rpc Create(CreateRequest) returns(CreateResponse) {}
+        rpc Update(UpdateRequest) returns(UpdateResponse) {}
+        rpc Delete(DeleteRequest) returns(DeleteResponse) {}
+        rpc GetAllByUserId(GetAllByUserIdRequest) returns(GetAllByUserIdResponse) {}
+        rpc Request(RequestRequest) returns(RequestResponse) {}
+}
+
+message Reservation {
+        string id = 1;
+        string accommodationId = 2;
+        string start = 3;
+        string end = 4;
+        string userId = 5;
+        int32 numberOfGuests = 6;
+        string status = 7;
+        float price = 8;
 }
 
 message GetRequest {
         string id = 1;
 }
-
 message GetResponse {
         string id = 1;
-        string accommodation = 2;
+        string accommodationId = 2;
         string start = 3;
         string end = 4;
-        string user = 5;
+        string userId = 5;
+        int32 numberOfGuests = 6;
+        string status = 7;
+        float price = 8;
 }
 
 message CreateRequest{
-        string id = 1;
-        string accommodation = 2;
+        string accommodationId = 2;
         string start = 3;
         string end = 4;
-        string user = 5;
+        string userId = 5;
+        int32 numberOfGuests = 6;
+}
+message CreateResponse {
+        string id = 1;
 }
 
 message UpdateRequest{
         string id = 1;
-        string accommodation = 2;
+        string accommodationId = 2;
         string start = 3;
         string end = 4;
-        string user = 5;
+        string userId = 5;
+        int32 numberOfGuests = 6;
+        string status = 7;
+        float price = 8;
+}
+message UpdateResponse {
+        string id = 1;
+        string accommodationId = 2;
+        string start = 3;
+        string end = 4;
+        string userId = 5;
+        int32 numberOfGuests = 6;
+        string status = 7;
+        float price = 8;
 }
 
+message DeleteRequest {
+        string id = 1;
+}
 message DeleteResponse {
         string message = 1;
 }
 
-message TestRequest {
-        string id = 1;
+message GetAllByUserIdRequest {
+        string userId = 1;
+}
+message GetAllByUserIdResponse {
+        repeated Reservation reservation = 1;
 }
 
-message TestResponse {
+message RequestRequest{
+        string accommodationId = 2;
+        string start = 3;
+        string end = 4;
+        string userId = 5;
+        int32 numberOfGuests = 6;
+}
+message RequestResponse {
         string id = 1;
 }
-/*type Reservation struct {
-	Id              primitive.ObjectID `bson:"_id,omitempty"`
-	AccommodationId string             `bson:"accommodation,omitempty"`
-	Start           time.Time          `bson:"start,omitempty"`
-	End             time.Time          `bson:"end,omitempty"`
-	UserId          string             `bson:"user,omitempty"`
-}*/

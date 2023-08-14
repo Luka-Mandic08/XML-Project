@@ -108,3 +108,8 @@ func decodeAvailabilities(cursor *mongo.Cursor) (availabilities []*model.Availab
 	err = cursor.Err()
 	return
 }
+
+func (store *AvailabilityStore) CheckAvailabilityExists(id string, date time.Time) (*model.Availability, error) {
+	filter := bson.M{"accommodationid": id, "date": date}
+	return store.filterOne(filter)
+}

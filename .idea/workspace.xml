@@ -5,33 +5,55 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4b0e1be7-6ec0-46d9-93c7-08dba697d1a5" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/XML-Project.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/AccommodationBackend/api_gateway/infrastructure/api/reservation_handler.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/AccommodationBackend/common/proto/reservation_service/reservation_service.pb.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/AccommodationBackend/common/proto/reservation_service/reservation_service.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/AccommodationBackend/common/proto/reservation_service/reservation_service_grpc.pb.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/AccommodationBackend/reservation_service/Dockerfile" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/AccommodationBackend/reservation_service/domain/model/reservation.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/AccommodationBackend/reservation_service/domain/repository/reservation_repository.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/AccommodationBackend/reservation_service/domain/repository/reservation_repository_i.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/AccommodationBackend/reservation_service/domain/service/reservation_service.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/AccommodationBackend/reservation_service/go.mod" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/AccommodationBackend/reservation_service/go.sum" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/AccommodationBackend/reservation_service/infrastructure/api/reservation_handler.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/AccommodationBackend/reservation_service/infrastructure/api/reservation_mapper.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/AccommodationBackend/reservation_service/infrastructure/persistence/client.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/AccommodationBackend/reservation_service/main.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/AccommodationBackend/reservation_service/startup/config.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/AccommodationBackend/reservation_service/startup/server.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/AccommodationBackend/.env" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/.env" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AccommodationBackend/api_gateway/infrastructure/services/client.go" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/api_gateway/infrastructure/services/client.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AccommodationBackend/api_gateway/startup/config.go" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/api_gateway/startup/config.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/accommodation_service/domain/repository/availability_repository.go" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/accommodation_service/domain/repository/availability_repository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/accommodation_service/domain/service/accommodation_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/accommodation_service/domain/service/accommodation_service.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/accommodation_service/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/accommodation_service/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/accommodation_service/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/accommodation_service/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/accommodation_service/infrastructure/api/accommodation_handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/accommodation_service/infrastructure/api/accommodation_handler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/accommodation_service/startup/config.go" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/accommodation_service/startup/config.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/accommodation_service/startup/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/accommodation_service/startup/server.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/api_gateway/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/api_gateway/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/api_gateway/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/api_gateway/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/api_gateway/infrastructure/api/reservation_handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/api_gateway/infrastructure/api/reservation_handler.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/AccommodationBackend/api_gateway/startup/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/api_gateway/startup/server.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AccommodationBackend/common/proto/user_service/user_service.proto" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/common/proto/user_service/user_service.proto" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/auth_service/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/auth_service/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/auth_service/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/auth_service/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/common/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/common/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/common/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/common/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/common/proto/accommodation_service/accommodation_service.pb.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/common/proto/accommodation_service/accommodation_service.proto" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/common/proto/accommodation_service/accommodation_service_grpc.pb.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/common/proto/auth_service/auth_service.pb.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/common/proto/auth_service/auth_service.proto" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/common/proto/auth_service/auth_service_grpc.pb.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/common/proto/google/api/annotations.proto" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/common/proto/google/api/field_behavior.proto" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/common/proto/google/api/http.proto" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/common/proto/google/api/httpbody.proto" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/common/proto/reservation_service/reservation_service.pb.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/common/proto/reservation_service/reservation_service.proto" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/common/proto/reservation_service/reservation_service_grpc.pb.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/common/proto/user_service/user_service.pb.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/common/proto/user_service/user_service.proto" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/common/proto/user_service/user_service_grpc.pb.go" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/AccommodationBackend/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/docker-compose.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/reservation_service/domain/model/reservation.go" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/reservation_service/domain/model/reservation.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/reservation_service/domain/repository/reservation_repository.go" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/reservation_service/domain/repository/reservation_repository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/reservation_service/domain/repository/reservation_repository_i.go" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/reservation_service/domain/repository/reservation_repository_i.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/reservation_service/domain/service/reservation_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/reservation_service/domain/service/reservation_service.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/reservation_service/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/reservation_service/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/reservation_service/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/reservation_service/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/reservation_service/infrastructure/api/reservation_handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/reservation_service/infrastructure/api/reservation_handler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/reservation_service/infrastructure/api/reservation_mapper.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/reservation_service/startup/config.go" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/reservation_service/startup/config.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/reservation_service/startup/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/reservation_service/startup/server.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/user_service/domain/service/user_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/user_service/domain/service/user_service.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/user_service/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/user_service/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/user_service/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/user_service/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/user_service/startup/config.go" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/user_service/startup/config.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/user_service/startup/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/user_service/startup/server.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -77,23 +99,41 @@
     &quot;git-widget-placeholder&quot;: &quot;feature-reservation__service&quot;,
     &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
     &quot;go.sdk.automatically.set&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;E:/Programski jezici/GO/XML-Project/AccommodationBackend/api_gateway/infrastructure/api&quot;,
+    &quot;last_opened_file_path&quot;: &quot;E:/Programski jezici/GO/XML-Project/AccommodationBackend/user_service/infrastructure/api&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;
   }
 }</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="E:\Programski jezici\GO\XML-Project\AccommodationBackend\api_gateway\infrastructure\api" />
-      <recent name="E:\Programski jezici\GO\XML-Project\AccommodationBackend\common\proto\reservation_service" />
-      <recent name="E:\Programski jezici\GO\XML-Project\AccommodationBackend\common\proto" />
+      <recent name="E:\Programski jezici\GO\XML-Project\AccommodationBackend\user_service\infrastructure\api" />
+      <recent name="E:\Programski jezici\GO\XML-Project\AccommodationBackend\accommodation_service\infrastructure\api" />
       <recent name="E:\Programski jezici\GO\XML-Project\AccommodationBackend\reservation_service\infrastructure\api" />
+      <recent name="E:\Programski jezici\GO\XML-Project\AccommodationBackend\common\saga\create_request" />
       <recent name="E:\Programski jezici\GO\XML-Project\AccommodationBackend\reservation_service\domain\service" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="E:\Programski jezici\GO\XML-Project\AccommodationBackend\common\saga\create_reservation" />
+      <recent name="E:\Programski jezici\GO\XML-Project\AccommodationBackend\common\saga\create_request" />
     </key>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="UnknownFeatures">
+    <option featureType="com.intellij.fileTypeFactory" implementationName=".env" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>

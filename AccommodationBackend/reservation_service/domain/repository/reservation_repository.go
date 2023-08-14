@@ -8,11 +8,6 @@ import (
 	"reservation_service/domain/model"
 )
 
-const (
-	DATABASE   = "reservation"
-	COLLECTION = "reservation"
-)
-
 type ReservationMongoDBStore struct {
 	reservations *mongo.Collection
 }
@@ -27,6 +22,11 @@ func NewReservationMongoDBStore(client *mongo.Client) ReservationStore {
 func (store *ReservationMongoDBStore) Get(id primitive.ObjectID) (*model.Reservation, error) {
 	filter := bson.M{"_id": id}
 	return store.filterOne(filter)
+}
+
+func (store *ReservationMongoDBStore) GetAllByUserId(id primitive.ObjectID) ([]*model.Reservation, error) {
+	filter := bson.M{"user": id.Hex()}
+	return store.filter(filter)
 }
 
 func (store *ReservationMongoDBStore) GetAll() ([]*model.Reservation, error) {
@@ -56,6 +56,9 @@ func (store *ReservationMongoDBStore) Update(reservation *model.Reservation) (*m
 			{"start", reservation.Start},
 			{"end", reservation.End},
 			{"user", reservation.UserId},
+			{"numberOfGuests", reservation.NumberOfGuests},
+			{"status", reservation.Status},
+			{"price", reservation.Price},
 		},
 	}}
 	result, err := store.reservations.UpdateByID(context.TODO(), reservation.Id, update)
@@ -72,7 +75,7 @@ func (store *ReservationMongoDBStore) filter(filter interface{}) ([]*model.Reser
 	if err != nil {
 		return nil, err
 	}
-	return decode(cursor)
+	return decodeReservations(cursor)
 }
 
 func (store *ReservationMongoDBStore) filterOne(filter interface{}) (reservation *model.Reservation, err error) {
@@ -81,7 +84,7 @@ func (store *ReservationMongoDBStore) filterOne(filter interface{}) (reservation
 	return
 }
 
-func decode(cursor *mongo.Cursor) (reservations []*model.Reservation, err error) {
+func decodeReservations(cursor *mongo.Cursor) (reservations []*model.Reservation, err error) {
 	for cursor.Next(context.TODO()) {
 		var reservation model.Reservation
 		err = cursor.Decode(&reservation)

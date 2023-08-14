@@ -12,4 +12,5 @@ type ReservationStore interface {
 	Insert(reservation *model.Reservation) (*model.Reservation, error)
 	Delete(id primitive.ObjectID) (*mongo.DeleteResult, error)
 	Update(reservation *model.Reservation) (*mongo.UpdateResult, error)
+	GetAllByUserId(id primitive.ObjectID) ([]*model.Reservation, error)
 }

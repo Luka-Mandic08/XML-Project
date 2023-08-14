@@ -8,7 +8,7 @@ import "google/protobuf/timestamp.proto";
 
 service AccommodationService{
         rpc Get(GetRequest) returns(GetResponse) {}
-        rpc Create(CreateRequest) returns(Response){}
+        rpc Create(CreateRequest) returns(CreateResponse){}
         rpc UpdateAvailability(UpdateAvailabilityRequest) returns(Response) {}
         rpc CheckAvailability(CheckAvailabilityRequest) returns(CheckAvailabilityResponse){}
         rpc Search(SearchRequest) returns(SearchResponse) {}
@@ -32,6 +32,10 @@ message CreateRequest{
         bool priceIsPerGuest = 7;
         bool hasAutomaticReservations = 8;
         string hostId = 9;
+}
+message CreateResponse{
+        string message = 1;
+        string id = 2;
 }
 
 message Address {

@@ -3,6 +3,8 @@ package startup
 import (
 	"accommodation_service/domain/repository"
 	"accommodation_service/domain/service"
+	saga "common/saga/messaging"
+	"common/saga/messaging/nats"
 	"fmt"
 	"log"
 	"net"
@@ -26,11 +28,20 @@ func NewServer(config *Config) *Server {
 	}
 }
 
+const (
+	QUEUE_GROUP = "accommodation_service"
+)
+
 func (server *Server) Start() {
 	mongoClient := server.initMongoClient()
 	accommodationStore := server.initAccommodationStore(mongoClient)
 	availabilityStore := server.initAvailabilityStore(mongoClient)
 	accommodationService := server.initAccommodationService(accommodationStore, *availabilityStore)
+
+	commandSubscriber := server.initSubscriber(server.config.CreateReservationCommandSubject, QUEUE_GROUP)
+	replyPublisher := server.initPublisher(server.config.CreateReservationReplySubject)
+	server.initCreateReservationHandler(accommodationService, replyPublisher, commandSubscriber)
+
 	accommodationHandler := server.initAccommodationHandler(accommodationService)
 	server.startGrpcServer(accommodationHandler)
 }
@@ -53,6 +64,31 @@ func (server *Server) initAvailabilityStore(client *mongo.Client) *repository.Av
 
 func (server *Server) initAccommodationService(accommodationStore repository.AccommodationStore, availabilityStore repository.AvailabilityStore) *service.AccommodationService {
 	return service.NewAccommodationService(accommodationStore, availabilityStore)
+}
+
+func (server *Server) initPublisher(subject string) saga.Publisher {
+	publisher, err := nats.NewNATSPublisher(
+		server.config.NatsHost, server.config.NatsPort,
+		server.config.NatsUser, server.config.NatsPass, subject)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return publisher
+}
+func (server *Server) initSubscriber(subject, queueGroup string) saga.Subscriber {
+	subscriber, err := nats.NewNATSSubscriber(
+		server.config.NatsHost, server.config.NatsPort,
+		server.config.NatsUser, server.config.NatsPass, subject, queueGroup)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return subscriber
+}
+func (server *Server) initCreateReservationHandler(service *service.AccommodationService, publisher saga.Publisher, subscriber saga.Subscriber) {
+	_, err := api.NewCreateReservationCommandHandler(service, publisher, subscriber)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func (server *Server) initAccommodationHandler(service *service.AccommodationService) *api.AccommodationHandler {

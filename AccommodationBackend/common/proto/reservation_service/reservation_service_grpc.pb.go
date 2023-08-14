@@ -19,11 +19,12 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	ReservationService_Get_FullMethodName    = "/reservation.ReservationService/Get"
-	ReservationService_Create_FullMethodName = "/reservation.ReservationService/Create"
-	ReservationService_Update_FullMethodName = "/reservation.ReservationService/Update"
-	ReservationService_Delete_FullMethodName = "/reservation.ReservationService/Delete"
-	ReservationService_Test_FullMethodName   = "/reservation.ReservationService/Test"
+	ReservationService_Get_FullMethodName            = "/reservation.ReservationService/Get"
+	ReservationService_Create_FullMethodName         = "/reservation.ReservationService/Create"
+	ReservationService_Update_FullMethodName         = "/reservation.ReservationService/Update"
+	ReservationService_Delete_FullMethodName         = "/reservation.ReservationService/Delete"
+	ReservationService_GetAllByUserId_FullMethodName = "/reservation.ReservationService/GetAllByUserId"
+	ReservationService_Request_FullMethodName        = "/reservation.ReservationService/Request"
 )
 
 // ReservationServiceClient is the client API for ReservationService service.
@@ -31,10 +32,11 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ReservationServiceClient interface {
 	Get(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetResponse, error)
-	Create(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*GetResponse, error)
-	Update(ctx context.Context, in *UpdateRequest, opts ...grpc.CallOption) (*GetResponse, error)
-	Delete(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*DeleteResponse, error)
-	Test(ctx context.Context, in *TestRequest, opts ...grpc.CallOption) (*TestResponse, error)
+	Create(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*CreateResponse, error)
+	Update(ctx context.Context, in *UpdateRequest, opts ...grpc.CallOption) (*UpdateResponse, error)
+	Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*DeleteResponse, error)
+	GetAllByUserId(ctx context.Context, in *GetAllByUserIdRequest, opts ...grpc.CallOption) (*GetAllByUserIdResponse, error)
+	Request(ctx context.Context, in *RequestRequest, opts ...grpc.CallOption) (*RequestResponse, error)
 }
 
 type reservationServiceClient struct {
@@ -54,8 +56,8 @@ func (c *reservationServiceClient) Get(ctx context.Context, in *GetRequest, opts
 	return out, nil
 }
 
-func (c *reservationServiceClient) Create(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*GetResponse, error) {
-	out := new(GetResponse)
+func (c *reservationServiceClient) Create(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*CreateResponse, error) {
+	out := new(CreateResponse)
 	err := c.cc.Invoke(ctx, ReservationService_Create_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -63,8 +65,8 @@ func (c *reservationServiceClient) Create(ctx context.Context, in *CreateRequest
 	return out, nil
 }
 
-func (c *reservationServiceClient) Update(ctx context.Context, in *UpdateRequest, opts ...grpc.CallOption) (*GetResponse, error) {
-	out := new(GetResponse)
+func (c *reservationServiceClient) Update(ctx context.Context, in *UpdateRequest, opts ...grpc.CallOption) (*UpdateResponse, error) {
+	out := new(UpdateResponse)
 	err := c.cc.Invoke(ctx, ReservationService_Update_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -72,7 +74,7 @@ func (c *reservationServiceClient) Update(ctx context.Context, in *UpdateRequest
 	return out, nil
 }
 
-func (c *reservationServiceClient) Delete(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*DeleteResponse, error) {
+func (c *reservationServiceClient) Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*DeleteResponse, error) {
 	out := new(DeleteResponse)
 	err := c.cc.Invoke(ctx, ReservationService_Delete_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -81,9 +83,18 @@ func (c *reservationServiceClient) Delete(ctx context.Context, in *GetRequest, o
 	return out, nil
 }
 
-func (c *reservationServiceClient) Test(ctx context.Context, in *TestRequest, opts ...grpc.CallOption) (*TestResponse, error) {
-	out := new(TestResponse)
-	err := c.cc.Invoke(ctx, ReservationService_Test_FullMethodName, in, out, opts...)
+func (c *reservationServiceClient) GetAllByUserId(ctx context.Context, in *GetAllByUserIdRequest, opts ...grpc.CallOption) (*GetAllByUserIdResponse, error) {
+	out := new(GetAllByUserIdResponse)
+	err := c.cc.Invoke(ctx, ReservationService_GetAllByUserId_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *reservationServiceClient) Request(ctx context.Context, in *RequestRequest, opts ...grpc.CallOption) (*RequestResponse, error) {
+	out := new(RequestResponse)
+	err := c.cc.Invoke(ctx, ReservationService_Request_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -95,10 +106,11 @@ func (c *reservationServiceClient) Test(ctx context.Context, in *TestRequest, op
 // for forward compatibility
 type ReservationServiceServer interface {
 	Get(context.Context, *GetRequest) (*GetResponse, error)
-	Create(context.Context, *CreateRequest) (*GetResponse, error)
-	Update(context.Context, *UpdateRequest) (*GetResponse, error)
-	Delete(context.Context, *GetRequest) (*DeleteResponse, error)
-	Test(context.Context, *TestRequest) (*TestResponse, error)
+	Create(context.Context, *CreateRequest) (*CreateResponse, error)
+	Update(context.Context, *UpdateRequest) (*UpdateResponse, error)
+	Delete(context.Context, *DeleteRequest) (*DeleteResponse, error)
+	GetAllByUserId(context.Context, *GetAllByUserIdRequest) (*GetAllByUserIdResponse, error)
+	Request(context.Context, *RequestRequest) (*RequestResponse, error)
 	mustEmbedUnimplementedReservationServiceServer()
 }
 
@@ -109,17 +121,20 @@ type UnimplementedReservationServiceServer struct {
 func (UnimplementedReservationServiceServer) Get(context.Context, *GetRequest) (*GetResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
 }
-func (UnimplementedReservationServiceServer) Create(context.Context, *CreateRequest) (*GetResponse, error) {
+func (UnimplementedReservationServiceServer) Create(context.Context, *CreateRequest) (*CreateResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
 }
-func (UnimplementedReservationServiceServer) Update(context.Context, *UpdateRequest) (*GetResponse, error) {
+func (UnimplementedReservationServiceServer) Update(context.Context, *UpdateRequest) (*UpdateResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
 }
-func (UnimplementedReservationServiceServer) Delete(context.Context, *GetRequest) (*DeleteResponse, error) {
+func (UnimplementedReservationServiceServer) Delete(context.Context, *DeleteRequest) (*DeleteResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
 }
-func (UnimplementedReservationServiceServer) Test(context.Context, *TestRequest) (*TestResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Test not implemented")
+func (UnimplementedReservationServiceServer) GetAllByUserId(context.Context, *GetAllByUserIdRequest) (*GetAllByUserIdResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllByUserId not implemented")
+}
+func (UnimplementedReservationServiceServer) Request(context.Context, *RequestRequest) (*RequestResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Request not implemented")
 }
 func (UnimplementedReservationServiceServer) mustEmbedUnimplementedReservationServiceServer() {}
 
@@ -189,7 +204,7 @@ func _ReservationService_Update_Handler(srv interface{}, ctx context.Context, de
 }
 
 func _ReservationService_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetRequest)
+	in := new(DeleteRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -201,25 +216,43 @@ func _ReservationService_Delete_Handler(srv interface{}, ctx context.Context, de
 		FullMethod: ReservationService_Delete_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ReservationServiceServer).Delete(ctx, req.(*GetRequest))
+		return srv.(ReservationServiceServer).Delete(ctx, req.(*DeleteRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ReservationService_Test_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TestRequest)
+func _ReservationService_GetAllByUserId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAllByUserIdRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ReservationServiceServer).Test(ctx, in)
+		return srv.(ReservationServiceServer).GetAllByUserId(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ReservationService_Test_FullMethodName,
+		FullMethod: ReservationService_GetAllByUserId_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ReservationServiceServer).Test(ctx, req.(*TestRequest))
+		return srv.(ReservationServiceServer).GetAllByUserId(ctx, req.(*GetAllByUserIdRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ReservationService_Request_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RequestRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ReservationServiceServer).Request(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ReservationService_Request_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ReservationServiceServer).Request(ctx, req.(*RequestRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -248,8 +281,12 @@ var ReservationService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _ReservationService_Delete_Handler,
 		},
 		{
-			MethodName: "Test",
-			Handler:    _ReservationService_Test_Handler,
+			MethodName: "GetAllByUserId",
+			Handler:    _ReservationService_GetAllByUserId_Handler,
+		},
+		{
+			MethodName: "Request",
+			Handler:    _ReservationService_Request_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
