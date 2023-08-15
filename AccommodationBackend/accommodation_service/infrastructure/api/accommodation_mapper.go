@@ -3,6 +3,7 @@ package api
 import (
 	"accommodation_service/domain/model"
 	accommodation "common/proto/accommodation_service"
+	"github.com/golang/protobuf/ptypes"
 )
 
 // Func za mapiranje objekata iz modela na proto message
@@ -76,4 +77,18 @@ func MapAccommodations(accs []*model.Accommodation) *accommodation.GetAllByHostI
 		accommodations = append(accommodations, &newAccommodation)
 	}
 	return &accommodation.GetAllByHostIdResponse{Accommodations: accommodations}
+}
+
+func MapAvailabilities(availabilities []*model.Availability) *accommodation.GetAvailabilitiesResponse {
+	var a = []*accommodation.Availability{}
+	for _, av := range availabilities {
+		protoTimestamp, _ := ptypes.TimestampProto(av.Date)
+		var availability = accommodation.Availability{
+			Date:        protoTimestamp,
+			IsAvailable: av.IsAvailable,
+			Price:       av.Price,
+		}
+		a = append(a, &availability)
+	}
+	return &accommodation.GetAvailabilitiesResponse{AvailabilityDates: a}
 }

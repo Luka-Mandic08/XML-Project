@@ -25,6 +25,7 @@ const (
 	AccommodationService_CheckAvailability_FullMethodName  = "/accommodation.AccommodationService/CheckAvailability"
 	AccommodationService_Search_FullMethodName             = "/accommodation.AccommodationService/Search"
 	AccommodationService_GetAllByHostId_FullMethodName     = "/accommodation.AccommodationService/GetAllByHostId"
+	AccommodationService_GetAvailabilities_FullMethodName  = "/accommodation.AccommodationService/GetAvailabilities"
 )
 
 // AccommodationServiceClient is the client API for AccommodationService service.
@@ -37,6 +38,7 @@ type AccommodationServiceClient interface {
 	CheckAvailability(ctx context.Context, in *CheckAvailabilityRequest, opts ...grpc.CallOption) (*CheckAvailabilityResponse, error)
 	Search(ctx context.Context, in *SearchRequest, opts ...grpc.CallOption) (*SearchResponse, error)
 	GetAllByHostId(ctx context.Context, in *GetAllByHostIdRequest, opts ...grpc.CallOption) (*GetAllByHostIdResponse, error)
+	GetAvailabilities(ctx context.Context, in *GetAvailabilitiesRequest, opts ...grpc.CallOption) (*GetAvailabilitiesResponse, error)
 }
 
 type accommodationServiceClient struct {
@@ -101,6 +103,15 @@ func (c *accommodationServiceClient) GetAllByHostId(ctx context.Context, in *Get
 	return out, nil
 }
 
+func (c *accommodationServiceClient) GetAvailabilities(ctx context.Context, in *GetAvailabilitiesRequest, opts ...grpc.CallOption) (*GetAvailabilitiesResponse, error) {
+	out := new(GetAvailabilitiesResponse)
+	err := c.cc.Invoke(ctx, AccommodationService_GetAvailabilities_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AccommodationServiceServer is the server API for AccommodationService service.
 // All implementations must embed UnimplementedAccommodationServiceServer
 // for forward compatibility
@@ -111,6 +122,7 @@ type AccommodationServiceServer interface {
 	CheckAvailability(context.Context, *CheckAvailabilityRequest) (*CheckAvailabilityResponse, error)
 	Search(context.Context, *SearchRequest) (*SearchResponse, error)
 	GetAllByHostId(context.Context, *GetAllByHostIdRequest) (*GetAllByHostIdResponse, error)
+	GetAvailabilities(context.Context, *GetAvailabilitiesRequest) (*GetAvailabilitiesResponse, error)
 	mustEmbedUnimplementedAccommodationServiceServer()
 }
 
@@ -135,6 +147,9 @@ func (UnimplementedAccommodationServiceServer) Search(context.Context, *SearchRe
 }
 func (UnimplementedAccommodationServiceServer) GetAllByHostId(context.Context, *GetAllByHostIdRequest) (*GetAllByHostIdResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllByHostId not implemented")
+}
+func (UnimplementedAccommodationServiceServer) GetAvailabilities(context.Context, *GetAvailabilitiesRequest) (*GetAvailabilitiesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAvailabilities not implemented")
 }
 func (UnimplementedAccommodationServiceServer) mustEmbedUnimplementedAccommodationServiceServer() {}
 
@@ -257,6 +272,24 @@ func _AccommodationService_GetAllByHostId_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AccommodationService_GetAvailabilities_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAvailabilitiesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AccommodationServiceServer).GetAvailabilities(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AccommodationService_GetAvailabilities_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AccommodationServiceServer).GetAvailabilities(ctx, req.(*GetAvailabilitiesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AccommodationService_ServiceDesc is the grpc.ServiceDesc for AccommodationService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -287,6 +320,10 @@ var AccommodationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetAllByHostId",
 			Handler:    _AccommodationService_GetAllByHostId_Handler,
+		},
+		{
+			MethodName: "GetAvailabilities",
+			Handler:    _AccommodationService_GetAvailabilities_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

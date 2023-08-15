@@ -80,6 +80,11 @@ func (store *AvailabilityStore) FindAndGroupAvailableDates(dateFrom, dateTo time
 	return ids, prices, nil
 }
 
+func (store *AvailabilityStore) GetAvailabilitiesForAccommodation(dateFrom, dateTo time.Time, accommodationid string) ([]*model.Availability, error) {
+	filter := bson.M{"date": bson.M{"$gte": dateFrom, "$lte": dateTo}, "accommodationid": accommodationid}
+	return store.filter(filter)
+}
+
 func (store *AvailabilityStore) filter(filter interface{}) ([]*model.Availability, error) {
 	cursor, err := store.availabilities.Find(context.TODO(), filter)
 	defer cursor.Close(context.TODO())

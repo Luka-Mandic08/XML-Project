@@ -64,3 +64,11 @@ func (handler *AccommodationHandler) GetAllByHostId(ctx context.Context, request
 	}
 	return MapAccommodations(accommodations), nil
 }
+
+func (handler *AccommodationHandler) GetAvailabilities(ctx context.Context, request *accommodation.GetAvailabilitiesRequest) (*accommodation.GetAvailabilitiesResponse, error) {
+	availabilities, err := handler.service.GetAvailabilitiesForAccommodation(request)
+	if err != nil {
+		return nil, status.Error(codes.Aborted, err.Error())
+	}
+	return MapAvailabilities(availabilities), nil
+}

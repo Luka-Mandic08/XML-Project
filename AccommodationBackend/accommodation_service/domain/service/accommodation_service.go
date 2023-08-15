@@ -158,3 +158,9 @@ func (service *AccommodationService) Search(req *accommodation.SearchRequest) ([
 func (service *AccommodationService) GetAllByHostId(hostId string) ([]*model.Accommodation, error) {
 	return service.accommodationStore.GetAllByHostId(hostId)
 }
+
+func (service *AccommodationService) GetAvailabilitiesForAccommodation(request *accommodation.GetAvailabilitiesRequest) ([]*model.Availability, error) {
+	dateFrom := request.DateFrom.AsTime()
+	dateTo := request.DateTo.AsTime()
+	return service.availabilityStore.GetAvailabilitiesForAccommodation(dateFrom, dateTo, request.Accommodationid)
+}

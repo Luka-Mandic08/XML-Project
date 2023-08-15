@@ -13,6 +13,7 @@ service AccommodationService{
         rpc CheckAvailability(CheckAvailabilityRequest) returns(CheckAvailabilityResponse){}
         rpc Search(SearchRequest) returns(SearchResponse) {}
         rpc GetAllByHostId(GetAllByHostIdRequest) returns(GetAllByHostIdResponse) {}
+        rpc GetAvailabilities(GetAvailabilitiesRequest) returns(GetAvailabilitiesResponse) {}
 }
 
 message GetRequest{
@@ -105,4 +106,20 @@ message Accommodation{
 
 message GetAllByHostIdResponse{
         repeated Accommodation accommodations = 1;
+}
+
+message GetAvailabilitiesRequest{
+        string accommodationid = 1;
+        google.protobuf.Timestamp dateFrom = 2;
+        google.protobuf.Timestamp dateTo = 3;
+}
+
+message GetAvailabilitiesResponse{
+        repeated Availability availabilityDates = 1;
+}
+
+message Availability{
+        google.protobuf.Timestamp date = 1;
+        bool isAvailable = 2;
+        float price = 3;
 }
