@@ -46,11 +46,11 @@ export function HostAccomodation(props: HostAccomodationProps) {
           </Button>
         </Grid>
       </Grid>
-      <Container style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
+      <div className={styles.cardsContainer}>
         {accomodationInfo?.map((accomodation, key) => (
           <AccommodationCard accomodationInfo={accomodation} />
         ))}
-      </Container>
+      </div>
     </>
   );
 }

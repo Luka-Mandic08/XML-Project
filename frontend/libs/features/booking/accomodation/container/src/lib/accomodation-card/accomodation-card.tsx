@@ -1,25 +1,27 @@
-import { AccommodationInfo } from '@frontend/models';
+import { AccommodationInfo, BookingAppRoutes } from '@frontend/models';
 import styles from './accomodation-card.module.css';
 import { Paper, Grid, Typography, Divider, Button } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 /* eslint-disable-next-line */
 export interface AccommodationCardProps {
   accomodationInfo: AccommodationInfo;
 }
 
-const updateAccommodation = async () => {
-  //await UpdateAccommodation(props.accomodationInfo);
-};
-
-const checkAvailability = async () => {
-  //await CheckAvailability(props.accomodationInfo.id);
-};
-
-const deleteAccommodation = async () => {
-  //await DeleteAccommodation(props.accomodationInfo.id);
-};
-
 export function AccommodationCard(props: AccommodationCardProps) {
+  const navigate = useNavigate();
+
+  const updateAccommodation = async () => {
+    //await UpdateAccommodation(props.accomodationInfo);
+  };
+
+  const checkAvailability = async () => {
+    navigate(BookingAppRoutes.AvailabilityCalendar);
+  };
+
+  const deleteAccommodation = async () => {
+    //await DeleteAccommodation(props.accomodationInfo.id);
+  };
   return (
     <Paper elevation={6} sx={{ maxWidth: '450px', margin: '1rem', padding: '1.5rem 2rem 1.5rem 2rem' }}>
       <Grid container justifyContent={'start'}>
@@ -36,15 +38,17 @@ export function AccommodationCard(props: AccommodationCardProps) {
             </Typography>
           </Grid>
           <Grid item xs={12}>
-            <Typography variant="subtitle1" align="left">
-              Street: {props.accomodationInfo.address.street}
-            </Typography>
-            <Typography variant="subtitle1" align="left">
-              City: {props.accomodationInfo.address.city}
-            </Typography>
-            <Typography variant="subtitle1" align="left">
-              Country: {props.accomodationInfo.address.country}
-            </Typography>
+            <div className={styles.lineContainer}>
+              <Typography variant="subtitle1" align="left">
+                Street: {props.accomodationInfo.address.street}
+              </Typography>
+              <Typography variant="subtitle1" align="left">
+                City: {props.accomodationInfo.address.city}
+              </Typography>
+              <Typography variant="subtitle1" align="left">
+                Country: {props.accomodationInfo.address.country}
+              </Typography>
+            </div>
           </Grid>
         </Grid>
 
@@ -85,13 +89,22 @@ export function AccommodationCard(props: AccommodationCardProps) {
           <Divider sx={{ backgroundColor: 'grey', width: '100%', marginTop: '1.25rem', marginBottom: '1.25rem' }} />
         </Grid>
 
-        <Grid container direction={'row'} xs={12} gap={2} justifyContent={'center'}>
-          <Typography variant="h5" width={'45%'}>
-            Minimum number of guests: {props.accomodationInfo.minGuests}
-          </Typography>
-          <Typography variant="h5" width={'45%'}>
-            Maximum number of guests: {props.accomodationInfo.maxGuests}
-          </Typography>
+        <Grid item direction={'row'} xs={12}>
+          <Grid item xs={12}>
+            <Typography variant="h5" align="left">
+              Number of guests
+            </Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <div className={styles.lineContainer}>
+              <Typography variant="subtitle1" align="left">
+                Minimun: {props.accomodationInfo.minGuests}
+              </Typography>
+              <Typography variant="subtitle1" align="left">
+                Maximum: {props.accomodationInfo.maxGuests}
+              </Typography>
+            </div>
+          </Grid>
         </Grid>
 
         <Grid item xs={12}>

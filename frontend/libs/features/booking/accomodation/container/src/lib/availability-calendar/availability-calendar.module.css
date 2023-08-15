@@ -1,7 +1,152 @@
-/*
- * Replace this with your own classes
- *
- * e.g.
- * .container {
- * }
-*/
+.inputContainer {
+  position: relative;
+  margin-bottom: 2rem;
+  width: 100%;
+}
+
+input {
+  height: 48px;
+  width: 100%;
+  border: 1px solid #c0c0c0;
+  border-radius: 4px;
+  box-sizing: border-box;
+  padding: 16px;
+}
+
+select {
+  height: 48px;
+  width: 100%;
+  border: 1px solid #c0c0c0;
+  border-radius: 4px;
+  box-sizing: border-box;
+  padding: 10px 16px 10px 16px;
+  font-size: 16px;
+  font-family: 'Segoe UI';
+}
+
+.label {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 16px;
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+}
+
+input,
+.label .text {
+  font-family: 'Segoe UI';
+  font-size: 16px;
+}
+
+.label .text {
+  transition: all 0.15s ease-out;
+  color: grey;
+}
+
+input:focus {
+  outline: none;
+  border: 2px solid black;
+}
+
+input:focus + .label .text,
+:not(input[value='']) + .label .text {
+  font-size: 12px;
+  transform: translate(0, -150%);
+  background-color: white;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+input:focus + .label .text {
+  color: black;
+}
+
+.errorLabel {
+  position: absolute;
+  top: 50px;
+  left: 16px;
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+  color: red;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  display: none;
+}
+
+input[type='datetime-local'],
+input[type='date'] + .label .text {
+  font-size: 12px;
+  transform: translate(0, -150%);
+  background-color: white;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+input[type='submit'] {
+  font-size: 16px;
+  background-color: #212121;
+  color: white;
+  height: auto;
+}
+
+input[type='submit']:hover {
+  transition: all 0.15s ease-out;
+  background-color: white;
+  color: #212121;
+  box-shadow: 0 0 3px #212121;
+  height: auto;
+}
+
+.lineContainer {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  gap: 2rem;
+}
+
+.inlineGrid {
+  display: grid;
+  grid-template-columns: 1fr 0.5fr;
+  gap: 2rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.calendarContainer {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1.5rem;
+  width: fit-content;
+  padding: 1.5rem;
+}
+
+.calendarItem {
+  width: 100px;
+  height: 100px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  border: #212121 1px solid;
+  border-radius: 4px;
+  padding: 0.75rem;
+}
+
+.calendarHeaderItem {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.updateAvailabilityForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 2rem;
+}

@@ -5,7 +5,8 @@ import { Routes, Route } from 'react-router-dom';
 import { RegisterPage } from '@frontend/features/booking/login/container';
 import { BookingNavBar } from '@frontend/features/booking/navigation/container';
 import { ProfileInfo } from '@frontend/features/booking/profiles/container';
-import { CreateUpdateAccommodation, HostAccomodation } from '@frontend/features/booking/accomodation/container';
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+import { AvailabilityCalendar, CreateUpdateAccommodation, HostAccomodation } from '@frontend/features/booking/accomodation/container';
 
 export function App() {
   return (
@@ -18,6 +19,7 @@ export function App() {
         <Route path={BookingAppRoutes.HomeHost} element={<HostAccomodation />} />
         <Route path={BookingAppRoutes.CreateAccommodation} element={<CreateUpdateAccommodation />} />
         <Route path={BookingAppRoutes.Profile} element={<ProfileInfo />} />
+        <Route path={BookingAppRoutes.AvailabilityCalendar} element={<AvailabilityCalendar />} />
       </Routes>
     </>
   );

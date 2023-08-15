@@ -5,3 +5,11 @@
  * .container {
  * }
 */
+
+.lineContainer {
+  justify-content: space-between;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  gap: 2rem;
+}

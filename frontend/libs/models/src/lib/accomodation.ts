@@ -23,3 +23,9 @@ export interface AccommodationCreateUpdateDTO {
   priceIsPerGuest: boolean;
   hasAutomaticReservations: boolean;
 }
+
+export interface AvailabilityDate {
+  date: Date;
+  isAvailable: boolean | undefined;
+  price: number | undefined;
+}
