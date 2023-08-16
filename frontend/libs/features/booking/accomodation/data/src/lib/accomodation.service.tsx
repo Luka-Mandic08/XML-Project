@@ -80,7 +80,7 @@ export async function GetAvailableDatesForAccommodation(data: any): Promise<Avai
     method: 'put',
     url: BookingBaseURL.URL + '/accommodation/availability',
     data: {
-      hostId: data.hostId,
+      accommodationid: data.accommodationId,
       dateFrom: data.dateFrom,
       dateTo: data.dateTo,
     },
@@ -106,6 +106,50 @@ export async function GetAvailableDatesForAccommodation(data: any): Promise<Avai
         icon: 'error',
         title: 'Error',
         text: 'Something went wrong, please try again',
+        showConfirmButton: false,
+        position: 'bottom-right',
+        timer: 3000,
+        timerProgressBar: true,
+        backdrop: 'none',
+        width: 300,
+        background: '#212121',
+        color: 'white',
+      });
+    });
+}
+
+export async function UpdateAvailableDatesForAccommodation(data: any): Promise<string> {
+  return await axios({
+    method: 'post',
+    url: BookingBaseURL.URL + '/accommodation/updateAvailability',
+    data: {
+      accommodationid: data.accommodationId,
+      dateFrom: data.dateFrom,
+      dateTo: data.dateTo,
+      price: data.price,
+    },
+  })
+    .then((response) => {
+      Swal.fire({
+        icon: 'success',
+        title: 'Success',
+        text: 'Availability updated successfully\n' + response.data,
+        showConfirmButton: false,
+        position: 'bottom-right',
+        timer: 3000,
+        timerProgressBar: true,
+        backdrop: 'none',
+        width: 300,
+        background: '#212121',
+        color: 'white',
+      });
+      return response.data;
+    })
+    .catch((err) => {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Something went wrong, please try again\n' + err.message,
         showConfirmButton: false,
         position: 'bottom-right',
         timer: 3000,

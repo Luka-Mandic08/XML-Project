@@ -2,6 +2,7 @@ import { AccommodationInfo, BookingAppRoutes } from '@frontend/models';
 import styles from './accomodation-card.module.css';
 import { Paper, Grid, Typography, Divider, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { useSelectedAccommodationStore } from '@frontend/features/booking/store/container';
 
 /* eslint-disable-next-line */
 export interface AccommodationCardProps {
@@ -9,6 +10,7 @@ export interface AccommodationCardProps {
 }
 
 export function AccommodationCard(props: AccommodationCardProps) {
+  const setSelectedAccommodation = useSelectedAccommodationStore((state) => state.setSelectedAccommodation);
   const navigate = useNavigate();
 
   const updateAccommodation = async () => {
@@ -16,6 +18,7 @@ export function AccommodationCard(props: AccommodationCardProps) {
   };
 
   const checkAvailability = async () => {
+    setSelectedAccommodation(props.accomodationInfo);
     navigate(BookingAppRoutes.AvailabilityCalendar);
   };
 

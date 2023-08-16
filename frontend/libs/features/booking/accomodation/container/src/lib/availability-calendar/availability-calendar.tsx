@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react';
 import { set, useForm } from 'react-hook-form';
 import { Grid, Typography, Button, Paper } from '@mui/material';
 import { render } from 'react-dom';
-import { GetAvailableDatesForAccommodation } from '@frontend/features/booking/accomodation/data';
+import { GetAvailableDatesForAccommodation, UpdateAvailableDatesForAccommodation } from '@frontend/features/booking/accomodation/data';
+import { useSelectedAccommodationStore } from '@frontend/features/booking/store/container';
 
 /* eslint-disable-next-line */
 export interface AvailabilityCalendarProps {}
@@ -13,9 +14,10 @@ export function AvailabilityCalendar(props: AvailabilityCalendarProps) {
   const [availabilityDates, setAvailabilityDates] = useState<AvailabilityDate[]>([]);
   const [month, setMonth] = useState<string>(new Date().toLocaleString('default', { month: 'long' }));
   const [year, setYear] = useState<number>(new Date().getFullYear());
+  const selectedAccommodation = useSelectedAccommodationStore((state) => state.selectedAccommodation);
 
   const months = ['January', 'February', 'March', 'April', 'May', 'June', 'Jully', 'August', 'September', 'October', 'November', 'December'];
-  const weekDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  const weekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
   useEffect(() => {
     renderCalendar();
@@ -25,29 +27,28 @@ export function AvailabilityCalendar(props: AvailabilityCalendarProps) {
     const availabilityDates: AvailabilityDate[] = [];
     const numberOfDaysInMonth = getNumberOfDaysInMonth(month, year);
 
-    const firstDayOfMonth = new Date(year, months.indexOf(month), 1).getDay() - 1;
+    const firstDayOfMonth = new Date(year, months.indexOf(month), 0).getDay();
 
-    const startOfCalendar = new Date(year, months.indexOf(month) - 1, getNumberOfDaysInMonth(months[months.indexOf(month) - 1], year) - firstDayOfMonth + 1);
-    const endOfCalendar = new Date(year, months.indexOf(month) + 1, 7 - new Date(year, months.indexOf(month), numberOfDaysInMonth).getDay());
+    const startOfCalendar = new Date(year, months.indexOf(month) - 1, getNumberOfDaysInMonth(months[months.indexOf(month) - 1], year) - firstDayOfMonth);
+    const endOfCalendar = new Date(year, months.indexOf(month) + 1, 7 - new Date(year, months.indexOf(month), numberOfDaysInMonth).getDay() - 1);
 
     const availabilityDatesFromBackend: AvailabilityDate[] = new Array<AvailabilityDate>();
-    availabilityDatesFromBackend.concat(
-      await GetAvailableDatesForAccommodation({
-        hostId: localStorage.getItem('userId'),
-        dateFrom: startOfCalendar,
-        dateTo: endOfCalendar,
-      })
-    );
-    availabilityDatesFromBackend.push({
-      date: new Date(),
-      isAvailable: true,
-      price: 1000,
+    const res: any = await GetAvailableDatesForAccommodation({
+      accommodationId: selectedAccommodation.id,
+      dateFrom: startOfCalendar,
+      dateTo: endOfCalendar,
     });
-    availabilityDatesFromBackend.push({
-      date: new Date(year, months.indexOf(month), numberOfDaysInMonth),
-      isAvailable: false,
-      price: 1000,
-    });
+
+    if (res) {
+      res.availabilityDates?.forEach((availabilityDate: any) => {
+        availabilityDatesFromBackend.push({
+          date: new Date(availabilityDate.date.seconds * 1000),
+          isAvailable: availabilityDate.isAvailable,
+          price: availabilityDate.price,
+        });
+      });
+    }
+
     let i = 0;
     while (startOfCalendar <= endOfCalendar) {
       const tempDate = new Date(startOfCalendar);
@@ -119,14 +120,21 @@ export function AvailabilityCalendar(props: AvailabilityCalendarProps) {
     formState: { errors: errorsAvailabilityDates },
   } = useForm({
     defaultValues: {
+      accommodationId: selectedAccommodation.id,
       dateFrom: '',
       dateTo: '',
       price: 0,
     },
   });
 
-  const onSubmitAvailabilityDates = (data: any) => {
-    /*call backend*/
+  const onSubmitAvailabilityDates = async (data: any) => {
+    data.dateFrom = new Date(data.dateFrom);
+    data.dateTo = new Date(data.dateTo);
+    const res = await UpdateAvailableDatesForAccommodation(data);
+
+    if (res) {
+      renderCalendar();
+    }
   };
 
   return (
@@ -134,7 +142,7 @@ export function AvailabilityCalendar(props: AvailabilityCalendarProps) {
       <Grid container marginY={'1rem'} alignItems={'left'} direction={'column'}>
         <Grid item marginBottom={'1rem'}>
           <Typography variant="h4" align="left">
-            Availability for accommodation: name
+            Availability for accommodation: {selectedAccommodation.name}
           </Typography>
         </Grid>
         <Grid item marginBottom={'1rem'}>
