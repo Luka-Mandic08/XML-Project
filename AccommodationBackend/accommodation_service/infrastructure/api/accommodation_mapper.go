@@ -53,7 +53,7 @@ func MapAccommodationsToSearchRequest(accs []*model.Accommodation, prices []floa
 	return &accommodation.SearchResponse{Accommodations: searchAccommodations}
 }
 
-func MapAccommodations(accs []*model.Accommodation) *accommodation.GetAllByHostIdResponse {
+func MapAccommodations(accs []*model.Accommodation) (*accommodation.GetAllByHostIdResponse, *accommodation.GetAllResponse) {
 	var accommodations = []*accommodation.Accommodation{}
 	for _, acc := range accs {
 		address := accommodation.Address{
@@ -76,7 +76,7 @@ func MapAccommodations(accs []*model.Accommodation) *accommodation.GetAllByHostI
 
 		accommodations = append(accommodations, &newAccommodation)
 	}
-	return &accommodation.GetAllByHostIdResponse{Accommodations: accommodations}
+	return &accommodation.GetAllByHostIdResponse{Accommodations: accommodations}, &accommodation.GetAllResponse{Accommodations: accommodations}
 }
 
 func MapAvailabilities(availabilities []*model.Availability) *accommodation.GetAvailabilitiesResponse {

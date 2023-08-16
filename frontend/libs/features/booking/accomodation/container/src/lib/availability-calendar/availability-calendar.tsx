@@ -105,10 +105,6 @@ export function AvailabilityCalendar(props: AvailabilityCalendarProps) {
   });
 
   const onSubmit = (data: any) => {
-    updateAvailabilityMonthAndYear(data);
-  };
-
-  const updateAvailabilityMonthAndYear = (data: any) => {
     setMonth(data.month);
     setYear(data.year);
   };

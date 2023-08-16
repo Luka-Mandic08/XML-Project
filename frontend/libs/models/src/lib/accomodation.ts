@@ -13,6 +13,16 @@ export interface AccommodationInfo {
   hasAutomaticReservations: boolean;
 }
 
+export interface SearchedAccommodationInfo {
+  id: string;
+  name: string;
+  address: Address;
+  amenities: string[];
+  images: string[];
+  unitPrice: number;
+  totalPrice: number;
+}
+
 export interface AccommodationCreateUpdateDTO {
   id: string;
   hostId: string;

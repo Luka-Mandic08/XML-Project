@@ -48,7 +48,7 @@ export function HostAccomodation(props: HostAccomodationProps) {
       </Grid>
       <div className={styles.cardsContainer}>
         {accomodationInfo?.map((accomodation, key) => (
-          <AccommodationCard accomodationInfo={accomodation} />
+          <AccommodationCard accomodationInfo={accomodation} isForHost={true} />
         ))}
       </div>
     </>

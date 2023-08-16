@@ -7,6 +7,7 @@ import { useSelectedAccommodationStore } from '@frontend/features/booking/store/
 /* eslint-disable-next-line */
 export interface AccommodationCardProps {
   accomodationInfo: AccommodationInfo;
+  isForHost: boolean;
 }
 
 export function AccommodationCard(props: AccommodationCardProps) {
@@ -144,38 +145,42 @@ export function AccommodationCard(props: AccommodationCardProps) {
           </Grid>
         </Grid>
 
-        <Grid item xs={12}>
-          <Divider sx={{ backgroundColor: 'grey', width: '100%', marginTop: '1.25rem', marginBottom: '1.25rem' }} />
-        </Grid>
+        {props.isForHost && (
+          <>
+            <Grid item xs={12}>
+              <Divider sx={{ backgroundColor: 'grey', width: '100%', marginTop: '1.25rem', marginBottom: '1.25rem' }} />
+            </Grid>
 
-        <Grid item xs={12}>
-          <Grid container justifyContent={'space-between'}>
-            <Button
-              variant="contained"
-              size="small"
-              onClick={updateAccommodation}
-              sx={{ color: 'white', background: '#212121', ':hover': { background: 'white', color: '#212121' } }}
-            >
-              Update info
-            </Button>
-            <Button
-              variant="contained"
-              size="small"
-              onClick={checkAvailability}
-              sx={{ color: 'white', background: '#212121', ':hover': { background: 'white', color: '#212121' } }}
-            >
-              Check Availability
-            </Button>
-            <Button
-              variant="contained"
-              size="small"
-              onClick={deleteAccommodation}
-              sx={{ color: 'white', background: 'red', ':hover': { background: 'white', color: 'red' } }}
-            >
-              Delete
-            </Button>
-          </Grid>
-        </Grid>
+            <Grid item xs={12}>
+              <Grid container justifyContent={'space-between'}>
+                <Button
+                  variant="contained"
+                  size="small"
+                  onClick={updateAccommodation}
+                  sx={{ color: 'white', background: '#212121', ':hover': { background: 'white', color: '#212121' } }}
+                >
+                  Update info
+                </Button>
+                <Button
+                  variant="contained"
+                  size="small"
+                  onClick={checkAvailability}
+                  sx={{ color: 'white', background: '#212121', ':hover': { background: 'white', color: '#212121' } }}
+                >
+                  Check Availability
+                </Button>
+                <Button
+                  variant="contained"
+                  size="small"
+                  onClick={deleteAccommodation}
+                  sx={{ color: 'white', background: 'red', ':hover': { background: 'white', color: 'red' } }}
+                >
+                  Delete
+                </Button>
+              </Grid>
+            </Grid>
+          </>
+        )}
       </Grid>
     </Paper>
   );

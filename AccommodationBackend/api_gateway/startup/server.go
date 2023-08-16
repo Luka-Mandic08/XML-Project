@@ -67,6 +67,7 @@ func CreateRoutersAndSetRoutes(config *Config) *gin.Engine {
 	userGroup.PUT("/update", userHandler.Update)
 
 	accommodationGroup := router.Group("/accommodation")
+	accommodationGroup.GET("/all", accommodationHandler.GetAll)
 	accommodationGroup.Use(services.ValidateToken())
 	accommodationGroup.POST("/create", services.AuthorizeRole("Host"), accommodationHandler.Create)
 	accommodationGroup.POST("/updateAvailability", services.AuthorizeRole("Host"), accommodationHandler.UpdateAvailability)

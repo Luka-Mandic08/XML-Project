@@ -62,7 +62,21 @@ func (handler *AccommodationHandler) GetAllByHostId(ctx context.Context, request
 	if err != nil {
 		return nil, status.Error(codes.Aborted, err.Error())
 	}
-	return MapAccommodations(accommodations), nil
+
+	mapped, _ := MapAccommodations(accommodations)
+
+	return mapped, nil
+}
+
+func (handler *AccommodationHandler) GetAll(ctx context.Context, request *accommodation.GetAllRequest) (*accommodation.GetAllResponse, error) {
+	accommodations, err := handler.service.GetAll()
+	if err != nil {
+		return nil, status.Error(codes.Aborted, err.Error())
+	}
+
+	_, mapped := MapAccommodations(accommodations)
+
+	return mapped, nil
 }
 
 func (handler *AccommodationHandler) GetAvailabilities(ctx context.Context, request *accommodation.GetAvailabilitiesRequest) (*accommodation.GetAvailabilitiesResponse, error) {

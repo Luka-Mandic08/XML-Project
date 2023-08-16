@@ -8,6 +8,7 @@ import "google/protobuf/timestamp.proto";
 
 service AccommodationService{
         rpc Get(GetRequest) returns(GetResponse) {}
+        rpc GetAll(GetAllRequest) returns(GetAllResponse) {}
         rpc Create(CreateRequest) returns(Response){}
         rpc UpdateAvailability(UpdateAvailabilityRequest) returns(Response) {}
         rpc CheckAvailability(CheckAvailabilityRequest) returns(CheckAvailabilityResponse){}
@@ -122,4 +123,12 @@ message Availability{
         google.protobuf.Timestamp date = 1;
         bool isAvailable = 2;
         float price = 3;
+}
+
+message GetAllRequest{
+
+}
+
+message GetAllResponse{
+        repeated Accommodation accommodations = 1;
 }

@@ -159,6 +159,10 @@ func (service *AccommodationService) GetAllByHostId(hostId string) ([]*model.Acc
 	return service.accommodationStore.GetAllByHostId(hostId)
 }
 
+func (service *AccommodationService) GetAll() ([]*model.Accommodation, error) {
+	return service.accommodationStore.GetAll()
+}
+
 func (service *AccommodationService) GetAvailabilitiesForAccommodation(request *accommodation.GetAvailabilitiesRequest) ([]*model.Availability, error) {
 	dateFrom := request.DateFrom.AsTime()
 	dateTo := request.DateTo.AsTime()

@@ -13,4 +13,5 @@ type AccommodationStore interface {
 	Update(*model.Accommodation) (*mongo.UpdateResult, error)
 	Delete(id string) (*mongo.DeleteResult, error)
 	GetAllByHostId(hostId string) ([]*model.Accommodation, error)
+	GetAll() ([]*model.Accommodation, error)
 }

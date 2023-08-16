@@ -107,3 +107,16 @@ func (store *AccommodationMongoDBStore) GetAllByHostId(hostId string) ([]*model.
 	}
 	return accommodations, nil
 }
+
+func (store *AccommodationMongoDBStore) GetAll() ([]*model.Accommodation, error) {
+	filter := bson.D{}
+	result, err := store.accommodations.Find(context.TODO(), filter)
+	if err != nil {
+		return nil, err
+	}
+	accommodations, err := decode(result)
+	if err != nil {
+		return nil, err
+	}
+	return accommodations, nil
+}

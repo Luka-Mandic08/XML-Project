@@ -81,12 +81,20 @@ func (store *AvailabilityStore) FindAndGroupAvailableDates(dateFrom, dateTo time
 }
 
 func (store *AvailabilityStore) GetAvailabilitiesForAccommodation(dateFrom, dateTo time.Time, accommodationid string) ([]*model.Availability, error) {
-	filter := bson.M{"date": bson.M{"$gte": dateFrom, "$lte": dateTo}, "accommodationid": accommodationid}
-	return store.filter(filter)
+	filter := bson.M{
+		"date":            bson.M{"$gte": dateFrom, "$lte": dateTo},
+		"accommodationid": accommodationid,
+	}
+
+	sort := bson.D{{"date", 1}} // Sort by date in descending order (latest to newest)
+
+	return store.filter(filter, sort)
 }
 
-func (store *AvailabilityStore) filter(filter interface{}) ([]*model.Availability, error) {
-	cursor, err := store.availabilities.Find(context.TODO(), filter)
+func (store *AvailabilityStore) filter(filter interface{}, sort interface{}) ([]*model.Availability, error) {
+	findOptions := options.Find().SetSort(sort) // Set the sort options
+
+	cursor, err := store.availabilities.Find(context.TODO(), filter, findOptions)
 	defer cursor.Close(context.TODO())
 
 	if err != nil {

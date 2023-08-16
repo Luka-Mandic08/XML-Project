@@ -1,4 +1,4 @@
-import { AccommodationCreateUpdateDTO, AccommodationInfo, AvailabilityDate, BookingBaseURL } from '@frontend/models';
+import { AccommodationCreateUpdateDTO, AccommodationInfo, AvailabilityDate, BookingBaseURL, SearchedAccommodationInfo } from '@frontend/models';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 
@@ -6,6 +6,31 @@ export async function GetAccomodationForHost(): Promise<AccommodationInfo[]> {
   return await axios({
     method: 'get',
     url: BookingBaseURL.URL + '/accommodation/all/host/' + localStorage.getItem('userId'),
+  })
+    .then((response) => {
+      return response.data.accommodations;
+    })
+    .catch(() => {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Something went wrong, please try again',
+        showConfirmButton: false,
+        position: 'bottom-right',
+        timer: 3000,
+        timerProgressBar: true,
+        backdrop: 'none',
+        width: 300,
+        background: '#212121',
+        color: 'white',
+      });
+    });
+}
+
+export async function GetAllAccomodation(): Promise<AccommodationInfo[]> {
+  return await axios({
+    method: 'get',
+    url: BookingBaseURL.URL + '/accommodation/all',
   })
     .then((response) => {
       return response.data.accommodations;
@@ -150,6 +175,51 @@ export async function UpdateAvailableDatesForAccommodation(data: any): Promise<s
         icon: 'error',
         title: 'Error',
         text: 'Something went wrong, please try again\n' + err.message,
+        showConfirmButton: false,
+        position: 'bottom-right',
+        timer: 3000,
+        timerProgressBar: true,
+        backdrop: 'none',
+        width: 300,
+        background: '#212121',
+        color: 'white',
+      });
+    });
+}
+
+export async function SearchAccommodation(data: any): Promise<SearchedAccommodationInfo[]> {
+  return await axios({
+    method: 'post',
+    url: BookingBaseURL.URL + '/accommodation/search',
+    data: {
+      city: data.city,
+      country: data.country,
+      dateFrom: new Date(data.dateFrom),
+      dateTo: new Date(data.dateTo),
+      numberOfGuests: data.numberOfGuests,
+    },
+  })
+    .then((response) => {
+      Swal.fire({
+        icon: 'success',
+        title: 'Success',
+        text: 'Accommodation created successfully',
+        showConfirmButton: false,
+        position: 'bottom-right',
+        timer: 3000,
+        timerProgressBar: true,
+        backdrop: 'none',
+        width: 300,
+        background: '#212121',
+        color: 'white',
+      });
+      return response.data.accommodations;
+    })
+    .catch(() => {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Something went wrong, please try again',
         showConfirmButton: false,
         position: 'bottom-right',
         timer: 3000,
