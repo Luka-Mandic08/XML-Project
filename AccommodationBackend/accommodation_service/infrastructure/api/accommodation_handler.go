@@ -4,6 +4,7 @@ import (
 	"accommodation_service/domain/service"
 	accommodation "common/proto/accommodation_service"
 	"context"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -19,9 +20,20 @@ func NewAccommodationHandler(service *service.AccommodationService) *Accommodati
 	}
 }
 
-func (handler *AccommodationHandler) Get(ctx context.Context, request *accommodation.GetRequest) (*accommodation.GetResponse, error) {
-	//todo
-	return nil, nil
+func (handler *AccommodationHandler) GetById(ctx context.Context, request *accommodation.GetByIdRequest) (*accommodation.GetByIdResponse, error) {
+	id, err := primitive.ObjectIDFromHex(request.Id)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, "Invalid ID format")
+	}
+
+	accommodation, err := handler.service.GetById(id)
+	if err != nil {
+		return nil, status.Error(codes.Aborted, err.Error())
+	}
+
+	mapped := MapAccommodation(accommodation)
+
+	return mapped, nil
 }
 
 func (handler *AccommodationHandler) Create(ctx context.Context, request *accommodation.CreateRequest) (*accommodation.Response, error) {

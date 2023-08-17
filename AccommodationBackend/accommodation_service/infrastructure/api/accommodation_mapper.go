@@ -79,6 +79,28 @@ func MapAccommodations(accs []*model.Accommodation) (*accommodation.GetAllByHost
 	return &accommodation.GetAllByHostIdResponse{Accommodations: accommodations}, &accommodation.GetAllResponse{Accommodations: accommodations}
 }
 
+func MapAccommodation(acc *model.Accommodation) *accommodation.GetByIdResponse {
+	address := accommodation.Address{
+		Street:  acc.Address.Street,
+		City:    acc.Address.City,
+		Country: acc.Address.Country,
+	}
+	var newAccommodation = accommodation.Accommodation{
+		Name:                     acc.Name,
+		Address:                  &address,
+		Amenities:                acc.Amenities,
+		Images:                   acc.Images,
+		MinGuests:                acc.MinGuests,
+		MaxGuests:                acc.MaxGuests,
+		PriceIsPerGuest:          acc.PriceIsPerGuest,
+		HasAutomaticReservations: acc.HasAutomaticReservations,
+		HostId:                   acc.HostId,
+		Id:                       acc.Id.Hex(),
+	}
+
+	return &accommodation.GetByIdResponse{Accommodation: &newAccommodation}
+}
+
 func MapAvailabilities(availabilities []*model.Availability) *accommodation.GetAvailabilitiesResponse {
 	var a = []*accommodation.Availability{}
 	for _, av := range availabilities {

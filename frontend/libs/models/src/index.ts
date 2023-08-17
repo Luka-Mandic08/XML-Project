@@ -5,3 +5,4 @@ export * from './lib/token';
 export * from './lib/SearchFlightsDTO';
 export * from './lib/bookingUser';
 export * from './lib/accomodation';
+export * from './lib/reservation';

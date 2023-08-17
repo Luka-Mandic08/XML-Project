@@ -59,37 +59,20 @@ func CreateRoutersAndSetRoutes(config *Config) *gin.Engine {
 
 	authGroup := router.Group("/auth")
 	authGroup.POST("/login", authHandler.Login)
-	/*{
-	    "username": "marko1",
-	    "password": "sifra"
-	}*/
 	authGroup.POST("/register", authHandler.Register)
-	/*{
-	    "name":"Marko",
-	    "surname":"Mihajlovic",
-	    "email":"marko@gmail.com",
-	    "address":{
-	        "street":"Moja ulica",
-	        "city":"Ns",
-	        "country":"Srbija"
-	    },
-
-	    "username":"marko1",
-	    "password": "sifra",
-	    "role":"Host"
-	}*/
-	authGroup.Use(services.ValidateToken()) //Login i register su navedeni pre ove linije, pa se za njih ne koristi validateToken
+	authGroup.Use(services.ValidateToken()) //Login i register do not use ValidateToken()
 	authGroup.PUT("/update", authHandler.Update)
 	authGroup.DELETE("/delete/:userId", authHandler.Delete)
 	authGroup.GET("/get/:userId", authHandler.GetByUserId)
 
 	userGroup := router.Group("/users")
 	userGroup.Use(services.ValidateToken())
-	userGroup.GET("/:id", services.AuthorizeRole("Host"), userHandler.Get)
+	userGroup.GET("/:id", userHandler.Get) //services.AuthorizeRole("Host") TODO: add for Guest
 	userGroup.PUT("/update", userHandler.Update)
 
 	accommodationGroup := router.Group("/accommodation")
 	accommodationGroup.GET("/all", accommodationHandler.GetAll)
+	accommodationGroup.GET("/:id", accommodationHandler.GetById)
 	accommodationGroup.POST("/search", accommodationHandler.Search)
 	accommodationGroup.Use(services.ValidateToken())
 	accommodationGroup.POST("/create", services.AuthorizeRole("Host"), accommodationHandler.Create)

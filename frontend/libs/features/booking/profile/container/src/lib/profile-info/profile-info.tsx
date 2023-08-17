@@ -9,7 +9,7 @@ import {
   GetProfileInformation,
   UpdateAccountInformation,
   UpdateProfileInformation,
-} from '@frontend/features/booking/profiles/data-access';
+} from '@frontend/features/booking/profile/data-access';
 
 /* eslint-disable-next-line */
 export interface ProfileInfoProps {}

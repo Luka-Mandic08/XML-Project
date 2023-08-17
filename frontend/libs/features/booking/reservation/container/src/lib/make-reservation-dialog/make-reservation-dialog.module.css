@@ -1,0 +1,20 @@
+.lineContainer {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.infoContainer {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 1rem;
+}
+
+.dialogContentContainer {
+  padding: 1rem 2rem 2rem 2rem !important;
+}

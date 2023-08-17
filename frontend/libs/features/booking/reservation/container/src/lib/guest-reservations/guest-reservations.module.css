@@ -1,0 +1,5 @@
+.cardsContainer {
+  display: flex;
+  margin: 2rem;
+  flex-grow: 1;
+}

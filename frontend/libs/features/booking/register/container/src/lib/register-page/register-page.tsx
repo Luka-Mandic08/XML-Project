@@ -3,7 +3,7 @@ import styles from './register-page.module.css';
 import { AppRoutes, RegisterUser } from '@frontend/models';
 import { Button, Paper, Typography } from '@mui/material';
 import { useForm } from 'react-hook-form';
-import { RegisterNewUser } from '@frontend/features/booking/login/data-access';
+import { RegisterNewUser } from '@frontend/features/booking/register/data-access';
 
 /* eslint-disable-next-line */
 export interface RegisterPageProps {}

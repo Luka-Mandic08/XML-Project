@@ -231,3 +231,28 @@ export async function SearchAccommodation(data: any): Promise<SearchedAccommodat
       });
     });
 }
+
+export async function GetAccommodationById(id: string): Promise<AccommodationInfo> {
+  return await axios({
+    method: 'get',
+    url: BookingBaseURL.URL + '/accommodation/' + id,
+  })
+    .then((response) => {
+      return response.data.accommodation;
+    })
+    .catch(() => {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Something went wrong, please try again',
+        showConfirmButton: false,
+        position: 'bottom-right',
+        timer: 3000,
+        timerProgressBar: true,
+        backdrop: 'none',
+        width: 300,
+        background: '#212121',
+        color: 'white',
+      });
+    });
+}

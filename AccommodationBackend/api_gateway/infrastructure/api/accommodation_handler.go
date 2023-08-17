@@ -154,6 +154,22 @@ func (handler *AccommodationHandler) GetAll(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, response)
 }
 
+func (handler *AccommodationHandler) GetById(ctx *gin.Context) {
+
+	request := accommodation.GetByIdRequest{Id: ctx.Param("id")}
+	response, err := handler.accommodationClient.GetById(ctx, &request)
+	if err != nil {
+		grpcError, ok := status.FromError(err)
+		if ok {
+			ctx.JSON(http.StatusBadRequest, grpcError.Message())
+			return
+		}
+		ctx.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+	ctx.JSON(http.StatusOK, response)
+}
+
 func (handler *AccommodationHandler) GetAvailabilities(ctx *gin.Context) {
 	var request accommodation.GetAvailabilitiesRequest
 	num, _ := ctx.GetRawData()

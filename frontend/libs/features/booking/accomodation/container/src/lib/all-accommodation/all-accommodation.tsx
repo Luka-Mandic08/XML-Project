@@ -7,6 +7,7 @@ import SearchedAccommodationCard from '../searched-accommodation-card/searched-a
 import styles from './all-accommodation.module.css';
 import { Grid, Button, Typography } from '@mui/material';
 import { useForm } from 'react-hook-form';
+import { useSearchParametersStore } from '@frontend/features/booking/store/container';
 
 /* eslint-disable-next-line */
 export interface AllAccommodationProps {}
@@ -15,6 +16,7 @@ export function AllAccommodation(props: AllAccommodationProps) {
   const [accomodationInfo, setAccomodationInfo] = useState<AccommodationInfo[]>([]);
   const [searchedAccomodationInfo, setSearchedAccomodationInfo] = useState<SearchedAccommodationInfo[]>([]);
   const [searched, setSearched] = useState<boolean>(false);
+  const setSearchParameters = useSearchParametersStore((state) => state.setSearchParameters);
 
   const navigate = useNavigate();
 
@@ -46,6 +48,7 @@ export function AllAccommodation(props: AllAccommodationProps) {
     setSearched(true);
     const res = await SearchAccommodation(data);
     setSearchedAccomodationInfo(res);
+    setSearchParameters(data);
   };
 
   const resetSearch = () => {

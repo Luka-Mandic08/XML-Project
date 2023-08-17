@@ -1,0 +1,15 @@
+.reservationCardContent {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.reservationCardFooter {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.reservationCard {
+  padding: 2rem;
+}

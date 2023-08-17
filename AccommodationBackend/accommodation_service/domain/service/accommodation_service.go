@@ -198,6 +198,10 @@ func (service *AccommodationService) GetAllByHostId(hostId string) ([]*model.Acc
 	return service.accommodationStore.GetAllByHostId(hostId)
 }
 
+func (service *AccommodationService) GetById(id primitive.ObjectID) (*model.Accommodation, error) {
+	return service.accommodationStore.GetById(id)
+}
+
 func (service *AccommodationService) GetAll() ([]*model.Accommodation, error) {
 	return service.accommodationStore.GetAll()
 }
