@@ -40,6 +40,14 @@ export function ReservationCard(props: ReservationItemProps) {
           <Typography variant="h6">Check in: {props.reservation.start}</Typography>
           <Typography variant="h6">Check out: {props.reservation.end}</Typography>
         </div>
+        {props.isForGuest && (
+          <div>
+            <Typography variant="h5">Address</Typography>
+            <Typography variant="h6">Street: {accommodationInfo?.address.street}</Typography>
+            <Typography variant="h6">City: {accommodationInfo?.address.city}</Typography>
+            <Typography variant="h6">Country: {accommodationInfo?.address.country}</Typography>
+          </div>
+        )}
         <div>
           <Typography variant="h6">Number of guests: {props.reservation.numberOfGuests}</Typography>
           <Typography variant="h6">Price: {props.reservation.price}</Typography>

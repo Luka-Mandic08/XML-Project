@@ -2,4 +2,5 @@
   display: flex;
   margin: 2rem;
   flex-grow: 1;
+  gap: 2rem;
 }
