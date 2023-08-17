@@ -1,16 +1,7 @@
 .inputContainer {
   position: relative;
   margin-bottom: 2rem;
-}
-
-input,
-select {
-  height: 48px;
-  width: 100%;
-  border: 1px solid #c0c0c0;
-  border-radius: 4px;
-  box-sizing: border-box;
-  padding: 16px;
+  display: flex;
 }
 
 .label {
@@ -34,16 +25,11 @@ input,
   color: grey;
 }
 
-input:focus {
-  outline: none;
-  border: 2px solid black;
-}
-
 input:focus + .label .text,
 :not(input[value='']) + .label .text {
   font-size: 12px;
   transform: translate(0, -150%);
-  background-color: whitesmoke;
+  background-color: white;
   padding-left: 4px;
   padding-right: 4px;
 }
@@ -62,42 +48,8 @@ input:focus + .label .text {
   color: red;
 }
 
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-  display: none;
-}
-
-input[type='datetime-local'] + .label .text {
-  font-size: 12px;
-  transform: translate(0, -150%);
-  background-color: white;
-  padding-left: 4px;
-  padding-right: 4px;
-}
-
-input[type='submit'] {
-  font-size: 16px;
-  background-color: #212121;
-  color: white;
-  height: auto;
-}
-
-input[type='submit']:hover {
-  transition: all 0.15s ease-out;
-  background-color: white;
-  color: #212121;
-  box-shadow: 0 0 3px #212121;
-  height: auto;
-}
-
 .registerContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  margin-top: 2rem;
-  border: #212121 solid 3px;
-  border-radius: 5px;
-  background-color: whitesmoke;
-  padding: 30px 50px 30px 50px !important;
+  width: max(430px, 35%);
+  margin: 2rem auto;
+  padding: 2rem 1rem;
 }

@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import styles from './register-page.module.css';
 import { AppRoutes, RegisterUser } from '@frontend/models';
-import { Container, Typography } from '@mui/material';
+import { Button, Paper, Typography } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { RegisterNewUser } from '@frontend/features/booking/login/data-access';
 
@@ -39,13 +39,15 @@ export function RegisterPage(props: RegisterPageProps) {
   };
 
   return (
-    <Container maxWidth="sm" className={styles.registerContainer}>
+    <Paper elevation={6} className={styles.registerContainer}>
       <Typography variant="h4" sx={{ mb: '2rem' }} align={'center'}>
         Registration form
       </Typography>
 
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Typography variant="h6">Peronal information</Typography>
+        <Typography variant="h6" marginBottom={'0.5rem'}>
+          Peronal information
+        </Typography>
         <div className={styles.inputContainer}>
           <input
             type="text"
@@ -90,7 +92,9 @@ export function RegisterPage(props: RegisterPageProps) {
           </label>
           <label className={styles.errorLabel}>{errors.email?.message}</label>
         </div>
-        <Typography variant="h6">Address information</Typography>
+        <Typography variant="h6" marginBottom={'0.5rem'}>
+          Address information
+        </Typography>
         <div className={styles.inputContainer}>
           <input type="text" id="address.street" value={watch('address.street')} {...register('address.street', { required: 'This field is required.' })} />
           <label className={styles.label} htmlFor="address.street" id="label-address.street">
@@ -129,7 +133,9 @@ export function RegisterPage(props: RegisterPageProps) {
           <label className={styles.errorLabel}>{errors.address?.country?.message}</label>
         </div>
 
-        <Typography variant="h6">Account information</Typography>
+        <Typography variant="h6" marginBottom={'0.5rem'}>
+          Account information
+        </Typography>
         <div className={styles.inputContainer}>
           <input
             type="text"
@@ -196,9 +202,18 @@ export function RegisterPage(props: RegisterPageProps) {
           <label className={styles.errorLabel}>{errors.role?.message}</label>
         </div>
 
-        <input style={{ width: '50%', marginLeft: '25%', marginRight: '25%' }} type="submit" value="Register" />
+        <div className={styles.inputContainer} style={{ justifyContent: 'center' }}>
+          <Button
+            variant="contained"
+            size="large"
+            type="submit"
+            sx={{ color: 'white', background: '#212121', height: '48px', width: '248px', ':hover': { background: 'white', color: '#212121' } }}
+          >
+            Register
+          </Button>
+        </div>
       </form>
-    </Container>
+    </Paper>
   );
 }
 

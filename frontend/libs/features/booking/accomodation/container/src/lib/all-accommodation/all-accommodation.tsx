@@ -64,6 +64,7 @@ export function AllAccommodation(props: AllAccommodationProps) {
               value={watch('dateFrom')}
               {...register('dateFrom', {
                 required: 'This field is required.',
+                min: { value: new Date().toISOString().split('T')[0], message: 'Minimum date is today.' },
               })}
             />
             <label className={styles.label} htmlFor="dateFrom" id="label-dateFrom">
@@ -79,6 +80,7 @@ export function AllAccommodation(props: AllAccommodationProps) {
               value={watch('dateTo')}
               {...register('dateTo', {
                 required: 'This field is required.',
+                min: { value: watch('dateFrom'), message: 'Minimum date is the date from.' },
               })}
             />
             <label className={styles.label} htmlFor="dateTo" id="label-dateTo">
@@ -110,6 +112,7 @@ export function AllAccommodation(props: AllAccommodationProps) {
               value={watch('numberOfGuests')}
               {...register('numberOfGuests', {
                 required: 'This field is required.',
+                min: { value: 1, message: 'Minimum number of guests is 1.' },
               })}
             />
             <label className={styles.label} htmlFor="numberOfGuests" id="label-numberOfGuests">
@@ -122,7 +125,7 @@ export function AllAccommodation(props: AllAccommodationProps) {
             variant="contained"
             size="large"
             type="submit"
-            sx={{ color: 'white', background: '#212121', height: '48px', width: '248px', ':hover': { background: 'white', color: '#212121' } }}
+            sx={{ color: 'white', background: '#212121', height: '48px', minWidth: '200px', ':hover': { background: 'white', color: '#212121' } }}
           >
             Search
           </Button>
@@ -131,7 +134,7 @@ export function AllAccommodation(props: AllAccommodationProps) {
             size="large"
             type="reset"
             onClick={resetSearch}
-            sx={{ color: 'white', background: '#212121', height: '48px', width: '248px', ':hover': { background: 'white', color: '#212121' } }}
+            sx={{ color: 'white', background: '#212121', height: '48px', minWidth: '200px', ':hover': { background: 'white', color: '#212121' } }}
           >
             Reset
           </Button>

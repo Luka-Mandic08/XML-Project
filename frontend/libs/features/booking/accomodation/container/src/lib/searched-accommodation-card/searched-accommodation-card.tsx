@@ -9,7 +9,7 @@ export interface SearchedAccommodationCardProps {
 
 export function SearchedAccommodationCard(props: SearchedAccommodationCardProps) {
   return (
-    <Paper elevation={6} sx={{ maxWidth: '450px', margin: '1rem', padding: '1.5rem 2rem 1.5rem 2rem' }}>
+    <Paper elevation={6} sx={{ maxWidth: '450px', padding: '1.5rem 2rem 1.5rem 2rem' }}>
       <Grid container justifyContent={'start'}>
         <Grid item xs={12}>
           <Typography variant="h3" align="center" fontWeight={550}>

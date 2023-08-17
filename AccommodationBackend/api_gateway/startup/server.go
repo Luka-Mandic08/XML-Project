@@ -68,11 +68,11 @@ func CreateRoutersAndSetRoutes(config *Config) *gin.Engine {
 
 	accommodationGroup := router.Group("/accommodation")
 	accommodationGroup.GET("/all", accommodationHandler.GetAll)
+	accommodationGroup.POST("/search", accommodationHandler.Search)
 	accommodationGroup.Use(services.ValidateToken())
 	accommodationGroup.POST("/create", services.AuthorizeRole("Host"), accommodationHandler.Create)
 	accommodationGroup.POST("/updateAvailability", services.AuthorizeRole("Host"), accommodationHandler.UpdateAvailability)
 	accommodationGroup.POST("/checkAvailability", accommodationHandler.CheckAvailability)
-	accommodationGroup.POST("/search", accommodationHandler.Search)
 	accommodationGroup.GET("/all/host/:hostId", accommodationHandler.GetAllByHostId)
 	accommodationGroup.PUT("/availability", accommodationHandler.GetAvailabilities)
 	return router

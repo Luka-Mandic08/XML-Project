@@ -1,6 +1,6 @@
 import { LoginToBookingApp, LoginToFlightsApp } from '@frontend/features/flights/login/data-access';
 import { AppRoutes, BookingAppRoutes } from '@frontend/models';
-import { Container, Typography } from '@mui/material';
+import { Button, Container, Paper, Typography } from '@mui/material';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
@@ -49,8 +49,8 @@ export function LoginPage(props: LoginPageProps) {
   };
 
   return (
-    <Container maxWidth="sm" className={styles.loginContainer}>
-      <Typography variant="h4" sx={{ mb: '2rem' }} align="center">
+    <Paper elevation={6} className={styles.loginContainer}>
+      <Typography variant="h4" sx={{ mb: '1rem' }} align="center">
         Log in
       </Typography>
 
@@ -85,17 +85,22 @@ export function LoginPage(props: LoginPageProps) {
           <label className={styles.errorLabel}>{errors.password?.message}</label>
         </div>
 
-        <input
-          style={{ width: '50%', marginLeft: '25%', marginRight: '25%', marginTop: '1rem' }}
-          type="submit"
-          value={props.isBookingApp ? 'Login to Booking App' : 'Login to Flights App'}
-        />
+        <div className={styles.inputContainer} style={{ justifyContent: 'center' }}>
+          <Button
+            variant="contained"
+            size="large"
+            type="submit"
+            sx={{ color: 'white', background: '#212121', height: '48px', width: '248px', ':hover': { background: 'white', color: '#212121' } }}
+          >
+            {props.isBookingApp ? 'Login to Booking App' : 'Login to Flights App'}
+          </Button>
+        </div>
       </form>
 
       <Typography variant="subtitle1" color={'red'} align="center" sx={{ mt: '0.5rem' }}>
         {error}
       </Typography>
-    </Container>
+    </Paper>
   );
 }
 

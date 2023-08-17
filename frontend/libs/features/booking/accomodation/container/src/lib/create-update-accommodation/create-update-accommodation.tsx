@@ -84,7 +84,6 @@ export function CreateUpdateAccommodation(props: CreateUpdateAccommodationProps)
     register,
     handleSubmit,
     watch,
-    setValue,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -109,10 +108,10 @@ export function CreateUpdateAccommodation(props: CreateUpdateAccommodationProps)
   };
 
   return (
-    <Paper elevation={3} sx={{ width: 'min(90%,1200px)', margin: '1rem auto', paddingX: '2.5rem', paddingY: '1rem' }}>
-      <Grid container justifyContent={'center'} marginY={'1rem'} alignItems={'center'}>
-        <Grid item paddingX={'1rem'}>
-          <Typography variant="h2" align="center">
+    <Paper elevation={6} className={styles.createAccommodationContainer}>
+      <Grid container justifyContent={'center'} alignItems={'center'}>
+        <Grid item>
+          <Typography variant="h3" align="center">
             Create Accommodation
           </Typography>
         </Grid>
@@ -316,15 +315,16 @@ export function CreateUpdateAccommodation(props: CreateUpdateAccommodationProps)
             <input style={{ width: '48px', height: '48px' }} type="checkbox" id="hasAutomaticReservations" {...register('hasAutomaticReservations')} />
           </div>
         </div>
-
-        <Button
-          variant="contained"
-          size="large"
-          type="submit"
-          sx={{ color: 'white', background: '#212121', height: '48px', width: '248px', ':hover': { background: 'white', color: '#212121' } }}
-        >
-          Create Accommodation
-        </Button>
+        <div className={styles.inputContainer} style={{ justifyContent: 'center' }}>
+          <Button
+            variant="contained"
+            size="large"
+            type="submit"
+            sx={{ color: 'white', background: '#212121', height: '48px', width: '248px', ':hover': { background: 'white', color: '#212121' } }}
+          >
+            Create Accommodation
+          </Button>
+        </div>
       </form>
     </Paper>
   );
