@@ -1,7 +1,69 @@
-/*
- * Replace this with your own classes
- *
- * e.g.
- * .container {
- * }
-*/
+.inputContainer {
+  display: flex;
+  position: relative;
+  margin-bottom: 2rem;
+}
+
+input {
+  height: 48px;
+  width: 100%;
+  border: 1px solid #c0c0c0;
+  border-radius: 4px;
+  box-sizing: border-box;
+  padding: 16px;
+}
+
+.label {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 16px;
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+}
+
+input,
+.label .text {
+  font-family: 'Segoe UI';
+  font-size: 16px;
+}
+
+.label .text {
+  transition: all 0.15s ease-out;
+  color: grey;
+}
+
+input:focus {
+  outline: none;
+  border: 2px solid black;
+}
+
+input:focus + .label .text,
+:not(input[value='']) + .label .text {
+  font-size: 12px;
+  transform: translate(0, -150%);
+  background-color: whitesmoke;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+input:focus + .label .text {
+  color: black;
+}
+
+.errorLabel {
+  position: absolute;
+  top: 50px;
+  left: 16px;
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+  color: red;
+}
+
+.loginContainer {
+  width: max(430px, 35%);
+  margin: 2rem auto;
+  padding: 2rem 1rem;
+}

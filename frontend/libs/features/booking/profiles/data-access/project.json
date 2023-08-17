@@ -1,0 +1,16 @@
+{
+  "name": "features-booking-profiles-data-access",
+  "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/features/booking/profiles/data-access/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/features/booking/profiles/data-access/**/*.{ts,tsx,js,jsx}"]
+      }
+    }
+  }
+}

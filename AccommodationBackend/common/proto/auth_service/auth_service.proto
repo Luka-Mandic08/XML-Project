@@ -8,6 +8,7 @@ service AuthService{
         rpc Login(LoginRequest) returns(LoginResponse) {}
         rpc Register(RegisterRequest) returns(RegisterResponse) {}
         rpc Update(UpdateRequest) returns(UpdateResponse) {}
+        rpc GetByUserId(GetByUserIdRequest) returns(GetByUserIdResponse) {}
         rpc Delete(DeleteRequest) returns(DeleteResponse) {}
 }
 
@@ -41,6 +42,7 @@ message UpdateRequest {
 
 message UpdateResponse{
         string message = 1;
+        string username = 2;
 }
 
 message DeleteRequest {
@@ -51,3 +53,10 @@ message DeleteResponse {
         string message = 1;
 }
 
+message GetByUserIdRequest{
+        string userId = 1;
+}
+
+message GetByUserIdResponse{
+        string username = 1;
+}

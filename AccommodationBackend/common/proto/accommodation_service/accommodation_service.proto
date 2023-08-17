@@ -8,10 +8,13 @@ import "google/protobuf/timestamp.proto";
 
 service AccommodationService{
         rpc Get(GetRequest) returns(GetResponse) {}
-        rpc Create(CreateRequest) returns(CreateResponse){}
+        rpc Create(CreateRequest) returns(Response){}
+        rpc GetAll(GetAllRequest) returns(GetAllResponse) {}
         rpc UpdateAvailability(UpdateAvailabilityRequest) returns(Response) {}
         rpc CheckAvailability(CheckAvailabilityRequest) returns(CheckAvailabilityResponse){}
         rpc Search(SearchRequest) returns(SearchResponse) {}
+        rpc GetAllByHostId(GetAllByHostIdRequest) returns(GetAllByHostIdResponse) {}
+        rpc GetAvailabilities(GetAvailabilitiesRequest) returns(GetAvailabilitiesResponse) {}
 }
 
 message GetRequest{
@@ -32,10 +35,6 @@ message CreateRequest{
         bool priceIsPerGuest = 7;
         bool hasAutomaticReservations = 8;
         string hostId = 9;
-}
-message CreateResponse{
-        string message = 1;
-        string id = 2;
 }
 
 message Address {
@@ -87,4 +86,49 @@ message SearchResultAccommodation{
         repeated string images = 5;
         float unitPrice = 6;
         float totalPrice = 7;
+}
+
+message GetAllByHostIdRequest{
+        string hostId = 1;
+}
+
+message Accommodation{
+        string name = 1;
+        Address address = 2;
+        repeated string amenities = 3;
+        repeated string images = 4;
+        int32 minGuests = 5;
+        int32 maxGuests = 6;
+        bool priceIsPerGuest = 7;
+        bool hasAutomaticReservations = 8;
+        string hostId = 9;
+        string id = 10;
+}
+
+message GetAllByHostIdResponse{
+        repeated Accommodation accommodations = 1;
+}
+
+message GetAvailabilitiesRequest{
+        string accommodationid = 1;
+        google.protobuf.Timestamp dateFrom = 2;
+        google.protobuf.Timestamp dateTo = 3;
+}
+
+message GetAvailabilitiesResponse{
+        repeated Availability availabilityDates = 1;
+}
+
+message Availability{
+        google.protobuf.Timestamp date = 1;
+        bool isAvailable = 2;
+        float price = 3;
+}
+
+message GetAllRequest{
+
+}
+
+message GetAllResponse{
+        repeated Accommodation accommodations = 1;
 }

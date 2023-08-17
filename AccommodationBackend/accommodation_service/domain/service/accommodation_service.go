@@ -170,7 +170,7 @@ func (service *AccommodationService) GetAllAvailability(dateFrom time.Time, date
 	return availabilitiesToUpdate
 }
 
-func (service *AccommodationService) CheckAccommodationAvailable(request *accommodation.CheckAvailabilityRequest) (*accommodation.CheckAvailabilityResponse, error) {
+/*func (service *AccommodationService) CheckAccommodationAvailable(request *accommodation.CheckAvailabilityRequest) (*accommodation.CheckAvailabilityResponse, error) {
 	id, _ := primitive.ObjectIDFromHex(request.Accommodationid)
 	acc, _ := service.accommodationStore.GetById(id)
 	if acc == nil {
@@ -192,4 +192,18 @@ func (service *AccommodationService) CheckAccommodationAvailable(request *accomm
 		ShouldCreateAutomaticReservation: acc.HasAutomaticReservations,
 		TotalPrice:                       totalPrice,
 	}, nil
+}*/
+
+func (service *AccommodationService) GetAllByHostId(hostId string) ([]*model.Accommodation, error) {
+	return service.accommodationStore.GetAllByHostId(hostId)
+}
+
+func (service *AccommodationService) GetAll() ([]*model.Accommodation, error) {
+	return service.accommodationStore.GetAll()
+}
+
+func (service *AccommodationService) GetAvailabilitiesForAccommodation(request *accommodation.GetAvailabilitiesRequest) ([]*model.Availability, error) {
+	dateFrom := request.DateFrom.AsTime()
+	dateTo := request.DateTo.AsTime()
+	return service.availabilityStore.GetAvailabilitiesForAccommodation(dateFrom, dateTo, request.Accommodationid)
 }

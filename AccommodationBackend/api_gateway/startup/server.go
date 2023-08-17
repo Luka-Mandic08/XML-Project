@@ -80,7 +80,8 @@ func CreateRoutersAndSetRoutes(config *Config) *gin.Engine {
 	}*/
 	authGroup.Use(services.ValidateToken()) //Login i register su navedeni pre ove linije, pa se za njih ne koristi validateToken
 	authGroup.PUT("/update", authHandler.Update)
-	authGroup.DELETE("/delete/:id", authHandler.Delete)
+	authGroup.DELETE("/delete/:userId", authHandler.Delete)
+	authGroup.GET("/get/:userId", authHandler.GetByUserId)
 
 	userGroup := router.Group("/users")
 	userGroup.Use(services.ValidateToken())
@@ -88,44 +89,19 @@ func CreateRoutersAndSetRoutes(config *Config) *gin.Engine {
 	userGroup.PUT("/update", userHandler.Update)
 
 	accommodationGroup := router.Group("/accommodation")
+	accommodationGroup.GET("/all", accommodationHandler.GetAll)
+	accommodationGroup.POST("/search", accommodationHandler.Search)
 	accommodationGroup.Use(services.ValidateToken())
 	accommodationGroup.POST("/create", services.AuthorizeRole("Host"), accommodationHandler.Create)
-	/*{
-	    "name":"Vila detelinara",
-	    "address":{
-	        "street":"Moja ulica",
-	        "city":"Ns",
-	        "country":"Srbija"
-	    },
-	    "amenities":["Klima","Bazen"],
-	    "images":["a","b"],
-	    "minGuests":2,
-	    "maxGuests":5,
-	    "hostId":"64d4fdddddf5b55946ce909f",
-	    "priceIsPerGuest":true,
-	    "hasAutomaticReservations":false
-	}*/
 	accommodationGroup.POST("/updateAvailability", services.AuthorizeRole("Host"), accommodationHandler.UpdateAvailability)
-	/*{
-	    "accommodationid":"64ce8316903c974f5743bc7b",
-	    "dateFrom":"2023-08-15T00:00:00.00Z",
-	    "dateTo":"2023-08-18T00:00:00.00Z",
-	    "price":1500.00
-	}*/
 	accommodationGroup.POST("/checkAvailability", accommodationHandler.CheckAvailability)
-	accommodationGroup.POST("/search", accommodationHandler.Search)
+	accommodationGroup.GET("/all/host/:hostId", accommodationHandler.GetAllByHostId)
+	accommodationGroup.PUT("/availability", accommodationHandler.GetAvailabilities)
 
 	reservationGroup := router.Group("/reservation")
 	reservationGroup.Use(services.ValidateToken())
 	reservationGroup.GET("/getAllByUserId/:id", reservationHandler.GetAllByUserId)
 	reservationGroup.POST("/request", services.AuthorizeRole("Guest"), reservationHandler.Request)
-	/*{
-	    "accommodationId": "1",
-	    "start": "2023-08-15T00:00:00.00Z",
-	    "end": "2023-01-15T15:04:05.00Z",
-	    "userId": "1",
-		"numberOfGuests": 6
-	}*/
 
 	return router
 }

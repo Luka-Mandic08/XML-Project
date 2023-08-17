@@ -1,1 +1,55 @@
 /* You can add global styles to this file, and also import other style files */
+::-webkit-scrollbar {
+  width: 0px; /* Adjust this value as needed */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0); /* Transparent background */
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: rgba(0, 0, 0, 0); /* Transparent background */
+}
+
+body {
+  margin: 0;
+  padding-top: 70px;
+  padding-bottom: 70px;
+}
+
+fieldset {
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+input {
+  height: 48px;
+  width: 100%;
+  border: 1px solid #c0c0c0;
+  border-radius: 4px;
+  box-sizing: border-box;
+  padding: 16px;
+}
+
+select {
+  height: 48px;
+  width: 100%;
+  border: 1px solid #c0c0c0;
+  border-radius: 4px;
+  box-sizing: border-box;
+  padding: 10px 16px 10px 16px;
+  font-size: 16px;
+  font-family: 'Segoe UI';
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  display: none;
+}
+
+input:focus {
+  outline: none;
+  border: 2px solid black;
+}

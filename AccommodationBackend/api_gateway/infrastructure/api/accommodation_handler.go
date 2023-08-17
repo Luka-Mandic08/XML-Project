@@ -117,3 +117,60 @@ func (handler *AccommodationHandler) Search(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, response)
 	return
 }
+
+func (handler *AccommodationHandler) GetAllByHostId(ctx *gin.Context) {
+	hostId := ctx.Param("hostId")
+	if services.AuthorizeId(hostId, ctx) {
+		ctx.JSON(http.StatusUnauthorized, "Not allowed")
+		return
+	}
+	request := accommodation.GetAllByHostIdRequest{HostId: hostId}
+	response, err := handler.accommodationClient.GetAllByHostId(ctx, &request)
+	if err != nil {
+		grpcError, ok := status.FromError(err)
+		if ok {
+			ctx.JSON(http.StatusBadRequest, grpcError.Message())
+			return
+		}
+		ctx.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+	ctx.JSON(http.StatusOK, response)
+}
+
+func (handler *AccommodationHandler) GetAll(ctx *gin.Context) {
+
+	request := accommodation.GetAllRequest{}
+	response, err := handler.accommodationClient.GetAll(ctx, &request)
+	if err != nil {
+		grpcError, ok := status.FromError(err)
+		if ok {
+			ctx.JSON(http.StatusBadRequest, grpcError.Message())
+			return
+		}
+		ctx.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+	ctx.JSON(http.StatusOK, response)
+}
+
+func (handler *AccommodationHandler) GetAvailabilities(ctx *gin.Context) {
+	var request accommodation.GetAvailabilitiesRequest
+	num, _ := ctx.GetRawData()
+	err := protojson.Unmarshal(num, &request)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+	response, err := handler.accommodationClient.GetAvailabilities(ctx, &request)
+	if err != nil {
+		grpcError, ok := status.FromError(err)
+		if ok {
+			ctx.JSON(http.StatusBadRequest, grpcError.Message())
+			return
+		}
+		ctx.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+	ctx.JSON(http.StatusOK, response)
+}

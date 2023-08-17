@@ -10,6 +10,7 @@ type AuthStore interface {
 	GetById(id primitive.ObjectID) (*model.Account, error)
 	Insert(user *model.Account) (*model.Account, error)
 	GetByUsername(username string) (*model.Account, error)
-	Update(*model.Account) (*mongo.UpdateResult, error)
+	GetByUserId(userId string) (*model.Account, error)
+	Update(*model.Account) (*mongo.UpdateResult, *model.Account, error)
 	Delete(id string) (*mongo.DeleteResult, error)
 }

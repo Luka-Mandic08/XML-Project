@@ -35,3 +35,18 @@ func UpdateMapper(req *auth.UpdateRequest) *model.Account {
 	}
 	return &acc
 }
+
+func UpdateMapperToAccount(acc *model.Account) *auth.UpdateResponse {
+	res := auth.UpdateResponse{
+		Message:  "Account successfully updated.",
+		Username: acc.Username,
+	}
+	return &res
+}
+
+func GetMapper(acc *model.Account) *auth.GetByUserIdResponse {
+	res := auth.GetByUserIdResponse{
+		Username: acc.Username,
+	}
+	return &res
+}

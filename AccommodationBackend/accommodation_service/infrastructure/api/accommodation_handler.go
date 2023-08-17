@@ -24,14 +24,13 @@ func (handler *AccommodationHandler) Get(ctx context.Context, request *accommoda
 	return nil, nil
 }
 
-func (handler *AccommodationHandler) Create(ctx context.Context, request *accommodation.CreateRequest) (*accommodation.CreateResponse, error) {
+func (handler *AccommodationHandler) Create(ctx context.Context, request *accommodation.CreateRequest) (*accommodation.Response, error) {
 	acc := MapCreateRequestToAccommodation(request)
 	acc, err := handler.service.Insert(acc)
 	if err != nil {
 		return nil, status.Error(codes.AlreadyExists, "An accommodation already exists at this location")
 	}
-	return &accommodation.CreateResponse{
-		Id:      acc.Id.Hex(),
+	return &accommodation.Response{
 		Message: "Accommodation successfully created",
 	}, nil
 }
@@ -58,4 +57,34 @@ func (handler *AccommodationHandler) Search(ctx context.Context, request *accomm
 		return nil, status.Error(codes.Aborted, err.Error())
 	}
 	return MapAccommodationsToSearchRequest(accommodations, prices, numberOfDays, int(request.NumberOfGuests)), nil
+}
+
+func (handler *AccommodationHandler) GetAllByHostId(ctx context.Context, request *accommodation.GetAllByHostIdRequest) (*accommodation.GetAllByHostIdResponse, error) {
+	accommodations, err := handler.service.GetAllByHostId(request.HostId)
+	if err != nil {
+		return nil, status.Error(codes.Aborted, err.Error())
+	}
+
+	mapped, _ := MapAccommodations(accommodations)
+
+	return mapped, nil
+}
+
+func (handler *AccommodationHandler) GetAll(ctx context.Context, request *accommodation.GetAllRequest) (*accommodation.GetAllResponse, error) {
+	accommodations, err := handler.service.GetAll()
+	if err != nil {
+		return nil, status.Error(codes.Aborted, err.Error())
+	}
+
+	_, mapped := MapAccommodations(accommodations)
+
+	return mapped, nil
+}
+
+func (handler *AccommodationHandler) GetAvailabilities(ctx context.Context, request *accommodation.GetAvailabilitiesRequest) (*accommodation.GetAvailabilitiesResponse, error) {
+	availabilities, err := handler.service.GetAvailabilitiesForAccommodation(request)
+	if err != nil {
+		return nil, status.Error(codes.Aborted, err.Error())
+	}
+	return MapAvailabilities(availabilities), nil
 }

@@ -94,3 +94,29 @@ func decode(cursor *mongo.Cursor) (accommodations []*model.Accommodation, err er
 	err = cursor.Err()
 	return
 }
+
+func (store *AccommodationMongoDBStore) GetAllByHostId(hostId string) ([]*model.Accommodation, error) {
+	filter := bson.M{"hostid": hostId}
+	result, err := store.accommodations.Find(context.TODO(), filter)
+	if err != nil {
+		return nil, err
+	}
+	accommodations, err := decode(result)
+	if err != nil {
+		return nil, err
+	}
+	return accommodations, nil
+}
+
+func (store *AccommodationMongoDBStore) GetAll() ([]*model.Accommodation, error) {
+	filter := bson.D{}
+	result, err := store.accommodations.Find(context.TODO(), filter)
+	if err != nil {
+		return nil, err
+	}
+	accommodations, err := decode(result)
+	if err != nil {
+		return nil, err
+	}
+	return accommodations, nil
+}

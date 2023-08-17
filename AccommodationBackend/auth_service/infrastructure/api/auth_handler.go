@@ -51,14 +51,14 @@ func (handler *AuthHandler) Register(ctx context.Context, request *pb.RegisterRe
 
 func (handler *AuthHandler) Update(ctx context.Context, request *pb.UpdateRequest) (*pb.UpdateResponse, error) {
 	account := UpdateMapper(request)
-	result, err := handler.service.Update(account)
+	result, acc, err := handler.service.Update(account)
 	if err != nil {
 		return nil, status.Error(codes.Unknown, "Unable to update account")
 	}
 	if result.MatchedCount == 0 {
 		return nil, status.Error(codes.NotFound, "Unable to find account")
 	}
-	return &pb.UpdateResponse{Message: "Account successfully updated"}, nil
+	return UpdateMapperToAccount(acc), nil
 }
 
 func (handler *AuthHandler) Delete(ctx context.Context, request *pb.DeleteRequest) (*pb.DeleteResponse, error) {
@@ -70,4 +70,12 @@ func (handler *AuthHandler) Delete(ctx context.Context, request *pb.DeleteReques
 		return nil, status.Error(codes.NotFound, "Unable to find account")
 	}
 	return &pb.DeleteResponse{Message: "Account successfully deleted"}, nil
+}
+
+func (handler *AuthHandler) GetByUserId(ctx context.Context, request *pb.GetByUserIdRequest) (*pb.GetByUserIdResponse, error) {
+	result, err := handler.service.GetByUserId(request.UserId)
+	if err != nil {
+		return nil, status.Error(codes.Unknown, "Unable to get account")
+	}
+	return GetMapper(result), nil
 }

@@ -1,0 +1,136 @@
+.inputContainer {
+  position: relative;
+  margin-bottom: 2rem;
+  display: flex;
+  flex-grow: 1;
+}
+
+.label {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 16px;
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+}
+
+input,
+.label .text {
+  font-family: 'Segoe UI';
+  font-size: 16px;
+}
+
+.label .text {
+  transition: all 0.15s ease-out;
+  color: grey;
+}
+
+input:focus + .label .text,
+:not(input[value='']) + .label .text {
+  font-size: 12px;
+  transform: translate(0, -150%);
+  background-color: white;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+input:focus + .label .text {
+  color: black;
+}
+
+.errorLabel {
+  position: absolute;
+  top: 50px;
+  left: 16px;
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+  color: red;
+}
+
+input[type='datetime-local'],
+input[type='date'] + .label .text {
+  font-size: 12px;
+  transform: translate(0, -150%);
+  background-color: white;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+.lineContainer {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 2rem;
+  row-gap: 0.125rem;
+  margin-bottom: 2rem;
+}
+
+.inlineGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+@media (max-width: 1564px) {
+  .inlineGrid {
+    grid-template-columns: 1fr; /* Change to a single column */
+  }
+}
+
+.calendarContainer {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1.5rem;
+  padding: 1.5rem;
+}
+
+.calendarHeaderItem {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 19px;
+  font-weight: bold;
+}
+
+@media (max-width: 1278px) {
+  .calendarHeaderItem {
+    display: none;
+  }
+  .calendarContainer {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+@media (max-width: 938px) {
+  .calendarContainer {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 598px) {
+  .calendarContainer {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.calendarItem {
+  min-width: 120px;
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  border: #212121 1px solid;
+  border-radius: 4px;
+  padding: 0.75rem;
+}
+
+.updateAvailabilityForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.5rem;
+  min-width: 205px;
+  flex-grow: 1;
+}

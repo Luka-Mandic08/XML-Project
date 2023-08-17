@@ -3,6 +3,7 @@ package api
 import (
 	"accommodation_service/domain/model"
 	accommodation "common/proto/accommodation_service"
+	"github.com/golang/protobuf/ptypes"
 )
 
 // Func za mapiranje objekata iz modela na proto message
@@ -50,4 +51,44 @@ func MapAccommodationsToSearchRequest(accs []*model.Accommodation, prices []floa
 		searchAccommodations = append(searchAccommodations, &searchAccommodation)
 	}
 	return &accommodation.SearchResponse{Accommodations: searchAccommodations}
+}
+
+func MapAccommodations(accs []*model.Accommodation) (*accommodation.GetAllByHostIdResponse, *accommodation.GetAllResponse) {
+	var accommodations = []*accommodation.Accommodation{}
+	for _, acc := range accs {
+		address := accommodation.Address{
+			Street:  acc.Address.Street,
+			City:    acc.Address.City,
+			Country: acc.Address.Country,
+		}
+		var newAccommodation = accommodation.Accommodation{
+			Name:                     acc.Name,
+			Address:                  &address,
+			Amenities:                acc.Amenities,
+			Images:                   acc.Images,
+			MinGuests:                acc.MinGuests,
+			MaxGuests:                acc.MaxGuests,
+			PriceIsPerGuest:          acc.PriceIsPerGuest,
+			HasAutomaticReservations: acc.HasAutomaticReservations,
+			HostId:                   acc.HostId,
+			Id:                       acc.Id.Hex(),
+		}
+
+		accommodations = append(accommodations, &newAccommodation)
+	}
+	return &accommodation.GetAllByHostIdResponse{Accommodations: accommodations}, &accommodation.GetAllResponse{Accommodations: accommodations}
+}
+
+func MapAvailabilities(availabilities []*model.Availability) *accommodation.GetAvailabilitiesResponse {
+	var a = []*accommodation.Availability{}
+	for _, av := range availabilities {
+		protoTimestamp, _ := ptypes.TimestampProto(av.Date)
+		var availability = accommodation.Availability{
+			Date:        protoTimestamp,
+			IsAvailable: av.IsAvailable,
+			Price:       av.Price,
+		}
+		a = append(a, &availability)
+	}
+	return &accommodation.GetAvailabilitiesResponse{AvailabilityDates: a}
 }
