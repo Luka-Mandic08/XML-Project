@@ -48,6 +48,10 @@ func CreateRoutersAndSetRoutes(config *Config) *gin.Engine {
 	reservationClient := services.NewReservationClient(reservationServiceAddress)
 	reservationHandler := handler.NewReservationHandler(reservationClient)
 
+	ratingServiceAddress := fmt.Sprintf("%s:%s", config.RatingHost, config.RatingPort)
+	ratingClient := services.NewRatingClient(ratingServiceAddress)
+	ratingHandler := handler.NewRatingHandler(ratingClient)
+
 	corsMiddleware := cors.New(cors.Config{
 		AllowOrigins: []string{"*"},
 		AllowMethods: []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
@@ -85,6 +89,25 @@ func CreateRoutersAndSetRoutes(config *Config) *gin.Engine {
 	reservationGroup.Use(services.ValidateToken())
 	reservationGroup.GET("/getAllByUserId/:id", reservationHandler.GetAllByUserId)
 	reservationGroup.POST("/request", services.AuthorizeRole("Guest"), reservationHandler.Request)
+
+	ratingGroup := router.Group("/rating")
+	ratingGroup.Use(services.ValidateToken())
+
+	hostGroup := ratingGroup.Group("/host")
+	hostGroup.GET("/:ratingId", ratingHandler.GetHostRatingById)
+	hostGroup.GET("/all/:hostId", ratingHandler.GetAllRatingsForHost)
+	hostGroup.GET("/averageScore/:hostId", ratingHandler.GetAverageScoreForHost)
+	hostGroup.POST("/create", services.AuthorizeRole("Guest"), ratingHandler.CreateHostRating)
+	hostGroup.PUT("/update", services.AuthorizeRole("Guest"), ratingHandler.UpdateHostRating)
+	hostGroup.DELETE("/delete", services.AuthorizeRole("Guest"), ratingHandler.DeleteHostRating)
+
+	accommodationGroup = ratingGroup.Group("/accommodation")
+	accommodationGroup.GET("/:ratingId", ratingHandler.GetAccommodationRatingById)
+	accommodationGroup.GET("/all/:accommodationId", ratingHandler.GetAllRatingsForAccommodation)
+	accommodationGroup.GET("/averageScore/:accommodationId", ratingHandler.GetAverageScoreForAccommodation)
+	accommodationGroup.POST("/create", services.AuthorizeRole("Guest"), ratingHandler.CreateAccommodationRating)
+	accommodationGroup.PUT("/update", services.AuthorizeRole("Guest"), ratingHandler.UpdateAccommodationRating)
+	accommodationGroup.DELETE("/delete", services.AuthorizeRole("Guest"), ratingHandler.DeleteAccommodationRating)
 
 	return router
 }

@@ -20,6 +20,8 @@ services:
       ACCOMMODATION_SERVICE_PORT: ${ACCOMMODATION_SERVICE_PORT}
       RESERVATION_SERVICE_HOST: ${RESERVATION_SERVICE_HOST}
       RESERVATION_SERVICE_PORT: ${RESERVATION_SERVICE_PORT}
+      RATING_SERVICE_HOST: ${RATING_SERVICE_HOST}
+      RATING_SERVICE_PORT: ${RATING_SERVICE_PORT}
     networks:
       - network
 
@@ -109,6 +111,22 @@ services:
     networks:
       - network
 
+  rating_service:
+    image: rating_service
+    container_name: rating_service
+    build:
+      context: .
+      dockerfile: ./rating_service/Dockerfile
+    restart: on-failure
+    environment:
+      RATING_DB_HOST: ${RATING_DB_HOST}
+      RATING_DB_PORT: ${RATING_DB_PORT}
+      RATING_SERVICE_PORT: ${RATING_SERVICE_PORT}
+    depends_on:
+      - rating_db
+    networks:
+      - network
+
   auth_db:
     image: mongo
     container_name: auth_db
@@ -153,6 +171,17 @@ services:
     networks:
       - network
 
+  rating_db:
+    image: mongo
+    container_name: rating_db
+    volumes:
+      - ratingDb:/data/db
+    restart: on-failure
+    ports:
+      - 5005:27017
+    networks:
+      - network
+
   nats:
     image: nats
     container_name: nats
@@ -165,6 +194,7 @@ volumes:
   userDb:
   accommodationDb:
   reservationDb:
+  ratingDb:
 
 networks:
   network:

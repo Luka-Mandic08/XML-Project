@@ -1,0 +1,81 @@
+syntax = "proto3";
+
+option go_package = "common/rating";
+
+package rating;
+
+service RatingService{
+  rpc GetHostRatingById(IdRequest) returns(HostRating) {}
+  rpc GetAllRatingsForHost(IdRequest) returns(GetAllRatingsForHostResponse) {}
+  rpc GetAverageScoreForHost(IdRequest) returns(GetAverageScoreForHostResponse) {}
+  rpc CreateHostRating(CreateHostRatingRequest) returns(HostRating) {}
+  rpc UpdateHostRating(HostRating) returns(HostRating) {}
+  rpc DeleteHostRating(DeleteRequest) returns(DeletedResponse) {}
+
+  rpc GetAccommodationRatingById(IdRequest) returns(AccommodationRating) {}
+  rpc GetAllRatingsForAccommodation(IdRequest) returns(GetAllRatingsForAccommodationResponse) {}
+  rpc GetAverageScoreForAccommodation(IdRequest) returns(GetAverageScoreForAccommodationResponse) {}
+  rpc CreateAccommodationRating(CreateAccommodationRatingRequest) returns(AccommodationRating) {}
+  rpc UpdateAccommodationRating(AccommodationRating) returns(AccommodationRating) {}
+  rpc DeleteAccommodationRating(DeleteRequest) returns(DeletedResponse) {}
+}
+
+message HostRating {
+  string id      = 1;
+  string guestId = 2;
+  string hostId  = 3;
+  int32  score   = 4;
+  string comment = 5;
+}
+
+message AccommodationRating {
+  string id      = 1;
+  string guestId = 2;
+  string accommodationId  = 3;
+  int32  score   = 4;
+  string comment = 5;
+}
+
+message IdRequest {
+  string id = 1;
+}
+
+message GetAllRatingsForHostResponse {
+  repeated HostRating hostRatings = 1;
+}
+
+message GetAverageScoreForHostResponse {
+  string hostId = 1;
+  float  score  = 2;
+}
+
+message CreateHostRatingRequest {
+  string guestId = 1;
+  string hostId  = 2;
+  int32  score   = 3;
+  string comment = 4;
+}
+
+message DeleteRequest {
+  string ratingId = 1;
+  string guestId = 2;
+}
+message DeletedResponse {
+  string message = 1;
+}
+
+message GetAllRatingsForAccommodationResponse {
+  repeated AccommodationRating accommodationRatings = 1;
+}
+
+message GetAverageScoreForAccommodationResponse {
+  string accommodationId = 1;
+  float score = 2;
+}
+
+message CreateAccommodationRatingRequest {
+  string guestId = 1;
+  string accommodationId  = 2;
+  int32  score   = 3;
+  string comment = 4;
+}
