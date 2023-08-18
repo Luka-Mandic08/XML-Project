@@ -32,7 +32,7 @@ type UserServiceClient interface {
 	Get(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetResponse, error)
 	Create(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*GetResponse, error)
 	Update(ctx context.Context, in *UpdateRequest, opts ...grpc.CallOption) (*GetResponse, error)
-	Delete(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*DeleteResponse, error)
+	Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*DeleteResponse, error)
 }
 
 type userServiceClient struct {
@@ -70,7 +70,7 @@ func (c *userServiceClient) Update(ctx context.Context, in *UpdateRequest, opts 
 	return out, nil
 }
 
-func (c *userServiceClient) Delete(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*DeleteResponse, error) {
+func (c *userServiceClient) Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*DeleteResponse, error) {
 	out := new(DeleteResponse)
 	err := c.cc.Invoke(ctx, UserService_Delete_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -86,7 +86,7 @@ type UserServiceServer interface {
 	Get(context.Context, *GetRequest) (*GetResponse, error)
 	Create(context.Context, *CreateRequest) (*GetResponse, error)
 	Update(context.Context, *UpdateRequest) (*GetResponse, error)
-	Delete(context.Context, *GetRequest) (*DeleteResponse, error)
+	Delete(context.Context, *DeleteRequest) (*DeleteResponse, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -103,7 +103,7 @@ func (UnimplementedUserServiceServer) Create(context.Context, *CreateRequest) (*
 func (UnimplementedUserServiceServer) Update(context.Context, *UpdateRequest) (*GetResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
 }
-func (UnimplementedUserServiceServer) Delete(context.Context, *GetRequest) (*DeleteResponse, error) {
+func (UnimplementedUserServiceServer) Delete(context.Context, *DeleteRequest) (*DeleteResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
@@ -174,7 +174,7 @@ func _UserService_Update_Handler(srv interface{}, ctx context.Context, dec func(
 }
 
 func _UserService_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetRequest)
+	in := new(DeleteRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -186,7 +186,7 @@ func _UserService_Delete_Handler(srv interface{}, ctx context.Context, dec func(
 		FullMethod: UserService_Delete_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).Delete(ctx, req.(*GetRequest))
+		return srv.(UserServiceServer).Delete(ctx, req.(*DeleteRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

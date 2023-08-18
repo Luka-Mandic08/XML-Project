@@ -8,7 +8,7 @@ service UserService{
         rpc Get(GetRequest) returns(GetResponse) {}
         rpc Create(CreateRequest) returns(GetResponse) {}
         rpc Update(UpdateRequest) returns(GetResponse) {}
-        rpc Delete(GetRequest) returns(DeleteResponse) {}
+        rpc Delete(DeleteRequest) returns(DeleteResponse) {}
 }
 
 message GetRequest {
@@ -44,7 +44,11 @@ message UpdateRequest{
         Address address = 5;
 }
 
+message DeleteRequest{
+        string id = 1;
+        string role = 2;
+}
+
 message DeleteResponse {
         string message = 1;
 }
-z

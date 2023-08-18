@@ -211,3 +211,11 @@ func (service *AccommodationService) GetAvailabilitiesForAccommodation(request *
 	dateTo := request.DateTo.AsTime()
 	return service.availabilityStore.GetAvailabilitiesForAccommodation(dateFrom, dateTo, request.Accommodationid)
 }
+
+func (service *AccommodationService) DeleteAllForHost(hostId string) (*mongo.DeleteResult, error) {
+	accommodations, _ := service.accommodationStore.GetAllByHostId(hostId)
+	for _, a := range accommodations {
+		service.availabilityStore.DeleteAllForAccommodation(a.Id.Hex())
+	}
+	return service.accommodationStore.DeleteAllForHost(hostId)
+}

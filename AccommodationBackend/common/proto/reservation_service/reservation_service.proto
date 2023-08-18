@@ -11,6 +11,8 @@ service ReservationService{
         rpc Delete(DeleteRequest) returns(DeleteResponse) {}
         rpc GetAllByUserId(GetAllByUserIdRequest) returns(GetAllByUserIdResponse) {}
         rpc Request(RequestRequest) returns(RequestResponse) {}
+        rpc CheckIfGuestHasReservations(CheckReservationRequest) returns(CheckReservationResponse) {}
+        rpc CheckIfHostHasReservations(CheckReservationRequest) returns(CheckReservationResponse) {}
 }
 
 message Reservation {
@@ -93,4 +95,12 @@ message RequestRequest{
 }
 message RequestResponse {
         string id = 1;
+}
+
+message CheckReservationRequest {
+        string id = 1;
+}
+
+message CheckReservationResponse {
+        string message = 1;
 }

@@ -84,3 +84,25 @@ func (service *ReservationService) Approve(id primitive.ObjectID, price float32)
 
 	return reservation, nil
 }
+
+func (service *ReservationService) GetActiveByUserId(id string) (bool, error) {
+	reservations, err := service.store.GetActiveByUserId(id)
+	if err != nil {
+		return true, err
+	}
+	if len(reservations) == 0 {
+		return false, nil
+	}
+	return true, nil
+}
+
+func (service *ReservationService) GetActiveForAccommodations(ids []string) (bool, error) {
+	reservations, err := service.store.GetActiveForAccommodations(ids)
+	if err != nil {
+		return true, err
+	}
+	if len(reservations) == 0 {
+		return false, nil
+	}
+	return true, nil
+}

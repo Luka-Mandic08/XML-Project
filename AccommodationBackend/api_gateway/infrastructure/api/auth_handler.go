@@ -88,7 +88,7 @@ func (handler *AuthHandler) Register(ctx *gin.Context) {
 
 	response, err := handler.authClient.Register(ctx, dto.RegisterDtoToAccount(&registerDto, userResponse.Id))
 	if err != nil {
-		handler.userClient.Delete(ctx, &user.GetRequest{Id: userResponse.Id})
+		handler.userClient.Delete(ctx, &user.DeleteRequest{Id: userResponse.Id, Role: registerDto.Role})
 		grpcError, ok := status.FromError(err)
 		if ok {
 			switch grpcError.Code() {
@@ -137,7 +137,12 @@ func (handler *AuthHandler) Delete(ctx *gin.Context) {
 		ctx.JSON(http.StatusUnauthorized, "Not allowed")
 		return
 	}
-	request := user.GetRequest{Id: id}
+	role := ctx.Param("role")
+	if role != "Host" && role != "Guest" {
+		ctx.JSON(http.StatusBadRequest, "Role must be 'Host' or 'Guest'")
+		return
+	}
+	request := user.DeleteRequest{Id: id, Role: role}
 	_, err := handler.userClient.Delete(ctx, &request)
 	if err != nil {
 		grpcError, ok := status.FromError(err)

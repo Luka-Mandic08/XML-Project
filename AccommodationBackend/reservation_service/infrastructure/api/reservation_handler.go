@@ -1,6 +1,7 @@
 package api
 
 import (
+	accommodation "common/proto/accommodation_service"
 	pb "common/proto/reservation_service"
 	"context"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -13,12 +14,14 @@ import (
 
 type ReservationHandler struct {
 	pb.UnimplementedReservationServiceServer
-	reservationService *service.ReservationService
+	reservationService  *service.ReservationService
+	accommodationClient accommodation.AccommodationServiceClient
 }
 
-func NewReservationHandler(reservationService *service.ReservationService) *ReservationHandler {
+func NewReservationHandler(reservationService *service.ReservationService, accommodationClient accommodation.AccommodationServiceClient) *ReservationHandler {
 	return &ReservationHandler{
-		reservationService: reservationService,
+		reservationService:  reservationService,
+		accommodationClient: accommodationClient,
 	}
 }
 
@@ -105,4 +108,35 @@ func (handler *ReservationHandler) Request(ctx context.Context, request *pb.Requ
 	}
 	response := MapReservationToRequestResponse(reservationRequest)
 	return response, nil
+}
+
+func (handler *ReservationHandler) CheckIfGuestHasReservations(ctx context.Context, request *pb.CheckReservationRequest) (*pb.CheckReservationResponse, error) {
+	hasReservations, err := handler.reservationService.GetActiveByUserId(request.GetId())
+	if err != nil {
+		return nil, err
+	}
+	if hasReservations {
+		return nil, status.Error(codes.Canceled, "User has active reservations")
+	}
+	return &pb.CheckReservationResponse{Message: "Success"}, nil
+}
+
+func (handler *ReservationHandler) CheckIfHostHasReservations(ctx context.Context, request *pb.CheckReservationRequest) (*pb.CheckReservationResponse, error) {
+	accommodations, err := handler.accommodationClient.GetAllByHostId(ctx, &accommodation.GetAllByHostIdRequest{HostId: request.GetId()})
+	var ids []string
+	for _, a := range accommodations.GetAccommodations() {
+		ids = append(ids, a.GetId())
+	}
+	if len(ids) == 0 {
+		return &pb.CheckReservationResponse{Message: "Success"}, nil
+	}
+	hasReservations, err := handler.reservationService.GetActiveForAccommodations(ids)
+	if err != nil {
+		return nil, err
+	}
+	if hasReservations {
+		return nil, status.Error(codes.Canceled, "User has active reservations")
+	}
+	handler.accommodationClient.DeleteAllForHost(ctx, &accommodation.GetByIdRequest{Id: request.GetId()})
+	return &pb.CheckReservationResponse{Message: "Success"}, nil
 }

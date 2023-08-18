@@ -7,19 +7,21 @@ import (
 	"google.golang.org/grpc/status"
 	"user_service/domain/service"
 
+	reservation "common/proto/reservation_service"
 	pb "common/proto/user_service"
-
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type UserHandler struct {
 	pb.UnimplementedUserServiceServer
-	service *service.UserService
+	service           *service.UserService
+	reservationClient reservation.ReservationServiceClient
 }
 
-func NewUserHandler(service *service.UserService) *UserHandler {
+func NewUserHandler(service *service.UserService, reservationClient reservation.ReservationServiceClient) *UserHandler {
 	return &UserHandler{
-		service: service,
+		service:           service,
+		reservationClient: reservationClient,
 	}
 }
 
@@ -39,8 +41,8 @@ func (handler *UserHandler) Get(ctx context.Context, request *pb.GetRequest) (*p
 
 func (handler *UserHandler) Create(ctx context.Context, request *pb.CreateRequest) (*pb.GetResponse, error) {
 	user := MapCreateRequestToUser(request)
-	user, error := handler.service.Insert(user)
-	if error != nil {
+	user, err := handler.service.Insert(user)
+	if err != nil {
 		return nil, status.Error(codes.AlreadyExists, "Unable to insert user into database")
 	}
 	response := MapUserToGetResponse(user)
@@ -49,8 +51,8 @@ func (handler *UserHandler) Create(ctx context.Context, request *pb.CreateReques
 
 func (handler *UserHandler) Update(ctx context.Context, request *pb.UpdateRequest) (*pb.GetResponse, error) {
 	user := MapUpdateRequestToUser(request)
-	result, error := handler.service.Update(user)
-	if error != nil {
+	result, err := handler.service.Update(user)
+	if err != nil {
 		return nil, status.Error(codes.Unknown, "Unable to update user")
 	}
 	if result.MatchedCount == 0 {
@@ -60,9 +62,19 @@ func (handler *UserHandler) Update(ctx context.Context, request *pb.UpdateReques
 	return response, nil
 }
 
-func (handler *UserHandler) Delete(ctx context.Context, request *pb.GetRequest) (*pb.DeleteResponse, error) {
-	result, error := handler.service.Delete(request.Id)
-	if error != nil {
+func (handler *UserHandler) Delete(ctx context.Context, request *pb.DeleteRequest) (*pb.DeleteResponse, error) {
+	var err error
+	if request.GetRole() == "Guest" {
+		_, err = handler.reservationClient.CheckIfGuestHasReservations(ctx, &reservation.CheckReservationRequest{Id: request.GetId()})
+	}
+	if request.GetRole() == "Host" {
+		_, err = handler.reservationClient.CheckIfHostHasReservations(ctx, &reservation.CheckReservationRequest{Id: request.GetId()})
+	}
+	if err != nil {
+		return nil, status.Error(codes.Canceled, err.Error())
+	}
+	result, err := handler.service.Delete(request.Id)
+	if err != nil {
 		return nil, status.Error(codes.Unknown, "Unable to delete user")
 	}
 	if result.DeletedCount == 0 {

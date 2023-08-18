@@ -15,6 +15,7 @@ service AccommodationService{
         rpc UpdateAvailability(UpdateAvailabilityRequest) returns(Response) {}
         rpc CheckAvailability(CheckAvailabilityRequest) returns(CheckAvailabilityResponse){}
         rpc Search(SearchRequest) returns(SearchResponse) {}
+        rpc DeleteAllForHost(GetByIdRequest) returns(Response) {}
 }
 
 message Accommodation{
@@ -45,6 +46,7 @@ message Availability{
 message GetByIdRequest{
         string id = 1;
 }
+
 message GetByIdResponse{
         Accommodation accommodation = 1;
 }

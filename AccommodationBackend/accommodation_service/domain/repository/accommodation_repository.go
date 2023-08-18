@@ -66,6 +66,15 @@ func (store *AccommodationMongoDBStore) Delete(id string) (*mongo.DeleteResult, 
 	return result, nil
 }
 
+func (store *AccommodationMongoDBStore) DeleteAllForHost(id string) (*mongo.DeleteResult, error) {
+	filter := bson.M{"userid": id}
+	result, err := store.accommodations.DeleteMany(context.TODO(), filter)
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
 func (store *AccommodationMongoDBStore) filter(filter interface{}) ([]*model.Accommodation, error) {
 	cursor, err := store.accommodations.Find(context.TODO(), filter)
 	defer cursor.Close(context.TODO())

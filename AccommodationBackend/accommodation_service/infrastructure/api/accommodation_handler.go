@@ -100,3 +100,11 @@ func (handler *AccommodationHandler) GetAvailabilities(ctx context.Context, requ
 	}
 	return MapAvailabilities(availabilities), nil
 }
+
+func (handler *AccommodationHandler) DeleteAllForHost(ctx context.Context, request *accommodation.GetByIdRequest) (*accommodation.Response, error) {
+	_, err := handler.service.DeleteAllForHost(request.GetId())
+	if err != nil {
+		return nil, status.Error(codes.Aborted, err.Error())
+	}
+	return &accommodation.Response{Message: "Success"}, nil
+}

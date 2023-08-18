@@ -6,6 +6,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"reservation_service/domain/model"
+	"time"
 )
 
 type ReservationMongoDBStore struct {
@@ -66,6 +67,19 @@ func (store *ReservationMongoDBStore) Update(reservation *model.Reservation) (*m
 		return nil, err
 	}
 	return result, nil
+}
+
+func (store *ReservationMongoDBStore) GetActiveByUserId(id string) ([]*model.Reservation, error) {
+	statuses := []string{"Accepted", "Pending"}
+	today := time.Now()
+	filter := bson.M{"user": id, "status": bson.M{"$in": statuses}, "end": bson.M{"$gt": today}}
+	return store.filter(filter)
+}
+func (store *ReservationMongoDBStore) GetActiveForAccommodations(ids []string) ([]*model.Reservation, error) {
+	statuses := []string{"Accepted", "Pending"}
+	today := time.Now()
+	filter := bson.M{"accommodation": bson.M{"$in": ids}, "status": bson.M{"$in": statuses}, "end": bson.M{"$gt": today}}
+	return store.filter(filter)
 }
 
 func (store *ReservationMongoDBStore) filter(filter interface{}) ([]*model.Reservation, error) {

@@ -13,7 +13,7 @@ import (
 func NewAuthClient(address string) auth.AuthServiceClient {
 	conn, err := getConnection(address)
 	if err != nil {
-		log.Fatalf("Failed to start gRPC connection to Catalogue service: %v", err)
+		log.Fatalf("Failed to start gRPC connection to Auth service: %v", err)
 	}
 	return auth.NewAuthServiceClient(conn)
 }
@@ -21,7 +21,7 @@ func NewAuthClient(address string) auth.AuthServiceClient {
 func NewUserClient(address string) user.UserServiceClient {
 	conn, err := getConnection(address)
 	if err != nil {
-		log.Fatalf("Failed to start gRPC connection to Catalogue service: %v", err)
+		log.Fatalf("Failed to start gRPC connection to User service: %v", err)
 	}
 	return user.NewUserServiceClient(conn)
 }
@@ -29,7 +29,7 @@ func NewUserClient(address string) user.UserServiceClient {
 func NewAccommodationClient(address string) accommodation.AccommodationServiceClient {
 	conn, err := getConnection(address)
 	if err != nil {
-		log.Fatalf("Failed to start gRPC connection to Catalogue service: %v", err)
+		log.Fatalf("Failed to start gRPC connection to Accommodation service: %v", err)
 	}
 	return accommodation.NewAccommodationServiceClient(conn)
 }
@@ -37,7 +37,7 @@ func NewAccommodationClient(address string) accommodation.AccommodationServiceCl
 func NewReservationClient(address string) reservation.ReservationServiceClient {
 	conn, err := getConnection(address)
 	if err != nil {
-		log.Fatalf("Failed to start gRPC connection to Catalogue service: %v", err)
+		log.Fatalf("Failed to start gRPC connection to Reservation service: %v", err)
 	}
 	return reservation.NewReservationServiceClient(conn)
 }

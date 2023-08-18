@@ -1,6 +1,7 @@
 package startup
 
 import (
+	accommodation "common/proto/accommodation_service"
 	reservation "common/proto/reservation_service"
 	saga "common/saga/messaging"
 	"common/saga/messaging/nats"
@@ -44,8 +45,8 @@ func (server *Server) Start() {
 	commandSubscriber := server.initSubscriber(server.config.CreateReservationCommandSubject, QUEUE_GROUP)
 	replyPublisher := server.initPublisher(server.config.CreateReservationReplySubject)
 	server.initCreateReservationHandler(reservationService, replyPublisher, commandSubscriber)
-
-	reservationHandler := server.initReservationHandler(reservationService)
+	accommodationClient := persistence.NewAccommodationClient(server.config.AccommodationHost, server.config.AccommodationPort)
+	reservationHandler := server.initReservationHandler(reservationService, accommodationClient)
 
 	server.startGrpcServer(reservationHandler)
 }
@@ -99,8 +100,8 @@ func (server *Server) initCreateReservationHandler(service *service.ReservationS
 	}
 }
 
-func (server *Server) initReservationHandler(reservationService *service.ReservationService) *api.ReservationHandler {
-	return api.NewReservationHandler(reservationService)
+func (server *Server) initReservationHandler(reservationService *service.ReservationService, accommodationClient accommodation.AccommodationServiceClient) *api.ReservationHandler {
+	return api.NewReservationHandler(reservationService, accommodationClient)
 }
 
 func (server *Server) startGrpcServer(reservationHandler *api.ReservationHandler) {
