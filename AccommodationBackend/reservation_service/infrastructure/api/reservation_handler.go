@@ -140,3 +140,33 @@ func (handler *ReservationHandler) CheckIfHostHasReservations(ctx context.Contex
 	handler.accommodationClient.DeleteAllForHost(ctx, &accommodation.GetByIdRequest{Id: request.GetId()})
 	return &pb.CheckReservationResponse{Message: "Success"}, nil
 }
+
+func (handler *ReservationHandler) CheckIfGuestVisitedAccommodation(ctx context.Context, request *pb.CheckPreviousReservationRequest) (*pb.CheckReservationResponse, error) {
+	hasReservations, err := handler.reservationService.GetPastByUserId(request.GetGuestId(), request.GetId())
+	if err != nil {
+		return nil, err
+	}
+	if !hasReservations {
+		return nil, status.Error(codes.Canceled, "User has no previous reservations")
+	}
+	return &pb.CheckReservationResponse{Message: "Success"}, nil
+}
+
+func (handler *ReservationHandler) CheckIfGuestVisitedHost(ctx context.Context, request *pb.CheckPreviousReservationRequest) (*pb.CheckReservationResponse, error) {
+	accommodations, err := handler.accommodationClient.GetAllByHostId(ctx, &accommodation.GetAllByHostIdRequest{HostId: request.GetId()})
+	var ids []string
+	for _, a := range accommodations.GetAccommodations() {
+		ids = append(ids, a.GetId())
+	}
+	if len(ids) == 0 {
+		return nil, status.Error(codes.Canceled, "User has no previous reservations")
+	}
+	hasReservations, err := handler.reservationService.GetPastForAccommodations(request.GetGuestId(), ids)
+	if err != nil {
+		return nil, err
+	}
+	if !hasReservations {
+		return nil, status.Error(codes.Canceled, "User has no previous reservations")
+	}
+	return &pb.CheckReservationResponse{Message: "Success"}, nil
+}

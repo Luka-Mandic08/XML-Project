@@ -2,6 +2,7 @@ package api
 
 import (
 	rating "common/proto/rating_service"
+	"github.com/golang/protobuf/ptypes"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"rating_service/domain/model"
 )
@@ -21,12 +22,14 @@ func MapManyHostRatingsToResponse(rs []*model.HostRating) *rating.GetAllRatingsF
 	var ratings []*rating.HostRating
 
 	for _, r := range rs {
+		protoTimestamp, _ := ptypes.TimestampProto(r.Date)
 		var mappedHostRating = rating.HostRating{
 			Id:      r.Id.Hex(),
 			GuestId: r.GuestId,
 			HostId:  r.HostId,
 			Score:   r.Score,
 			Comment: r.Comment,
+			Date:    protoTimestamp,
 		}
 		ratings = append(ratings, &mappedHostRating)
 	}
@@ -40,6 +43,7 @@ func MapCreateRequestToHostRating(r *rating.CreateHostRatingRequest) *model.Host
 		HostId:  r.HostId,
 		Score:   r.Score,
 		Comment: r.Comment,
+		Date:    r.Date.AsTime(),
 	}
 	return &mappedHostRating
 }
@@ -51,17 +55,20 @@ func MapToHostRating(r *rating.HostRating, objectId primitive.ObjectID) *model.H
 		HostId:  r.HostId,
 		Score:   r.Score,
 		Comment: r.Comment,
+		Date:    r.Date.AsTime(),
 	}
 	return &mappedHostRating
 }
 
 func MapAccommodationRatingToResponse(r *model.AccommodationRating) *rating.AccommodationRating {
+	protoTimestamp, _ := ptypes.TimestampProto(r.Date)
 	var mappedAccommodationRating = rating.AccommodationRating{
 		Id:              r.Id.Hex(),
 		GuestId:         r.GuestId,
 		AccommodationId: r.AccommodationId,
 		Score:           r.Score,
 		Comment:         r.Comment,
+		Date:            protoTimestamp,
 	}
 	return &mappedAccommodationRating
 }
@@ -70,12 +77,14 @@ func MapManyAccommodationRatingsToResponse(rs []*model.AccommodationRating) *rat
 	var ratings []*rating.AccommodationRating
 
 	for _, r := range rs {
+		protoTimestamp, _ := ptypes.TimestampProto(r.Date)
 		var mappedAccommodationRating = rating.AccommodationRating{
 			Id:              r.Id.Hex(),
 			GuestId:         r.GuestId,
 			AccommodationId: r.AccommodationId,
 			Score:           r.Score,
 			Comment:         r.Comment,
+			Date:            protoTimestamp,
 		}
 		ratings = append(ratings, &mappedAccommodationRating)
 	}
@@ -89,6 +98,7 @@ func MapCreateRequestToAccommodationRating(r *rating.CreateAccommodationRatingRe
 		AccommodationId: r.AccommodationId,
 		Score:           r.Score,
 		Comment:         r.Comment,
+		Date:            r.Date.AsTime(),
 	}
 	return &mappedAccommodationRating
 }
@@ -100,6 +110,7 @@ func MapToAccommodationRating(r *rating.AccommodationRating, objectId primitive.
 		AccommodationId: r.AccommodationId,
 		Score:           r.Score,
 		Comment:         r.Comment,
+		Date:            r.Date.AsTime(),
 	}
 	return &mappedAccommodationRating
 }

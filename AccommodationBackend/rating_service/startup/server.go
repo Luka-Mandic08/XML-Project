@@ -11,6 +11,7 @@ import (
 	"rating_service/infrastructure/persistence"
 
 	rating "common/proto/rating_service"
+	reservation "common/proto/reservation_service"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"google.golang.org/grpc"
@@ -31,7 +32,8 @@ func (server *Server) Start() {
 	hostRatingStore := server.initHostRatingStore(mongoClient)
 	accommodationRatingStore := server.initAccommodationRatingStore(mongoClient)
 	ratingService := server.initRatingService(hostRatingStore, accommodationRatingStore)
-	ratingHandler := server.initRatingHandler(ratingService)
+	reservationClient := persistence.NewReservationClient(server.config.ReservationHost, server.config.ReservationPort)
+	ratingHandler := server.initRatingHandler(ratingService, reservationClient)
 	server.startGrpcServer(ratingHandler)
 }
 
@@ -55,8 +57,8 @@ func (server *Server) initRatingService(hostStore repository.HostRatingStore, ac
 	return service.NewRatingService(hostStore, accommodationStore)
 }
 
-func (server *Server) initRatingHandler(service *service.RatingService) *api.RatingHandler {
-	return api.NewRatingHandler(service)
+func (server *Server) initRatingHandler(service *service.RatingService, reservationClient reservation.ReservationServiceClient) *api.RatingHandler {
+	return api.NewRatingHandler(service, reservationClient)
 }
 
 func (server *Server) startGrpcServer(ratingHandler *api.RatingHandler) {

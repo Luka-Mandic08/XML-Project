@@ -13,6 +13,8 @@ service ReservationService{
         rpc Request(RequestRequest) returns(RequestResponse) {}
         rpc CheckIfGuestHasReservations(CheckReservationRequest) returns(CheckReservationResponse) {}
         rpc CheckIfHostHasReservations(CheckReservationRequest) returns(CheckReservationResponse) {}
+        rpc CheckIfGuestVisitedAccommodation(CheckPreviousReservationRequest) returns(CheckReservationResponse) {}
+        rpc CheckIfGuestVisitedHost(CheckPreviousReservationRequest) returns(CheckReservationResponse) {}
 }
 
 message Reservation {
@@ -103,4 +105,9 @@ message CheckReservationRequest {
 
 message CheckReservationResponse {
         string message = 1;
+}
+
+message CheckPreviousReservationRequest{
+        string id = 1;
+        string guestId = 2;
 }
