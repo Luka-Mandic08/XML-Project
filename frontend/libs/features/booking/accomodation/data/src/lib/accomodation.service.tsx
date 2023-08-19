@@ -52,7 +52,7 @@ export async function GetAllAccomodation(): Promise<AccommodationInfo[]> {
     });
 }
 
-export async function CreateUpdateAccommodationFunction(data: AccommodationCreateUpdateDTO, amenities: string[], images: File[]): Promise<void> {
+export async function CreateUpdateAccommodationFunction(data: AccommodationCreateUpdateDTO, amenities: string[], images: string[]): Promise<void> {
   await axios({
     method: 'post',
     url: BookingBaseURL.URL + '/accommodation/create',
@@ -61,7 +61,7 @@ export async function CreateUpdateAccommodationFunction(data: AccommodationCreat
       name: data.name,
       address: data.address,
       amenities: amenities,
-      images: [],
+      images: images,
       minGuests: 1 * data.minGuests,
       maxGuests: 1 * data.maxGuests,
       priceIsPerGuest: data.priceIsPerGuest,

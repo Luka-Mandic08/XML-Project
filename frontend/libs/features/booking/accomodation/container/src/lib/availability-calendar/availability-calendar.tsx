@@ -29,7 +29,7 @@ export function AvailabilityCalendar(props: AvailabilityCalendarProps) {
     const firstDayOfMonth = new Date(year, months.indexOf(month), 0).getDay();
 
     const startOfCalendar = new Date(year, months.indexOf(month) - 1, getNumberOfDaysInMonth(months[months.indexOf(month) - 1], year) - firstDayOfMonth);
-    const endOfCalendar = new Date(year, months.indexOf(month) + 1, 7 - new Date(year, months.indexOf(month), numberOfDaysInMonth).getDay() - 1);
+    const endOfCalendar = new Date(year, months.indexOf(month) + 1, 7 - new Date(year, months.indexOf(month), numberOfDaysInMonth).getDay());
 
     const availabilityDatesFromBackend: AvailabilityDate[] = new Array<AvailabilityDate>();
     const res: any = await GetAvailableDatesForAccommodation({
@@ -49,7 +49,7 @@ export function AvailabilityCalendar(props: AvailabilityCalendarProps) {
     }
 
     let i = 0;
-    while (startOfCalendar <= endOfCalendar) {
+    while (startOfCalendar < endOfCalendar) {
       const tempDate = new Date(startOfCalendar);
       if (availabilityDatesFromBackend[i]?.date?.toDateString() === tempDate.toDateString()) {
         availabilityDates.push(availabilityDatesFromBackend[i]);

@@ -33,19 +33,14 @@ export function SearchedAccommodationCard(props: SearchedAccommodationCardProps)
           <Grid item direction={'row'} xs={12} marginTop={'1.25rem'}>
             <Grid item xs={12}>
               <Typography variant="h5" align="left">
-                Address
+                Location
               </Typography>
             </Grid>
             <Grid item xs={12}>
               <div className={styles.lineContainer}>
                 <Typography variant="subtitle1" align="left">
-                  Street: {props.searchedAccomodationInfo.address.street}
-                </Typography>
-                <Typography variant="subtitle1" align="left">
-                  City: {props.searchedAccomodationInfo.address.city}
-                </Typography>
-                <Typography variant="subtitle1" align="left">
-                  Country: {props.searchedAccomodationInfo.address.country}
+                  {props.searchedAccomodationInfo.address.street}, {props.searchedAccomodationInfo.address.city},{' '}
+                  {props.searchedAccomodationInfo.address.country}
                 </Typography>
               </div>
             </Grid>

@@ -17,6 +17,7 @@ export const BookingAppRoutes = {
   GuestReservations: '/reservations/guest',
   AccommodationReservations: '/reservations/accommodation',
   CreateReservation: '/reservations/create',
+  AccommodationDetails: '/accommodation/details',
 };
 
 export const SharedRoutes = {

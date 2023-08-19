@@ -5,8 +5,15 @@ import { Routes, Route } from 'react-router-dom';
 import { RegisterPage } from '@frontend/features/booking/register/container';
 import { BookingNavBar } from '@frontend/features/booking/navigation/container';
 import { ProfileInfo } from '@frontend/features/booking/profile/container';
+import styles from './app.module.css';
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
-import { AllAccommodation, AvailabilityCalendar, CreateUpdateAccommodation, HostAccomodation } from '@frontend/features/booking/accomodation/container';
+import {
+  AccommodationDetails,
+  AllAccommodation,
+  AvailabilityCalendar,
+  CreateUpdateAccommodation,
+  HostAccomodation,
+} from '@frontend/features/booking/accomodation/container';
 import { AccommodationReservations, GuestReservations } from '@frontend/features/booking/reservation/container';
 
 export function App() {
@@ -23,6 +30,7 @@ export function App() {
         <Route path={BookingAppRoutes.AvailabilityCalendar} element={<AvailabilityCalendar />} />
         <Route path={BookingAppRoutes.GuestReservations} element={<GuestReservations />} />
         <Route path={BookingAppRoutes.AccommodationReservations} element={<AccommodationReservations />} />
+        <Route path={BookingAppRoutes.AccommodationDetails} element={<AccommodationDetails />} />
       </Routes>
     </>
   );
