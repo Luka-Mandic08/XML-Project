@@ -27,9 +27,16 @@ func MapCreateRequestToAccommodation(req *accommodation.CreateRequest) *model.Ac
 	return &acc
 }
 
-func MapAccommodationsToSearchRequest(accs []*model.Accommodation, prices []float64, numberOfDays, numberOfGuests int) *accommodation.SearchResponse {
+func MapAccommodationsToSearchRequest(accs []*model.Accommodation, prices []float64, numberOfDays, numberOfGuests, page int) *accommodation.SearchResponse {
 	var searchAccommodations = []*accommodation.SearchResultAccommodation{}
-	for i, acc := range accs {
+	startIndex := (page - 1) * 9
+	endIndex := startIndex + 9
+	if endIndex > len(accs) {
+		endIndex = len(accs)
+	}
+
+	for i := startIndex; i < endIndex; i++ {
+		acc := accs[i]
 		address := accommodation.Address{
 			Street:  acc.Address.Street,
 			City:    acc.Address.City,
@@ -50,6 +57,7 @@ func MapAccommodationsToSearchRequest(accs []*model.Accommodation, prices []floa
 		}
 		searchAccommodations = append(searchAccommodations, &searchAccommodation)
 	}
+
 	return &accommodation.SearchResponse{Accommodations: searchAccommodations}
 }
 

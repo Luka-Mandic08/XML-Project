@@ -24,6 +24,11 @@ export function AccommodationCard(props: AccommodationCardProps) {
     navigate(BookingAppRoutes.AccommodationDetails);
   };
 
+  const makeReservation = async () => {
+    setSelectedAccommodation(props.accomodationInfo);
+    navigate(BookingAppRoutes.MakeReservation);
+  };
+
   return (
     <Paper elevation={6} sx={{ width: '500px', padding: '1.5rem 2rem 1.5rem 2rem' }}>
       <Grid container justifyContent={'start'}>
@@ -81,7 +86,7 @@ export function AccommodationCard(props: AccommodationCardProps) {
                 <Button
                   variant="contained"
                   size="small"
-                  onClick={accommodationDetails}
+                  onClick={makeReservation}
                   sx={{ color: 'white', background: '#212121', ':hover': { background: 'white', color: '#212121' } }}
                 >
                   Details

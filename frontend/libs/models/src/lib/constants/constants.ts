@@ -17,6 +17,7 @@ export const BookingAppRoutes = {
   GuestReservations: '/reservations/guest',
   AccommodationReservations: '/reservations/accommodation',
   CreateReservation: '/reservations/create',
+  MakeReservation: '/accommodation/make-reservation',
   AccommodationDetails: '/accommodation/details',
 };
 

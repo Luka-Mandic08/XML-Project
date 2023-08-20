@@ -3,6 +3,7 @@
   margin-bottom: 2rem;
   display: flex;
   flex-grow: 1;
+  min-width: 250px;
 }
 
 .label {
@@ -49,15 +50,6 @@ input:focus + .label .text {
   color: red;
 }
 
-input[type='datetime-local'],
-input[type='date'] + .label .text {
-  font-size: 12px;
-  transform: translate(0, -150%);
-  background-color: white;
-  padding-left: 4px;
-  padding-right: 4px;
-}
-
 .lineContainer {
   display: flex;
   flex-direction: row;
@@ -69,14 +61,7 @@ input[type='date'] + .label .text {
 
 .inlineGrid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2rem;
-}
-
-@media (max-width: 1564px) {
-  .inlineGrid {
-    grid-template-columns: 1fr; /* Change to a single column */
-  }
+  grid-template-columns: 1fr;
 }
 
 .calendarContainer {
@@ -124,13 +109,4 @@ input[type='date'] + .label .text {
   border: #212121 1px solid;
   border-radius: 4px;
   padding: 0.75rem;
-}
-
-.updateAvailabilityForm {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  padding: 1.5rem;
-  min-width: 205px;
-  flex-grow: 1;
 }

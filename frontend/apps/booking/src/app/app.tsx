@@ -10,11 +10,11 @@ import styles from './app.module.css';
 import {
   AccommodationDetails,
   AllAccommodation,
-  AvailabilityCalendar,
   CreateUpdateAccommodation,
   HostAccomodation,
+  UpdateAccommodationAvailability,
 } from '@frontend/features/booking/accomodation/container';
-import { AccommodationReservations, GuestReservations } from '@frontend/features/booking/reservation/container';
+import { AccommodationReservations, GuestReservations, MakeReservation } from '@frontend/features/booking/reservation/container';
 
 export function App() {
   return (
@@ -27,10 +27,11 @@ export function App() {
         <Route path={BookingAppRoutes.HomeHost} element={<HostAccomodation />} />
         <Route path={BookingAppRoutes.CreateAccommodation} element={<CreateUpdateAccommodation />} />
         <Route path={BookingAppRoutes.Profile} element={<ProfileInfo />} />
-        <Route path={BookingAppRoutes.AvailabilityCalendar} element={<AvailabilityCalendar />} />
+        <Route path={BookingAppRoutes.AvailabilityCalendar} element={<UpdateAccommodationAvailability />} />
         <Route path={BookingAppRoutes.GuestReservations} element={<GuestReservations />} />
         <Route path={BookingAppRoutes.AccommodationReservations} element={<AccommodationReservations />} />
         <Route path={BookingAppRoutes.AccommodationDetails} element={<AccommodationDetails />} />
+        <Route path={BookingAppRoutes.MakeReservation} element={<MakeReservation />} />
       </Routes>
     </>
   );

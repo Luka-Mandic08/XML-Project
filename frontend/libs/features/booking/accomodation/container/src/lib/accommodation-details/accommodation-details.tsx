@@ -21,6 +21,7 @@ export function AccommodationDetails(props: AccommodationDetailsProps) {
               Images
             </Typography>
             <div className={styles.imageContainer}>
+              {/* eslint-disable-next-line jsx-a11y/img-redundant-alt*/}
               <img key={i} src={item} alt="Accomodation image" className={styles.imageStyle} />
             </div>
           </>

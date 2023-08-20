@@ -90,6 +90,7 @@ message SearchRequest{
         google.protobuf.Timestamp dateFrom = 3;
         google.protobuf.Timestamp dateTo = 4;
         int32 numberOfGuests = 5;
+        int32 pageNumber = 6;
 }
 message SearchResponse{
         repeated SearchResultAccommodation accommodations = 1;
