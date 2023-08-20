@@ -106,3 +106,25 @@ func (service *ReservationService) GetActiveForAccommodations(ids []string) (boo
 	}
 	return true, nil
 }
+
+func (service *ReservationService) GetPastByUserId(guestId, accommodationId string) (bool, error) {
+	reservations, err := service.store.GetPastByUserId(guestId, accommodationId)
+	if err != nil {
+		return true, err
+	}
+	if len(reservations) == 0 {
+		return false, nil
+	}
+	return true, nil
+}
+
+func (service *ReservationService) GetPastForAccommodations(guestId string, ids []string) (bool, error) {
+	reservations, err := service.store.GetPastForAccommodations(guestId, ids)
+	if err != nil {
+		return true, err
+	}
+	if len(reservations) == 0 {
+		return false, nil
+	}
+	return true, nil
+}

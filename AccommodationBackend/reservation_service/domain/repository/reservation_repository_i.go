@@ -15,4 +15,6 @@ type ReservationStore interface {
 	GetAllByUserId(id primitive.ObjectID) ([]*model.Reservation, error)
 	GetActiveByUserId(id string) ([]*model.Reservation, error)
 	GetActiveForAccommodations(ids []string) ([]*model.Reservation, error)
+	GetPastByUserId(guestId, accommodationId string) ([]*model.Reservation, error)
+	GetPastForAccommodations(guestId string, ids []string) ([]*model.Reservation, error)
 }

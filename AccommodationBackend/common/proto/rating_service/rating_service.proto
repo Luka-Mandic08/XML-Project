@@ -4,6 +4,8 @@ option go_package = "common/rating";
 
 package rating;
 
+import "google/protobuf/timestamp.proto";
+
 service RatingService{
   rpc GetHostRatingById(IdRequest) returns(HostRating) {}
   rpc GetAllRatingsForHost(IdRequest) returns(GetAllRatingsForHostResponse) {}
@@ -26,6 +28,7 @@ message HostRating {
   string hostId  = 3;
   int32  score   = 4;
   string comment = 5;
+  google.protobuf.Timestamp date = 6;
 }
 
 message AccommodationRating {
@@ -34,6 +37,7 @@ message AccommodationRating {
   string accommodationId  = 3;
   int32  score   = 4;
   string comment = 5;
+  google.protobuf.Timestamp date = 6;
 }
 
 message IdRequest {
@@ -54,12 +58,14 @@ message CreateHostRatingRequest {
   string hostId  = 2;
   int32  score   = 3;
   string comment = 4;
+  google.protobuf.Timestamp date = 5;
 }
 
 message DeleteRequest {
   string ratingId = 1;
   string guestId = 2;
 }
+
 message DeletedResponse {
   string message = 1;
 }
@@ -78,4 +84,5 @@ message CreateAccommodationRatingRequest {
   string accommodationId  = 2;
   int32  score   = 3;
   string comment = 4;
+  google.protobuf.Timestamp date = 5;
 }

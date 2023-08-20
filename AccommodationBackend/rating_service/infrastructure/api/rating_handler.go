@@ -1,6 +1,7 @@
 package api
 
 import (
+	reservation "common/proto/reservation_service"
 	"context"
 	"errors"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -15,12 +16,14 @@ import (
 
 type RatingHandler struct {
 	pb.UnimplementedRatingServiceServer
-	service *service.RatingService
+	service           *service.RatingService
+	reservationClient reservation.ReservationServiceClient
 }
 
-func NewRatingHandler(service *service.RatingService) *RatingHandler {
+func NewRatingHandler(service *service.RatingService, reservationClient reservation.ReservationServiceClient) *RatingHandler {
 	return &RatingHandler{
-		service: service,
+		service:           service,
+		reservationClient: reservationClient,
 	}
 }
 
@@ -64,8 +67,15 @@ func (handler *RatingHandler) GetAverageScoreForHost(ctx context.Context, reques
 }
 
 func (handler *RatingHandler) CreateHostRating(ctx context.Context, request *pb.CreateHostRatingRequest) (*pb.HostRating, error) {
+	_, err := handler.reservationClient.CheckIfGuestVisitedAccommodation(ctx, &reservation.CheckPreviousReservationRequest{
+		Id:      request.HostId,
+		GuestId: request.GuestId,
+	})
+	if err != nil {
+		return nil, err
+	}
 	hostRating := MapCreateRequestToHostRating(request)
-	hostRating, err := handler.service.InsertHostRating(hostRating)
+	hostRating, err = handler.service.InsertHostRating(hostRating)
 	if err != nil {
 		return nil, status.Error(codes.AlreadyExists, "Unable to insert host rating into database")
 	}
@@ -154,8 +164,15 @@ func (handler *RatingHandler) GetAverageScoreForAccommodation(ctx context.Contex
 }
 
 func (handler *RatingHandler) CreateAccommodationRating(ctx context.Context, request *pb.CreateAccommodationRatingRequest) (*pb.AccommodationRating, error) {
+	_, err := handler.reservationClient.CheckIfGuestVisitedAccommodation(ctx, &reservation.CheckPreviousReservationRequest{
+		Id:      request.AccommodationId,
+		GuestId: request.GuestId,
+	})
+	if err != nil {
+		return nil, err
+	}
 	accommodationRating := MapCreateRequestToAccommodationRating(request)
-	accommodationRating, err := handler.service.InsertAccommodationRating(accommodationRating)
+	accommodationRating, err = handler.service.InsertAccommodationRating(accommodationRating)
 	if err != nil {
 		return nil, status.Error(codes.AlreadyExists, "Unable to insert accommodation rating into database")
 	}
