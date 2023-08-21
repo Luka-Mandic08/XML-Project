@@ -1,6 +1,7 @@
 package persistence
 
 import (
+	rating "common/proto/rating_service"
 	reservation "common/proto/reservation_service"
 	"context"
 	"fmt"
@@ -24,6 +25,15 @@ func NewReservationClient(host, port string) reservation.ReservationServiceClien
 		log.Fatalf("Failed to start gRPC connection to Reservation service: %v", err)
 	}
 	return reservation.NewReservationServiceClient(conn)
+}
+
+func NewRatingClient(host, port string) rating.RatingServiceClient {
+	address := fmt.Sprintf("%s:%s", host, port)
+	conn, err := getConnection(address)
+	if err != nil {
+		log.Fatalf("Failed to start gRPC connection to Rating service: %v", err)
+	}
+	return rating.NewRatingServiceClient(conn)
 }
 
 func getConnection(address string) (*grpc.ClientConn, error) {

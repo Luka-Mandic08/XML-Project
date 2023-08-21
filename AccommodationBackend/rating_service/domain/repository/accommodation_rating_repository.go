@@ -30,22 +30,30 @@ func (a AccommodationMongoDBStore) GetAllForAccommodation(accommodationId string
 }
 
 func (a AccommodationMongoDBStore) GetAverageScoreForAccommodation(accommodationId string) (float32, error) {
-	result, err := a.GetAllForAccommodation(accommodationId)
-	if err != nil {
-		return 0.0, err
+	pipeline := bson.A{
+		bson.D{
+			{"$match", bson.D{
+				{"accommodationid", accommodationId},
+			}},
+		},
+		bson.D{
+			{"$group", bson.D{
+				{"_id", nil},
+				{"averageScore", bson.D{
+					{"$avg", "$score"},
+				}},
+			}},
+		},
 	}
-
-	if len(result) == 0 {
-		return 0.0, nil // TODO: No ratings for the accommodation, what to do next?
+	cursor, err := a.accommodationRatings.Aggregate(context.TODO(), pipeline)
+	var result []bson.M
+	if err = cursor.All(context.TODO(), &result); err != nil {
+		return 0, err
 	}
-
-	totalScore := int32(0)
-	for _, rating := range result {
-		totalScore += rating.Score
+	if len(result) > 0 {
+		return result[0]["averageScore"].(float32), nil
 	}
-
-	averageScore := float32(totalScore) / float32(len(result))
-	return averageScore, nil
+	return 0.0, nil
 }
 
 func (a AccommodationMongoDBStore) Insert(accommodationRating *model.AccommodationRating) (*model.AccommodationRating, error) {

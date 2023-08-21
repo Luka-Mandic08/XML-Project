@@ -202,8 +202,8 @@ func (service *AccommodationService) GetById(id primitive.ObjectID) (*model.Acco
 	return service.accommodationStore.GetById(id)
 }
 
-func (service *AccommodationService) GetAll() ([]*model.Accommodation, error) {
-	return service.accommodationStore.GetAll()
+func (service *AccommodationService) GetAll(page int) ([]*model.Accommodation, error) {
+	return service.accommodationStore.GetAll(page)
 }
 
 func (service *AccommodationService) GetAvailabilitiesForAccommodation(request *accommodation.GetAvailabilitiesRequest) ([]*model.Availability, error) {

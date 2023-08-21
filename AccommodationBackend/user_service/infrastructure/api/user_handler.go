@@ -1,6 +1,7 @@
 package api
 
 import (
+	rating "common/proto/rating_service"
 	"context"
 	"go.mongodb.org/mongo-driver/mongo"
 	"google.golang.org/grpc/codes"
@@ -16,12 +17,14 @@ type UserHandler struct {
 	pb.UnimplementedUserServiceServer
 	service           *service.UserService
 	reservationClient reservation.ReservationServiceClient
+	ratingClient      rating.RatingServiceClient
 }
 
-func NewUserHandler(service *service.UserService, reservationClient reservation.ReservationServiceClient) *UserHandler {
+func NewUserHandler(service *service.UserService, reservationClient reservation.ReservationServiceClient, ratingClient rating.RatingServiceClient) *UserHandler {
 	return &UserHandler{
 		service:           service,
 		reservationClient: reservationClient,
+		ratingClient:      ratingClient,
 	}
 }
 
@@ -35,8 +38,10 @@ func (handler *UserHandler) Get(ctx context.Context, request *pb.GetRequest) (*p
 	if err == mongo.ErrNoDocuments {
 		return nil, status.Error(codes.NotFound, "Unable to find user")
 	}
-	response := MapUserToGetResponse(user)
-	return response, nil
+	mapped := MapUserToGetResponse(user)
+	response, _ := handler.ratingClient.GetAverageScoreForHost(ctx, &rating.IdRequest{Id: mapped.GetId()})
+	mapped.Rating = response.GetScore()
+	return mapped, nil
 }
 
 func (handler *UserHandler) Create(ctx context.Context, request *pb.CreateRequest) (*pb.GetResponse, error) {
