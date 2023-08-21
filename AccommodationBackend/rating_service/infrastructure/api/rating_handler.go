@@ -67,7 +67,7 @@ func (handler *RatingHandler) GetAverageScoreForHost(ctx context.Context, reques
 }
 
 func (handler *RatingHandler) CreateHostRating(ctx context.Context, request *pb.CreateHostRatingRequest) (*pb.HostRating, error) {
-	_, err := handler.reservationClient.CheckIfGuestVisitedAccommodation(ctx, &reservation.CheckPreviousReservationRequest{
+	_, err := handler.reservationClient.CheckIfGuestVisitedHost(ctx, &reservation.CheckPreviousReservationRequest{
 		Id:      request.HostId,
 		GuestId: request.GuestId,
 	})
