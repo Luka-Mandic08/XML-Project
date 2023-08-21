@@ -3,6 +3,7 @@
   margin-bottom: 2rem;
   display: flex;
   flex-grow: 1;
+  min-width: 250px;
 }
 
 .label {
@@ -49,49 +50,19 @@ input:focus + .label .text {
   color: red;
 }
 
-.headerContainer {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  margin: 2rem 2rem 1rem 2rem;
+input[type='datetime-local'],
+input[type='date'] + .label .text {
+  font-size: 12px;
+  transform: translate(0, -150%);
+  background-color: white;
+  padding-left: 4px;
+  padding-right: 4px;
 }
 
-.ratingContainer {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  width: fit-content;
-  gap: 1rem;
-  margin-left: 2rem;
-  margin-bottom: 1rem;
-}
-
-.buttonTopContainer {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  width: fit-content;
-  gap: 1rem;
-}
-
-.bodyContainer {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: auto;
-  gap: 2rem;
-  margin: 0 2rem 2rem 2rem;
-}
-
-@media (max-width: 1000px) {
-  .bodyContainer {
-    grid-template-columns: 1fr; /* Change to a single column */
-  }
-}
-
-.formContainer {
+.rateForm {
   display: flex;
   flex-direction: column;
-  flex-grow: 1;
-  padding: 2rem;
+  gap: 1rem;
+  padding: 1.5rem;
+  height: fit-content;
 }

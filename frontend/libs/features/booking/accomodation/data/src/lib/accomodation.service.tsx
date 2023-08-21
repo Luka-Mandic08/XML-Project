@@ -27,12 +27,13 @@ export async function GetAccomodationForHost(): Promise<AccommodationInfo[]> {
     });
 }
 
-export async function GetAllAccomodation(): Promise<AccommodationInfo[]> {
+export async function GetAllAccomodation(pageNumber: number): Promise<AccommodationInfo[]> {
   return await axios({
     method: 'get',
-    url: BookingBaseURL.URL + '/accommodation/all',
+    url: BookingBaseURL.URL + '/accommodation/all/' + pageNumber,
   })
     .then((response) => {
+      console.log(response.data.accommodations);
       return response.data.accommodations;
     })
     .catch(() => {
@@ -187,7 +188,7 @@ export async function UpdateAvailableDatesForAccommodation(data: any): Promise<s
     });
 }
 
-export async function SearchAccommodation(data: any): Promise<SearchedAccommodationInfo[]> {
+export async function SearchAccommodation(data: any, pageNumber: number): Promise<SearchedAccommodationInfo[]> {
   return await axios({
     method: 'post',
     url: BookingBaseURL.URL + '/accommodation/search',
@@ -197,6 +198,7 @@ export async function SearchAccommodation(data: any): Promise<SearchedAccommodat
       dateFrom: new Date(data.dateFrom),
       dateTo: new Date(data.dateTo),
       numberOfGuests: data.numberOfGuests,
+      pageNumber: pageNumber,
     },
   })
     .then((response) => {

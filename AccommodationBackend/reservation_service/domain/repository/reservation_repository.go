@@ -84,12 +84,12 @@ func (store *ReservationMongoDBStore) GetActiveForAccommodations(ids []string) (
 
 func (store *ReservationMongoDBStore) GetPastByUserId(guestId, accommodationId string) ([]*model.Reservation, error) {
 	today := time.Now()
-	filter := bson.M{"user": guestId, "accommodation": accommodationId, "status": "Accepted", "end": bson.M{"$lt": today}}
+	filter := bson.M{"user": guestId, "accommodation": accommodationId, "status": "Approved", "end": bson.M{"$lt": today}}
 	return store.filter(filter)
 }
 func (store *ReservationMongoDBStore) GetPastForAccommodations(guestId string, ids []string) ([]*model.Reservation, error) {
 	today := time.Now()
-	filter := bson.M{"user": guestId, "accommodation": bson.M{"$in": ids}, "status": "Accepted", "end": bson.M{"$lt": today}}
+	filter := bson.M{"user": guestId, "accommodation": bson.M{"$in": ids}, "status": "Approved", "end": bson.M{"$lt": today}}
 	return store.filter(filter)
 }
 

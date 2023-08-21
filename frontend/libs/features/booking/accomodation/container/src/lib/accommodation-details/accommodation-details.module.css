@@ -16,7 +16,9 @@
   gap: 1rem;
   padding: 2rem;
   margin: 2rem auto 2rem auto;
-  max-width: 1500px;
+  max-width: 1150px;
+  flex-grow: 1;
+  height: fit-content;
 }
 
 @media (max-width: 1628px) {

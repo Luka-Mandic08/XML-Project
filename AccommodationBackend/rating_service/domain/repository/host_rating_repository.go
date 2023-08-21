@@ -57,7 +57,7 @@ func (store *HostRatingMongoDBStore) GetAverageScoreForHost(hostId string) (floa
 		return 0, err
 	}
 	if len(result) > 0 {
-		return result[0]["averageScore"].(float32), nil
+		return float32(result[0]["averageScore"].(float64)), nil
 	}
 	return 0.0, nil
 }

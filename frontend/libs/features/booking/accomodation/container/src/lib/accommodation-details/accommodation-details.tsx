@@ -1,32 +1,43 @@
 import { useSelectedAccommodationStore } from '@frontend/features/booking/store/container';
 import styles from './accommodation-details.module.css';
 import Carousel from 'react-material-ui-carousel';
-import { Divider, Grid, Paper, Typography } from '@mui/material';
+import { Divider, Grid, Paper, Rating, Typography } from '@mui/material';
 
 /* eslint-disable-next-line */
-export interface AccommodationDetailsProps {}
+export interface AccommodationDetailsProps {
+  hasMargin?: string;
+}
 
 export function AccommodationDetails(props: AccommodationDetailsProps) {
   const selectedAccommodation = useSelectedAccommodationStore((state) => state.selectedAccommodation);
 
   return (
-    <Paper elevation={6} className={styles.detailsContainer}>
+    <Paper elevation={6} className={styles.detailsContainer} sx={{ margin: props.hasMargin }}>
       <Typography variant="h3" align="center" fontWeight={550}>
         {selectedAccommodation.name}
       </Typography>
-      <Carousel autoPlay={false} navButtonsAlwaysVisible={true} duration={700} height={700}>
-        {selectedAccommodation.images.map((item, i) => (
-          <>
-            <Typography variant="h4" align="left" marginBottom={'1rem'}>
-              Images
-            </Typography>
-            <div className={styles.imageContainer}>
-              {/* eslint-disable-next-line jsx-a11y/img-redundant-alt*/}
-              <img key={i} src={item} alt="Accomodation image" className={styles.imageStyle} />
-            </div>
-          </>
-        ))}
-      </Carousel>
+      <Rating value={selectedAccommodation.rating} precision={0.1} readOnly size="large" sx={{ marginX: 'auto' }} />
+
+      {selectedAccommodation.images && (
+        <Carousel autoPlay={false} navButtonsAlwaysVisible={true} duration={700} height={700}>
+          {selectedAccommodation.images.map((item, i) => (
+            <>
+              <Typography variant="h4" align="left" marginBottom={'1rem'}>
+                Images
+              </Typography>
+              <div className={styles.imageContainer}>
+                {/* eslint-disable-next-line jsx-a11y/img-redundant-alt*/}
+                <img key={i} src={item} alt="Accomodation image" className={styles.imageStyle} />
+              </div>
+            </>
+          ))}
+        </Carousel>
+      )}
+      {selectedAccommodation.images === undefined && (
+        <Typography variant="h4" align="left" marginBottom={'1rem'}>
+          This accommodation has no images yet
+        </Typography>
+      )}
 
       <Grid container marginY={'1rem'} alignItems={'left'} direction={'column'}>
         <Grid item marginBottom={'1rem'}>

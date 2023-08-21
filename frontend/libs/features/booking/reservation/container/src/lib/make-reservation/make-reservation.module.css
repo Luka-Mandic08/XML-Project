@@ -76,6 +76,23 @@ input[type='date'] + .label .text {
   margin: 2rem;
 }
 
+.flexRow {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+  margin: 2rem;
+  flex-wrap: wrap;
+  flex-grow: 1;
+}
+
+.flexColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  flex-wrap: wrap;
+  flex-grow: 1;
+}
+
 @media (max-width: 1610px) {
   .inlineGrid {
     grid-template-columns: 1fr; /* Change to a single column */

@@ -2,8 +2,10 @@
 import { AccommodationDetails, AvailabilityCalendar } from '@frontend/features/booking/accomodation/container';
 import styles from './make-reservation.module.css';
 import { useSelectedAccommodationStore } from '@frontend/features/booking/store/container';
-import { Paper, Typography, Button } from '@mui/material';
+import { Paper, Typography, Button, Grid } from '@mui/material';
 import { useForm } from 'react-hook-form';
+import { RateAccommodationOrHostForm } from '@frontend/features/booking/rating/container';
+import { HostDetails } from '@frontend/features/booking/profile/container';
 
 /* eslint-disable-next-line */
 export interface MakeReservationProps {}
@@ -34,7 +36,14 @@ export function MakeReservation(props: MakeReservationProps) {
     <>
       {selectedAccommodation.id !== '' && (
         <>
-          <AccommodationDetails />
+          <div className={styles.flexRow}>
+            <AccommodationDetails hasMargin={'0 !important'} />
+            <div className={styles.flexColumn}>
+              <HostDetails hostId={selectedAccommodation.hostId} />
+              <RateAccommodationOrHostForm hostId={selectedAccommodation.hostId} />
+              <RateAccommodationOrHostForm accommodationId={selectedAccommodation.id} />
+            </div>
+          </div>
           <div className={styles.inlineGrid}>
             <AvailabilityCalendar shouldRenderCalendar={true} />
             <Paper elevation={6} className={styles.updateAvailabilityForm}>

@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/encoding/protojson"
 	"net/http"
 )
 
@@ -76,7 +77,8 @@ func (handler *RatingHandler) GetAverageScoreForHost(ctx *gin.Context) {
 
 func (handler *RatingHandler) CreateHostRating(ctx *gin.Context) {
 	var hostRating rating.CreateHostRatingRequest
-	err := ctx.ShouldBindJSON(&hostRating)
+	raw, _ := ctx.GetRawData()
+	err := protojson.Unmarshal(raw, &hostRating)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, err.Error())
 		return
@@ -103,7 +105,8 @@ func (handler *RatingHandler) CreateHostRating(ctx *gin.Context) {
 
 func (handler *RatingHandler) UpdateHostRating(ctx *gin.Context) {
 	var hostRating rating.HostRating
-	err := ctx.ShouldBindJSON(&hostRating)
+	raw, _ := ctx.GetRawData()
+	err := protojson.Unmarshal(raw, &hostRating)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, err.Error())
 		return
@@ -217,7 +220,8 @@ func (handler *RatingHandler) GetAverageScoreForAccommodation(ctx *gin.Context) 
 
 func (handler *RatingHandler) CreateAccommodationRating(ctx *gin.Context) {
 	var accommodationRating rating.CreateAccommodationRatingRequest
-	err := ctx.ShouldBindJSON(&accommodationRating)
+	raw, _ := ctx.GetRawData()
+	err := protojson.Unmarshal(raw, &accommodationRating)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, err.Error())
 		return
@@ -244,7 +248,8 @@ func (handler *RatingHandler) CreateAccommodationRating(ctx *gin.Context) {
 
 func (handler *RatingHandler) UpdateAccommodationRating(ctx *gin.Context) {
 	var accommodationRating rating.AccommodationRating
-	err := ctx.ShouldBindJSON(&accommodationRating)
+	raw, _ := ctx.GetRawData()
+	err := protojson.Unmarshal(raw, &accommodationRating)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, err.Error())
 		return

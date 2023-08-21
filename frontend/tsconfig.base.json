@@ -21,6 +21,8 @@
       "@frontend/features/booking/navigation/container": ["libs/features/booking/navigation/container/src/index.ts"],
       "@frontend/features/booking/profile/container": ["libs/features/booking/profile/container/src/index.ts"],
       "@frontend/features/booking/profile/data-access": ["libs/features/booking/profile/data-access/src/index.ts"],
+      "@frontend/features/booking/rating/container": ["libs/features/booking/rating/container/src/index.ts"],
+      "@frontend/features/booking/rating/data-access": ["libs/features/booking/rating/data-access/src/index.ts"],
       "@frontend/features/booking/register/container": ["libs/features/booking/register/container/src/index.ts"],
       "@frontend/features/booking/register/data-access": ["libs/features/booking/register/data-access/src/index.ts"],
       "@frontend/features/booking/reservation/container": ["libs/features/booking/reservation/container/src/index.ts"],

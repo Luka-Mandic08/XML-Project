@@ -22,6 +22,7 @@ export const useSelectedAccommodationStore = create<SelectedAccommodationState>(
     maxGuests: 0,
     priceIsPerGuest: false,
     hasAutomaticReservations: false,
+    rating: 0,
   },
   setSelectedAccommodation: (newAccommodation: AccommodationInfo) => set({ selectedAccommodation: newAccommodation }),
 }));

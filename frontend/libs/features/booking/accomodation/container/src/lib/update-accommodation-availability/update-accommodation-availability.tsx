@@ -1,6 +1,5 @@
-import { GetAvailableDatesForAccommodation, UpdateAvailableDatesForAccommodation } from '@frontend/features/booking/accomodation/data';
+import { UpdateAvailableDatesForAccommodation } from '@frontend/features/booking/accomodation/data';
 import { useSelectedAccommodationStore } from '@frontend/features/booking/store/container';
-import { AvailabilityDate } from '@frontend/models';
 import { Grid, Typography, Button, Paper } from '@mui/material';
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';

@@ -8,6 +8,7 @@ import (
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/encoding/protojson"
 	"net/http"
+	"strconv"
 )
 
 type AccommodationHandler struct {
@@ -139,8 +140,12 @@ func (handler *AccommodationHandler) GetAllByHostId(ctx *gin.Context) {
 }
 
 func (handler *AccommodationHandler) GetAll(ctx *gin.Context) {
-
-	request := accommodation.GetAllRequest{}
+	pageNumber, err := strconv.ParseInt(ctx.Param("pageNumber"), 10, 32)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, "Bad page number!")
+		return
+	}
+	request := accommodation.GetAllRequest{PageNumber: int32(pageNumber)}
 	response, err := handler.accommodationClient.GetAll(ctx, &request)
 	if err != nil {
 		grpcError, ok := status.FromError(err)

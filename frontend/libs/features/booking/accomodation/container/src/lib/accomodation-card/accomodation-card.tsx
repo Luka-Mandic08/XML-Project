@@ -1,6 +1,6 @@
 import { AccommodationInfo, BookingAppRoutes } from '@frontend/models';
 import styles from './accomodation-card.module.css';
-import { Paper, Grid, Typography, Divider, Button } from '@mui/material';
+import { Paper, Grid, Typography, Divider, Button, Rating } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useSelectedAccommodationStore } from '@frontend/features/booking/store/container';
 
@@ -82,7 +82,11 @@ export function AccommodationCard(props: AccommodationCardProps) {
               <Divider sx={{ backgroundColor: 'grey', width: '100%', marginTop: '1.25rem', marginBottom: '1.25rem' }} />
             </Grid>
             <Grid item xs={12}>
-              <Grid container justifyContent={'flex-end'}>
+              <Grid container justifyContent={'space-between'}>
+                <div>
+                  <Rating name="half-rating-read" value={props.accomodationInfo.rating} precision={0.1} readOnly />
+                  <Typography>Score: {props.accomodationInfo.rating}</Typography>
+                </div>
                 <Button
                   variant="contained"
                   size="small"
@@ -104,6 +108,10 @@ export function AccommodationCard(props: AccommodationCardProps) {
 
             <Grid item xs={12}>
               <Grid container justifyContent={'space-between'}>
+                <div>
+                  <Rating name="half-rating-read" value={props.accomodationInfo.rating} precision={0.1} readOnly />
+                  <Typography>Score: {props.accomodationInfo.rating ? props.accomodationInfo.rating.toString() : 0}</Typography>
+                </div>
                 <Button
                   variant="contained"
                   size="small"

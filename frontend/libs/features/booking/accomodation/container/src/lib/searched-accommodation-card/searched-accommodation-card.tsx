@@ -1,6 +1,7 @@
 import { SearchedAccommodationInfo } from '@frontend/models';
 import styles from './searched-accommodation-card.module.css';
 import { Paper, Grid, Typography, Divider, Button } from '@mui/material';
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { MakeReservationDialog } from '@frontend/features/booking/reservation/container';
 import { useState } from 'react';
 
