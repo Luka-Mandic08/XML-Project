@@ -2,6 +2,7 @@ package model
 
 import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"time"
 )
 
 //Status types: Approved, Pending, Rejected(when host rejects), Canceled(when guest cancels)
@@ -18,7 +19,11 @@ type Reservation struct {
 }
 
 func (r *Reservation) CalculateDuration() int32 {
-	duration := r.End.Sub(r.Start)
+	layout := "2006-01-02T15:04:05"
+	StartDate, _ := time.Parse(layout, r.Start)
+	EndDate, _ := time.Parse(layout, r.End)
+
+	duration := EndDate.Sub(StartDate)
 	durationHours := int32(duration.Hours()) / 24
 	return durationHours
 }
