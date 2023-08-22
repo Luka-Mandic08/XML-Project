@@ -170,3 +170,22 @@ func (handler *ReservationHandler) CheckIfGuestVisitedHost(ctx context.Context, 
 	}
 	return &pb.CheckReservationResponse{Message: "Success"}, nil
 }
+
+func (handler *ReservationHandler) UpdateOutstandingHostStatus(ctx context.Context, request *pb.CheckPreviousReservationRequest) (*pb.CheckReservationResponse, error) {
+	accommodations, err := handler.accommodationClient.GetAllByHostId(ctx, &accommodation.GetAllByHostIdRequest{HostId: request.GetId()})
+	var ids []string
+	for _, a := range accommodations.GetAccommodations() {
+		ids = append(ids, a.GetId())
+	}
+	if len(ids) == 0 {
+		return nil, status.Error(codes.Canceled, "User has no previous reservations")
+	}
+	hasReservations, err := handler.reservationService.GetPastForAccommodations(request.GetGuestId(), ids)
+	if err != nil {
+		return nil, err
+	}
+	if !hasReservations {
+		return nil, status.Error(codes.Canceled, "User has no previous reservations")
+	}
+	return &pb.CheckReservationResponse{Message: "Success"}, nil
+}

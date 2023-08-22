@@ -17,4 +17,5 @@ type ReservationStore interface {
 	GetActiveForAccommodations(ids []string) ([]*model.Reservation, error)
 	GetPastByUserId(guestId, accommodationId string) ([]*model.Reservation, error)
 	GetPastForAccommodations(guestId string, ids []string) ([]*model.Reservation, error)
+	GetReservationsForAccommodationsByStatus(accommodationIds []string, status string) ([]*model.Reservation, error)
 }

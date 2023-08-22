@@ -5,6 +5,8 @@ import (
 	"time"
 )
 
+//Status types: Approved, Pending, Rejected(when host rejects), Canceled(when guest cancels)
+
 type Reservation struct {
 	Id              primitive.ObjectID `bson:"_id,omitempty"`
 	AccommodationId string             `bson:"accommodation,omitempty"`
@@ -14,4 +16,10 @@ type Reservation struct {
 	NumberOfGuests  int32              `bson:"numberOfGuests,omitempty"`
 	Status          string             `bson:"status,omitempty"`
 	Price           float32            `bson:"price"`
+}
+
+func (r *Reservation) CalculateDuration() int32 {
+	duration := r.End.Sub(r.Start)
+	durationHours := int32(duration.Hours()) / 24
+	return durationHours
 }

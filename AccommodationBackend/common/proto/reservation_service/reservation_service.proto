@@ -111,3 +111,10 @@ message CheckPreviousReservationRequest{
         string id = 1;
         string guestId = 2;
 }
+
+message UpdateOutstandingHostStatusRequest{
+        bool shouldUpdate = 1;
+}
+message UpdateOutstandingHostStatusResponse{
+        string message = 1;
+}

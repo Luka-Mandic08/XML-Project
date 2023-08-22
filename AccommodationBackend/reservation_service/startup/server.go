@@ -35,12 +35,13 @@ func (server *Server) Start() {
 	mongoClient := server.initMongoClient()
 
 	reservationStore := server.initReservationStore(mongoClient)
+	outstandingHostStore := server.initOutstandingHostStore(mongoClient)
 
 	commandPublisher := server.initPublisher(server.config.CreateReservationCommandSubject)
 	replySubscriber := server.initSubscriber(server.config.CreateReservationReplySubject, QUEUE_GROUP)
 	createReservationOrchestrator := server.initCreateReservationOrchestrator(commandPublisher, replySubscriber)
 
-	reservationService := server.initReservationService(reservationStore, createReservationOrchestrator)
+	reservationService := server.initReservationService(reservationStore, *outstandingHostStore, createReservationOrchestrator)
 
 	commandSubscriber := server.initSubscriber(server.config.CreateReservationCommandSubject, QUEUE_GROUP)
 	replyPublisher := server.initPublisher(server.config.CreateReservationReplySubject)
@@ -61,6 +62,10 @@ func (server *Server) initMongoClient() *mongo.Client {
 
 func (server *Server) initReservationStore(client *mongo.Client) repository.ReservationStore {
 	return repository.NewReservationMongoDBStore(client)
+}
+
+func (server *Server) initOutstandingHostStore(client *mongo.Client) *repository.OutstandingHostMongoDBStore {
+	return repository.NewOutstandingHostMongoDBStore(client)
 }
 
 func (server *Server) initPublisher(subject string) saga.Publisher {
@@ -89,8 +94,8 @@ func (server *Server) initCreateReservationOrchestrator(publisher saga.Publisher
 	return orchestrator
 }
 
-func (server *Server) initReservationService(store repository.ReservationStore, reservationOrchestrator *service.CreateReservationOrchestrator) *service.ReservationService {
-	return service.NewReservationService(store, reservationOrchestrator)
+func (server *Server) initReservationService(store repository.ReservationStore, outstandingHostStore repository.OutstandingHostMongoDBStore, reservationOrchestrator *service.CreateReservationOrchestrator) *service.ReservationService {
+	return service.NewReservationService(store, outstandingHostStore, reservationOrchestrator)
 }
 
 func (server *Server) initCreateReservationHandler(service *service.ReservationService, publisher saga.Publisher, subscriber saga.Subscriber) {

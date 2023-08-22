@@ -9,14 +9,16 @@ import (
 )
 
 type ReservationService struct {
-	store        repository.ReservationStore
-	orchestrator *CreateReservationOrchestrator
+	store                repository.ReservationStore
+	outstandingHostStore repository.OutstandingHostMongoDBStore
+	orchestrator         *CreateReservationOrchestrator
 }
 
-func NewReservationService(store repository.ReservationStore, orchestrator *CreateReservationOrchestrator) *ReservationService {
+func NewReservationService(store repository.ReservationStore, outstandingHostStore repository.OutstandingHostMongoDBStore, orchestrator *CreateReservationOrchestrator) *ReservationService {
 	return &ReservationService{
-		store:        store,
-		orchestrator: orchestrator,
+		store:                store,
+		orchestrator:         orchestrator,
+		outstandingHostStore: outstandingHostStore,
 	}
 }
 
@@ -126,5 +128,33 @@ func (service *ReservationService) GetPastForAccommodations(guestId string, ids 
 	if len(reservations) == 0 {
 		return false, nil
 	}
+	return true, nil
+}
+
+func (service *ReservationService) CheckOutstandingHostStatus(accommodationIds []string) (bool, error) {
+	approvedReservation, err := service.store.GetReservationsForAccommodationsByStatus(accommodationIds, "Approved")
+	if err != nil {
+		return false, err
+	}
+	if len(approvedReservation) < 5 {
+		return false, nil
+	}
+
+	var totalDuration int32
+	for _, r := range approvedReservation {
+		totalDuration += r.CalculateDuration()
+	}
+	if totalDuration < 50 {
+		return false, nil
+	}
+
+	canceledReservation, err := service.store.GetReservationsForAccommodationsByStatus(accommodationIds, "Canceled")
+	if err != nil {
+		return false, err
+	}
+	if float32(len(canceledReservation))/float32(len(approvedReservation)) >= 0.05 {
+		return false, nil
+	}
+
 	return true, nil
 }

@@ -121,3 +121,8 @@ func decodeReservations(cursor *mongo.Cursor) (reservations []*model.Reservation
 	err = cursor.Err()
 	return
 }
+
+func (store *ReservationMongoDBStore) GetReservationsForAccommodationsByStatus(accommodationIds []string, status string) ([]*model.Reservation, error) {
+	filter := bson.M{"accommodation": bson.M{"$in": accommodationIds}, "status": status}
+	return store.filter(filter)
+}
