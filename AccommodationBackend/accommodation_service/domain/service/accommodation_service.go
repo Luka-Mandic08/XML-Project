@@ -272,3 +272,15 @@ func (service *AccommodationService) GetAndCancelAllAvailabilitiesToCancel(reque
 
 	return &accommodation.GetAndCancelAllAvailabilitiesToCancelResponse{ToCancel: response}, nil
 }
+
+func (service *AccommodationService) GetAllForHostByAccommodationId(request *accommodation.GetByIdRequest) (*accommodation.GetAllForHostByAccommodationIdResponse, error) {
+	objectId, err := primitive.ObjectIDFromHex(request.GetId())
+	if err != nil {
+		return nil, err
+	}
+	ids, hostId, err := service.accommodationStore.GetAllForHostByAccommodationId(objectId)
+	if err != nil {
+		return nil, err
+	}
+	return &accommodation.GetAllForHostByAccommodationIdResponse{AccommodationIds: ids, HostId: hostId}, nil
+}

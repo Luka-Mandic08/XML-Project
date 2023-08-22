@@ -71,7 +71,7 @@ func CreateRoutersAndSetRoutes(config *Config) *gin.Engine {
 
 	userGroup := router.Group("/users")
 	userGroup.Use(services.ValidateToken())
-	userGroup.GET("/:id", userHandler.Get) //services.AuthorizeRole("Host") TODO: add for Guest
+	userGroup.GET("/:id", userHandler.Get)
 	userGroup.PUT("/update", userHandler.Update)
 
 	accommodationGroup := router.Group("/accommodation")

@@ -18,6 +18,7 @@ service AccommodationService{
         rpc DeleteAllForHost(GetByIdRequest) returns(Response) {}
         rpc CheckCanApprove(CheckCanApproveRequest) returns(CheckCanApproveResponse) {}
         rpc GetAndCancelAllAvailabilitiesToCancel(GetAndCancelAllAvailabilitiesToCancelRequest) returns(GetAndCancelAllAvailabilitiesToCancelResponse) {}
+        rpc GetAllForHostByAccommodationId(GetByIdRequest) returns(GetAllForHostByAccommodationIdResponse) {}
 }
 
 message Accommodation{
@@ -148,4 +149,9 @@ message GetAndCancelAllAvailabilitiesToCancelRequest {
 }
 message GetAndCancelAllAvailabilitiesToCancelResponse {
         repeated string toCancel = 1;
+}
+
+message GetAllForHostByAccommodationIdResponse{
+        repeated string accommodationIds = 1;
+        string hostId = 2;
 }

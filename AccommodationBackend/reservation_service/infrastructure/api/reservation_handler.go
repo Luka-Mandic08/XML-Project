@@ -2,6 +2,7 @@ package api
 
 import (
 	accommodation "common/proto/accommodation_service"
+	rating "common/proto/rating_service"
 	pb "common/proto/reservation_service"
 	"context"
 	"errors"
@@ -16,12 +17,14 @@ type ReservationHandler struct {
 	pb.UnimplementedReservationServiceServer
 	reservationService  *service.ReservationService
 	accommodationClient accommodation.AccommodationServiceClient
+	ratingClient        rating.RatingServiceClient
 }
 
-func NewReservationHandler(reservationService *service.ReservationService, accommodationClient accommodation.AccommodationServiceClient) *ReservationHandler {
+func NewReservationHandler(reservationService *service.ReservationService, accommodationClient accommodation.AccommodationServiceClient, ratingClient rating.RatingServiceClient) *ReservationHandler {
 	return &ReservationHandler{
 		reservationService:  reservationService,
 		accommodationClient: accommodationClient,
+		ratingClient:        ratingClient,
 	}
 }
 
@@ -285,7 +288,9 @@ func (handler *ReservationHandler) Cancel(ctx context.Context, request *pb.Cance
 			return nil, err
 		}
 	}
-	//TODO Add CheckOutstandingHost
+	//TODO: Add CheckOutstandingHost
+	handler.accommodationClient.
+	handler.ratingClient.GetAverageScoreForHost(reservation.)
 
 	_, err = handler.reservationService.Cancel(reservationId)
 	if err == mongo.ErrNoDocuments {
