@@ -5,6 +5,7 @@ import (
 	"accommodation_service/domain/repository"
 	accommodation "common/proto/accommodation_service"
 	"errors"
+	"fmt"
 	"go.mongodb.org/mongo-driver/mongo"
 	"strconv"
 	"strings"
@@ -116,7 +117,9 @@ func (service *AccommodationService) CheckDateAvailability(request *accommodatio
 }
 
 func (service *AccommodationService) ChangeAvailability(availabilities []*model.Availability, isAvailable bool) error {
-	for _, av := range availabilities {
+
+	for i := 0; i < len(availabilities); i++ {
+		av := availabilities[i]
 		av.IsAvailable = isAvailable
 		err := service.availabilityStore.Upsert(av)
 		if err != nil {
@@ -161,7 +164,6 @@ func (service *AccommodationService) CheckAccommodationExists(id primitive.Objec
 }
 
 func (service *AccommodationService) GetAllAvailability(dateFrom time.Time, dateTo time.Time, accommodationId string) []*model.Availability {
-	// TODO Price?
 	var availabilitiesToUpdate []*model.Availability
 	for date := dateFrom; !date.After(dateTo); date = date.Add(time.Hour * 24) {
 		av, _ := service.availabilityStore.GetByDateAndAccommodation(accommodationId, date)
@@ -169,30 +171,6 @@ func (service *AccommodationService) GetAllAvailability(dateFrom time.Time, date
 	}
 	return availabilitiesToUpdate
 }
-
-/*func (service *AccommodationService) CheckAccommodationAvailable(request *accommodation.CheckAvailabilityRequest) (*accommodation.CheckAvailabilityResponse, error) {
-	id, _ := primitive.ObjectIDFromHex(request.Accommodationid)
-	acc, _ := service.accommodationStore.GetById(id)
-	if acc == nil {
-		return nil, errors.New("this accommodation does not exist")
-	}
-	if acc.MinGuests > request.NumberOfGuests {
-		return nil, errors.New("this accommodation accepts a minimum of " + strconv.Itoa(int(acc.MinGuests)) + " guests, requested " + strconv.Itoa(int(request.NumberOfGuests)))
-	}
-	if acc.MaxGuests < request.NumberOfGuests {
-		return nil, errors.New("this accommodation accepts a maximum of " + strconv.Itoa(int(acc.MaxGuests)) + " guests, requested " + strconv.Itoa(int(request.NumberOfGuests)))
-	}
-
-	totalPrice, _, err := service.CheckDateAvailability(request, acc)
-	if err != nil {
-		return nil, err
-	}
-
-	return &accommodation.CheckAvailabilityResponse{
-		ShouldCreateAutomaticReservation: acc.HasAutomaticReservations,
-		TotalPrice:                       totalPrice,
-	}, nil
-}*/
 
 func (service *AccommodationService) GetAllByHostId(hostId string) ([]*model.Accommodation, error) {
 	return service.accommodationStore.GetAllByHostId(hostId)
@@ -218,4 +196,43 @@ func (service *AccommodationService) DeleteAllForHost(hostId string) (*mongo.Del
 		service.availabilityStore.DeleteAllForAccommodation(a.Id.Hex())
 	}
 	return service.accommodationStore.DeleteAllForHost(hostId)
+}
+
+func (service *AccommodationService) CheckCanApprove(request *accommodation.CheckCanApproveRequest) (*accommodation.CheckCanApproveResponse, error) {
+	layout := "2006-01-02T15:04:05"
+
+	dateFrom, err := time.Parse(layout, request.Start)
+	if err != nil {
+		fmt.Println("Error parsing time:", err)
+		return nil, err
+	}
+	dateTo, err := time.Parse(layout, request.End)
+	if err != nil {
+		fmt.Println("Error parsing time:", err)
+		return nil, err
+	}
+	var availabilitiesToUpdate []*model.Availability
+	for date := dateFrom; !date.After(dateTo); date = date.Add(time.Hour * 24) {
+		av, err := service.availabilityStore.GetByDateAndAccommodation(request.AccommodationId, date)
+		if av == nil {
+			response := accommodation.CheckCanApproveResponse{
+				CanApprove: "false",
+			}
+			return &response, nil
+		}
+		if err != nil {
+			return nil, err
+		}
+		availabilitiesToUpdate = append(availabilitiesToUpdate, av)
+	}
+
+	err = service.ChangeAvailability(availabilitiesToUpdate, false)
+	if err != nil {
+		return nil, err
+	}
+
+	response := accommodation.CheckCanApproveResponse{
+		CanApprove: "true",
+	}
+	return &response, nil
 }

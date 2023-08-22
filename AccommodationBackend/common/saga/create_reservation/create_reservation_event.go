@@ -1,14 +1,10 @@
 package create_reservation
 
-import (
-	"time"
-)
-
 type Reservation struct {
 	Id              string
 	AccommodationId string
-	Start           time.Time
-	End             time.Time
+	Start           string
+	End             string
 	UserId          string
 	NumberOfGuests  int32
 	Status          string
@@ -17,11 +13,9 @@ type Reservation struct {
 
 type CreateReservationCommandType int8
 
-// TODO Command
 const (
 	CheckAccommodationExists CreateReservationCommandType = iota
 	CheckAvailableAccommodation
-	ChangeAvailability
 	CheckUserExists
 	CheckAutomaticApproveReservation
 	RevertAvailability
@@ -39,7 +33,6 @@ type CreateReservationCommand struct {
 
 type CreateReservationReplyType int8
 
-// TODO Reply
 const (
 	AccommodationExists CreateReservationReplyType = iota
 	AccommodationNotExist
@@ -47,13 +40,9 @@ const (
 	AccommodationAvailable
 	AccommodationNotAvailable
 
-	AvailabilityChanged
-	AvailabilityNotChanged
-
 	UserExists
 	UserNotExist
 
-	//TODO !!!
 	AvailabilityReverted
 	AvailabilityNotReverted
 

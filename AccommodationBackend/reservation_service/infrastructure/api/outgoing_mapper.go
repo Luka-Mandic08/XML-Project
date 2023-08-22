@@ -10,8 +10,8 @@ func MapReservationToGetResponse(u *model.Reservation) *reservation.GetResponse 
 	result := reservation.GetResponse{
 		Id:              u.Id.Hex(),
 		AccommodationId: u.AccommodationId,
-		Start:           u.Start.String(),
-		End:             u.End.String(),
+		Start:           u.Start,
+		End:             u.End,
 		UserId:          u.UserId,
 		NumberOfGuests:  u.NumberOfGuests,
 		Status:          u.Status,
@@ -31,13 +31,14 @@ func MapReservationToUpdateResponse(u *model.Reservation) *reservation.UpdateRes
 	result := reservation.UpdateResponse{
 		Id:              u.Id.Hex(),
 		AccommodationId: u.AccommodationId,
-		Start:           u.Start.String(),
-		End:             u.End.String(),
+		Start:           u.Start,
+		End:             u.End,
 		UserId:          u.UserId,
 		NumberOfGuests:  u.NumberOfGuests,
 		Status:          u.Status,
 		Price:           u.Price,
 	}
+
 	return &result
 }
 
@@ -62,17 +63,39 @@ func MapReservationsToGetAllByUserIdResponse(u []*model.Reservation) *reservatio
 		reservation := reservation.Reservation{
 			Id:              currentReservation.Id.Hex(),
 			AccommodationId: currentReservation.AccommodationId,
-			Start:           currentReservation.Start.Format("2023-01-15T15:04:05.00Z"),
-			End:             currentReservation.End.Format("2023-01-15T15:04:05.00Z"),
+			Start:           currentReservation.Start,
+			End:             currentReservation.End,
 			UserId:          currentReservation.UserId,
 			NumberOfGuests:  currentReservation.NumberOfGuests,
 			Status:          currentReservation.Status,
 			Price:           currentReservation.Price,
 		}
 		reservations = append(reservations, &reservation)
+
 	}
 	result := reservation.GetAllByUserIdResponse{
 		Reservation: reservations,
+	}
+	return &result
+}
+
+func MapReservationToApproveResponse(u *model.Reservation) *reservation.ApproveResponse {
+	result := reservation.ApproveResponse{
+		Id: u.Id.Hex(),
+	}
+	return &result
+}
+
+func MapReservationToDenyResponse(u *model.Reservation) *reservation.DenyResponse {
+	result := reservation.DenyResponse{
+		Id: u.Id.Hex(),
+	}
+	return &result
+}
+
+func MapReservationToCancelResponse(u *model.Reservation) *reservation.CancelResponse {
+	result := reservation.CancelResponse{
+		Id: u.Id.Hex(),
 	}
 	return &result
 }

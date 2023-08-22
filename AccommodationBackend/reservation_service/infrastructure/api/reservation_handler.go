@@ -4,12 +4,12 @@ import (
 	accommodation "common/proto/accommodation_service"
 	pb "common/proto/reservation_service"
 	"context"
+	"errors"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"reservation_service/domain/service"
-
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type ReservationHandler struct {
@@ -169,4 +169,66 @@ func (handler *ReservationHandler) CheckIfGuestVisitedHost(ctx context.Context, 
 		return nil, status.Error(codes.Canceled, "User has no previous reservations")
 	}
 	return &pb.CheckReservationResponse{Message: "Success"}, nil
+}
+
+func (handler *ReservationHandler) Approve(ctx context.Context, request *pb.ApproveRequest) (*pb.ApproveResponse, error) {
+	id := request.Id
+	reservationId, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return nil, err
+	}
+	reservation, err := handler.reservationService.Get(reservationId)
+	if err != nil {
+		return nil, err
+	}
+
+	canApprove, err := handler.accommodationClient.CheckCanApprove(ctx, &accommodation.CheckCanApproveRequest{
+		AccommodationId: reservation.AccommodationId,
+		Start:           reservation.Start,
+		End:             reservation.End,
+		NumberOfGuests:  reservation.NumberOfGuests,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	if canApprove.CanApprove != "true" {
+		return &pb.ApproveResponse{Id: id}, errors.New("Cannot Approve Reservation")
+	}
+
+	reservation, err = handler.reservationService.Approve(reservationId)
+	if err == mongo.ErrNoDocuments {
+		return nil, status.Error(codes.NotFound, "Unable to find reservation: id = "+request.Id)
+	}
+	response := MapReservationToApproveResponse(reservation)
+	return response, nil
+}
+
+func (handler *ReservationHandler) Deny(ctx context.Context, request *pb.DenyRequest) (*pb.DenyResponse, error) {
+	id := request.Id
+	objectId, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return nil, err
+	}
+	reservation, err := handler.reservationService.Deny(objectId)
+	if err == mongo.ErrNoDocuments {
+		return nil, status.Error(codes.NotFound, "Unable to find reservation: id = "+request.Id)
+	}
+	response := MapReservationToDenyResponse(reservation)
+	return response, nil
+}
+
+func (handler *ReservationHandler) Cancel(ctx context.Context, request *pb.CancelRequest) (*pb.CancelResponse, error) {
+	id := request.Id
+	objectId, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return nil, err
+	}
+
+	reservation, err := handler.reservationService.Cancel(objectId)
+	if err == mongo.ErrNoDocuments {
+		return nil, status.Error(codes.NotFound, "Unable to find reservation: id = "+request.Id)
+	}
+	response := MapReservationToCancelResponse(reservation)
+	return response, nil
 }

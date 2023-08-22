@@ -159,3 +159,60 @@ func (handler *ReservationHandler) Request(ctx *gin.Context) {
 	}
 	ctx.JSON(http.StatusOK, response)
 }
+
+func (handler *ReservationHandler) Approve(ctx *gin.Context) {
+	id := ctx.Param("id")
+	request := reservation.ApproveRequest{Id: id}
+	response, err := handler.client.Approve(ctx, &request)
+	if err != nil {
+		grpcError, ok := status.FromError(err)
+		if ok {
+			switch grpcError.Code() {
+			case codes.AlreadyExists:
+				ctx.JSON(http.StatusConflict, grpcError.Message())
+				return
+			}
+		}
+		ctx.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+	ctx.JSON(http.StatusOK, response)
+}
+
+func (handler *ReservationHandler) Deny(ctx *gin.Context) {
+	id := ctx.Param("id")
+	request := reservation.DenyRequest{Id: id}
+	response, err := handler.client.Deny(ctx, &request)
+	if err != nil {
+		grpcError, ok := status.FromError(err)
+		if ok {
+			switch grpcError.Code() {
+			case codes.AlreadyExists:
+				ctx.JSON(http.StatusConflict, grpcError.Message())
+				return
+			}
+		}
+		ctx.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+	ctx.JSON(http.StatusOK, response)
+}
+
+func (handler *ReservationHandler) Cancel(ctx *gin.Context) {
+	id := ctx.Param("id")
+	request := reservation.CancelRequest{Id: id}
+	response, err := handler.client.Cancel(ctx, &request)
+	if err != nil {
+		grpcError, ok := status.FromError(err)
+		if ok {
+			switch grpcError.Code() {
+			case codes.AlreadyExists:
+				ctx.JSON(http.StatusConflict, grpcError.Message())
+				return
+			}
+		}
+		ctx.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+	ctx.JSON(http.StatusOK, response)
+}

@@ -5,116 +5,27 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4b0e1be7-6ec0-46d9-93c7-08dba697d1a5" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/frontend/libs/features/booking/accomodation/container/.babelrc" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/features/booking/accomodation/container/.eslintrc.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/features/booking/accomodation/container/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/features/booking/accomodation/container/project.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/features/booking/accomodation/container/src/index.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/features/booking/accomodation/container/src/lib/accomodation-card/accomodation-card.module.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/features/booking/accomodation/container/src/lib/accomodation-card/accomodation-card.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/features/booking/accomodation/container/src/lib/all-accommodation/all-accommodation.module.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/features/booking/accomodation/container/src/lib/all-accommodation/all-accommodation.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/features/booking/accomodation/container/src/lib/availability-calendar/availability-calendar.module.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/features/booking/accomodation/container/src/lib/availability-calendar/availability-calendar.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/features/booking/accomodation/container/src/lib/create-update-accommodation/create-update-accommodation.module.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/features/booking/accomodation/container/src/lib/create-update-accommodation/create-update-accommodation.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/features/booking/accomodation/container/src/lib/host-accomodation/host-accomodation.module.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/features/booking/accomodation/container/src/lib/host-accomodation/host-accomodation.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/features/booking/accomodation/container/src/lib/searched-accommodation-card/searched-accommodation-card.module.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/features/booking/accomodation/container/src/lib/searched-accommodation-card/searched-accommodation-card.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/features/booking/accomodation/container/tsconfig.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/features/booking/accomodation/container/tsconfig.lib.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/features/booking/accomodation/data/.babelrc" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/features/booking/accomodation/data/.eslintrc.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/features/booking/accomodation/data/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/features/booking/accomodation/data/project.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/features/booking/accomodation/data/src/index.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/features/booking/accomodation/data/src/lib/accomodation.service.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/features/booking/accomodation/data/tsconfig.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/features/booking/accomodation/data/tsconfig.lib.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/features/booking/login/container/src/lib/register-page/register-page.module.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/features/booking/login/container/src/lib/register-page/register-page.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/features/booking/login/data-access/src/lib/register.service.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/features/booking/navigation/container/.babelrc" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/features/booking/navigation/container/.eslintrc.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/features/booking/navigation/container/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/features/booking/navigation/container/project.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/features/booking/navigation/container/src/index.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/features/booking/navigation/container/src/lib/booking-nav-bar/booking-nav-bar.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/features/booking/navigation/container/tsconfig.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/features/booking/navigation/container/tsconfig.lib.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/features/booking/profiles/container/.babelrc" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/features/booking/profiles/container/.eslintrc.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/features/booking/profiles/container/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/features/booking/profiles/container/project.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/features/booking/profiles/container/src/index.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/features/booking/profiles/container/src/lib/profile-info/profile-info.module.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/features/booking/profiles/container/src/lib/profile-info/profile-info.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/features/booking/profiles/container/tsconfig.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/features/booking/profiles/container/tsconfig.lib.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/features/booking/profiles/data-access/.babelrc" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/features/booking/profiles/data-access/.eslintrc.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/features/booking/profiles/data-access/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/features/booking/profiles/data-access/project.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/features/booking/profiles/data-access/src/index.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/features/booking/profiles/data-access/src/lib/profiles.service.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/features/booking/profiles/data-access/tsconfig.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/features/booking/profiles/data-access/tsconfig.lib.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/features/booking/store/container/.babelrc" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/features/booking/store/container/.eslintrc.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/features/booking/store/container/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/features/booking/store/container/project.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/features/booking/store/container/src/index.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/features/booking/store/container/src/lib/selected-accommodation-store/selected-accommodation-store.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/features/booking/store/container/tsconfig.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/features/booking/store/container/tsconfig.lib.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/models/src/lib/SearchFlightsDTO.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/models/src/lib/accomodation.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/models/src/lib/bookingUser.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/libs/models/src/lib/token.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AccommodationBackend/accommodation_service/domain/repository/accommodation_repository.go" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/accommodation_service/domain/repository/accommodation_repository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AccommodationBackend/accommodation_service/domain/repository/accommodation_repository_i.go" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/accommodation_service/domain/repository/accommodation_repository_i.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AccommodationBackend/accommodation_service/domain/repository/availability_repository.go" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/accommodation_service/domain/repository/availability_repository.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/AccommodationBackend/accommodation_service/domain/service/accommodation_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/accommodation_service/domain/service/accommodation_service.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/AccommodationBackend/accommodation_service/infrastructure/api/accommodation_handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/accommodation_service/infrastructure/api/accommodation_handler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AccommodationBackend/accommodation_service/infrastructure/api/accommodation_mapper.go" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/accommodation_service/infrastructure/api/accommodation_mapper.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AccommodationBackend/api_gateway/infrastructure/api/accommodation_handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/api_gateway/infrastructure/api/accommodation_handler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AccommodationBackend/api_gateway/infrastructure/api/auth_handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/api_gateway/infrastructure/api/auth_handler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/accommodation_service/infrastructure/api/create_reservation_handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/accommodation_service/infrastructure/api/create_reservation_handler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/api_gateway/infrastructure/api/reservation_handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/api_gateway/infrastructure/api/reservation_handler.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/AccommodationBackend/api_gateway/startup/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/api_gateway/startup/server.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AccommodationBackend/auth_service/domain/repository/auth_repository.go" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/auth_service/domain/repository/auth_repository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AccommodationBackend/auth_service/domain/repository/auth_repository_i.go" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/auth_service/domain/repository/auth_repository_i.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AccommodationBackend/auth_service/domain/service/auth_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/auth_service/domain/service/auth_service.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AccommodationBackend/auth_service/infrastructure/api/auth_handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/auth_service/infrastructure/api/auth_handler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AccommodationBackend/auth_service/infrastructure/api/auth_mapper.go" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/auth_service/infrastructure/api/auth_mapper.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/AccommodationBackend/common/proto/accommodation_service/accommodation_service.pb.go" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/AccommodationBackend/common/proto/accommodation_service/accommodation_service.proto" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/common/proto/accommodation_service/accommodation_service.proto" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/AccommodationBackend/common/proto/accommodation_service/accommodation_service_grpc.pb.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AccommodationBackend/common/proto/auth_service/auth_service.pb.go" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/common/proto/auth_service/auth_service.pb.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AccommodationBackend/common/proto/auth_service/auth_service.proto" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/common/proto/auth_service/auth_service.proto" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AccommodationBackend/common/proto/auth_service/auth_service_grpc.pb.go" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/common/proto/auth_service/auth_service_grpc.pb.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/apps/booking/src/app/app.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/apps/booking/src/app/app.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/apps/booking/src/main.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/apps/booking/src/main.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/apps/booking/src/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/apps/booking/src/styles.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/apps/flights/src/main.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/apps/flights/src/main.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/libs/features/booking/login/container/src/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/libs/features/booking/login/container/src/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/libs/features/booking/login/container/src/lib/features-booking-login-container.module.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/libs/features/booking/navigation/container/src/lib/booking-nav-bar/booking-nav-bar.module.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/libs/features/booking/login/container/src/lib/features-booking-login-container.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/libs/features/booking/login/data-access/src/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/libs/features/booking/login/data-access/src/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/libs/features/booking/login/data-access/src/lib/features-booking-login-data-access.module.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/libs/features/booking/login/data-access/src/lib/features-booking-login-data-access.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/libs/features/flights/login/container/src/lib/login-page/login-page.module.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/libs/features/flights/login/container/src/lib/login-page/login-page.module.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/libs/features/flights/login/container/src/lib/login-page/login-page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/libs/features/flights/login/container/src/lib/login-page/login-page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/libs/features/flights/login/data-access/src/lib/login.service.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/libs/features/flights/login/data-access/src/lib/login.service.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/libs/helpers/src/lib/helpers.module.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/libs/helpers/src/lib/helpers.spec.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/libs/helpers/src/lib/helpers.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/libs/helpers/src/lib/helpers.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/libs/models/src/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/libs/models/src/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/libs/models/src/lib/constants/constants.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/libs/models/src/lib/constants/constants.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/libs/models/tsconfig.lib.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/libs/models/tsconfig.lib.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/tsconfig.base.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/tsconfig.base.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/common/proto/reservation_service/reservation_service.pb.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/common/proto/reservation_service/reservation_service.proto" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/common/proto/reservation_service/reservation_service.proto" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/common/proto/reservation_service/reservation_service_grpc.pb.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/common/saga/create_reservation/create_reservation_event.go" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/common/saga/create_reservation/create_reservation_event.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/reservation_service/domain/model/reservation.go" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/reservation_service/domain/model/reservation.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/reservation_service/domain/service/create_reservation_orchestrator.go" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/reservation_service/domain/service/create_reservation_orchestrator.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/reservation_service/domain/service/reservation_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/reservation_service/domain/service/reservation_service.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/reservation_service/infrastructure/api/create_reservation_handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/reservation_service/infrastructure/api/create_reservation_handler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/reservation_service/infrastructure/api/incomming_mapper.go" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/reservation_service/infrastructure/api/incomming_mapper.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/reservation_service/infrastructure/api/outgoing_mapper.go" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/reservation_service/infrastructure/api/outgoing_mapper.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/reservation_service/infrastructure/api/reservation_handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/reservation_service/infrastructure/api/reservation_handler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/reservation_service/startup/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/reservation_service/startup/server.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -157,7 +68,7 @@
     "RunOnceActivity.go.modules.automatic.dependencies.download": "true",
     "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
     "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "Merging master",
+    "git-widget-placeholder": "feature-reservation__manual__approve__deny",
     "go.import.settings.migrated": "true",
     "go.sdk.automatically.set": "true",
     "last_opened_file_path": "E:/Programski jezici/GO/XML-Project/AccommodationBackend/user_service/infrastructure/api",

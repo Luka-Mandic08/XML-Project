@@ -50,13 +50,14 @@ func (service *ReservationService) Delete(id string) (*mongo.DeleteResult, error
 	return service.store.Delete(uuid)
 }
 
-func (service *ReservationService) Cancel(id primitive.ObjectID) (*model.Reservation, error) {
+func (service *ReservationService) AutoCancel(id primitive.ObjectID, price float32) (*model.Reservation, error) {
 	reservation, err := service.store.Get(id)
 	if err != nil {
 		return nil, err
 	}
 
 	reservation.Status = "Cancelled"
+	reservation.Price = price
 	_, err = service.store.Update(reservation)
 	if err != nil {
 		return nil, err
@@ -69,7 +70,7 @@ func (service *ReservationService) GetAllByUserId(id primitive.ObjectID) ([]*mod
 	return service.store.GetAllByUserId(id)
 }
 
-func (service *ReservationService) Approve(id primitive.ObjectID, price float32) (*model.Reservation, error) {
+func (service *ReservationService) AutoApprove(id primitive.ObjectID, price float32) (*model.Reservation, error) {
 	reservation, err := service.store.Get(id)
 	if err != nil {
 		return nil, err
@@ -127,4 +128,65 @@ func (service *ReservationService) GetPastForAccommodations(guestId string, ids 
 		return false, nil
 	}
 	return true, nil
+}
+
+func (service *ReservationService) AutoPending(id primitive.ObjectID, price float32) (*model.Reservation, error) {
+	reservation, err := service.store.Get(id)
+	if err != nil {
+		return nil, err
+	}
+
+	reservation.Status = "Pending"
+	reservation.Price = price
+	_, err = service.store.Update(reservation)
+	if err != nil {
+		return nil, err
+	}
+
+	return reservation, nil
+}
+
+func (service *ReservationService) Approve(id primitive.ObjectID) (*model.Reservation, error) {
+	reservation, err := service.store.Get(id)
+	if err != nil {
+		return nil, err
+	}
+
+	reservation.Status = "Approved"
+	_, err = service.store.Update(reservation)
+	if err != nil {
+		return nil, err
+	}
+
+	return reservation, nil
+}
+
+func (service *ReservationService) Deny(id primitive.ObjectID) (*model.Reservation, error) {
+	reservation, err := service.store.Get(id)
+	if err != nil {
+		return nil, err
+	}
+
+	reservation.Status = "Denied"
+	_, err = service.store.Update(reservation)
+	if err != nil {
+		return nil, err
+	}
+
+	return reservation, nil
+}
+
+func (service *ReservationService) Cancel(id primitive.ObjectID) (*model.Reservation, error) {
+	reservation, err := service.store.Get(id)
+	if err != nil {
+		return nil, err
+	}
+
+	reservation.Status = "Canceled"
+	_, err = service.store.Update(reservation)
+	if err != nil {
+		return nil, err
+	}
+
+	return reservation, nil
 }

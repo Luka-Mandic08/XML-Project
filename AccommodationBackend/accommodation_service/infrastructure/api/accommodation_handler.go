@@ -108,3 +108,12 @@ func (handler *AccommodationHandler) DeleteAllForHost(ctx context.Context, reque
 	}
 	return &accommodation.Response{Message: "Success"}, nil
 }
+
+func (handler *AccommodationHandler) CheckCanApprove(ctx context.Context, request *accommodation.CheckCanApproveRequest) (*accommodation.CheckCanApproveResponse, error) {
+	response, err := handler.service.CheckCanApprove(request)
+	if err != nil {
+		return nil, err
+	}
+
+	return response, nil
+}

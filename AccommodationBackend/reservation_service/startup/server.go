@@ -45,7 +45,9 @@ func (server *Server) Start() {
 	commandSubscriber := server.initSubscriber(server.config.CreateReservationCommandSubject, QUEUE_GROUP)
 	replyPublisher := server.initPublisher(server.config.CreateReservationReplySubject)
 	server.initCreateReservationHandler(reservationService, replyPublisher, commandSubscriber)
+
 	accommodationClient := persistence.NewAccommodationClient(server.config.AccommodationHost, server.config.AccommodationPort)
+
 	reservationHandler := server.initReservationHandler(reservationService, accommodationClient)
 
 	server.startGrpcServer(reservationHandler)

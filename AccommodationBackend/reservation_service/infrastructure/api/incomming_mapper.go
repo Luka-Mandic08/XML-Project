@@ -27,8 +27,8 @@ func MapCreateRequestToReservation(request *reservation.CreateRequest) (*model.R
 
 	result := model.Reservation{
 		AccommodationId: request.AccommodationId,
-		Start:           startTime,
-		End:             endTime,
+		Start:           startTime.Format("2006-01-02T15:04:05.000000000"),
+		End:             endTime.Format("2006-01-02T15:04:05.000000000"),
 		UserId:          request.UserId,
 		NumberOfGuests:  request.NumberOfGuests,
 	}
@@ -54,8 +54,8 @@ func MapUpdateRequestToReservation(request *reservation.UpdateRequest) (*model.R
 
 	result := model.Reservation{
 		AccommodationId: request.AccommodationId,
-		Start:           startTime,
-		End:             endTime,
+		Start:           startTime.Format("2006-01-02T15:04:05.000000000"),
+		End:             endTime.Format("2006-01-02T15:04:05.000000000"),
 		UserId:          request.UserId,
 		NumberOfGuests:  request.NumberOfGuests,
 		Status:          request.Status,
@@ -83,8 +83,8 @@ func MapRequestRequestToReservation(request *reservation.RequestRequest) (*model
 
 	result := model.Reservation{
 		AccommodationId: request.AccommodationId,
-		Start:           startTime,
-		End:             endTime,
+		Start:           startTime.Format("2006-01-02T15:04:05.000000000"),
+		End:             endTime.Format("2006-01-02T15:04:05.000000000"),
 		UserId:          request.UserId,
 		NumberOfGuests:  request.NumberOfGuests,
 	}

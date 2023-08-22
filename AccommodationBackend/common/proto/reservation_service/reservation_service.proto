@@ -15,6 +15,9 @@ service ReservationService{
         rpc CheckIfHostHasReservations(CheckReservationRequest) returns(CheckReservationResponse) {}
         rpc CheckIfGuestVisitedAccommodation(CheckPreviousReservationRequest) returns(CheckReservationResponse) {}
         rpc CheckIfGuestVisitedHost(CheckPreviousReservationRequest) returns(CheckReservationResponse) {}
+        rpc Approve(ApproveRequest) returns(ApproveResponse) {}
+        rpc Deny(DenyRequest) returns(DenyResponse) {}
+        rpc Cancel(CancelRequest) returns(CancelResponse) {}
 }
 
 message Reservation {
@@ -110,4 +113,25 @@ message CheckReservationResponse {
 message CheckPreviousReservationRequest{
         string id = 1;
         string guestId = 2;
+}
+
+message ApproveRequest{
+        string id = 1;
+}
+message ApproveResponse {
+        string id = 1;
+}
+
+message DenyRequest{
+        string id = 1;
+}
+message DenyResponse {
+        string id = 1;
+}
+
+message CancelRequest{
+        string id = 1;
+}
+message CancelResponse {
+        string id = 1;
 }

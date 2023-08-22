@@ -7,6 +7,7 @@ import (
 	saga "common/saga/messaging"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"google.golang.org/protobuf/types/known/timestamppb"
+	"time"
 )
 
 type CreateReservationCommandHandler struct {
@@ -63,12 +64,27 @@ func (handler *CreateReservationCommandHandler) handle(command *events.CreateRes
 		println("Reply: events.AccommodationExists")
 	case events.CheckAvailableAccommodation:
 		println("Command: events.CheckAvailableAccommodation")
+
+		startDate, err := time.Parse("2006-01-02T15:04:05.000000000", command.Reservation.Start)
+		if err != nil {
+			println(err)
+			println(command.Reservation.Start)
+			break
+		}
+		endDate, err := time.Parse("2006-01-02T15:04:05.000000000", command.Reservation.End)
+		if err != nil {
+			println(err)
+			println(command.Reservation.End)
+			break
+		}
+
 		request := accommodation.CheckAvailabilityRequest{
 			Accommodationid: command.Reservation.AccommodationId,
-			DateFrom:        timestamppb.New(command.Reservation.Start),
-			DateTo:          timestamppb.New(command.Reservation.End),
+			DateFrom:        timestamppb.New(startDate),
+			DateTo:          timestamppb.New(endDate),
 			NumberOfGuests:  command.Reservation.NumberOfGuests,
 		}
+
 		accommodation, err := handler.accommodationService.CheckAccommodationAvailability(&request)
 		if err != nil {
 			reply.Type = events.AccommodationNotAvailable
@@ -77,25 +93,8 @@ func (handler *CreateReservationCommandHandler) handle(command *events.CreateRes
 			break
 		}
 		reply.Reservation.Price = accommodation.TotalPrice
-
 		reply.Type = events.AccommodationAvailable
 		println("Reply: events.AccommodationAvailable")
-	case events.ChangeAvailability:
-		println("Command: events.ChangeAvailability")
-		availabilitiesToUpdate := handler.accommodationService.GetAllAvailability(command.Reservation.Start, command.Reservation.End, accommodationId.Hex())
-		id, err = primitive.ObjectIDFromHex(command.Reservation.AccommodationId)
-		accommodation, err := handler.accommodationService.Get(id)
-		if accommodation.HasAutomaticReservations == true {
-			err = handler.accommodationService.ChangeAvailability(availabilitiesToUpdate, false)
-			if err != nil {
-				reply.Type = events.AvailabilityNotChanged
-				println("Reply: events.AvailabilityNotChanged")
-				println(err.Error())
-				break
-			}
-		}
-		reply.Type = events.AvailabilityChanged
-		println("Reply: events.AvailabilityChanged")
 	case events.CheckAutomaticApproveReservation:
 		println("Command: events.CheckAutomaticApproveReservation")
 		accommodation, err := handler.accommodationService.Get(accommodationId)
@@ -112,10 +111,24 @@ func (handler *CreateReservationCommandHandler) handle(command *events.CreateRes
 		println("Reply: events.ManualPendingReservation")
 	case events.RevertAvailability:
 		println("Command: events.RevertAvailability")
+
+		startDate, err := time.Parse("2006-01-02T15:04:05.000000000", command.Reservation.Start)
+		if err != nil {
+			println(err)
+			println(command.Reservation.Start)
+			break
+		}
+		endDate, err := time.Parse("2006-01-02T15:04:05.000000000", command.Reservation.End)
+		if err != nil {
+			println(err)
+			println(command.Reservation.End)
+			break
+		}
+
 		accommodationAvailability := accommodation.CheckAvailabilityRequest{
 			Accommodationid: command.Reservation.Id,
-			DateFrom:        timestamppb.New(command.Reservation.Start),
-			DateTo:          timestamppb.New(command.Reservation.End),
+			DateFrom:        timestamppb.New(startDate),
+			DateTo:          timestamppb.New(endDate),
 			NumberOfGuests:  0,
 		}
 

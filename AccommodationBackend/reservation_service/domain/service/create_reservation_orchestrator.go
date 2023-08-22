@@ -49,7 +49,6 @@ func (o *CreateReservationOrchestrator) handle(reply *events.CreateReservationRe
 }
 
 func (o *CreateReservationOrchestrator) nextCommandType(reply events.CreateReservationReplyType) events.CreateReservationCommandType {
-	//TODO Preuzmeravanje
 	switch reply {
 	case events.AccommodationExists:
 		return events.CheckAvailableAccommodation
@@ -57,13 +56,8 @@ func (o *CreateReservationOrchestrator) nextCommandType(reply events.CreateReser
 		return events.CancelReservation
 
 	case events.AccommodationAvailable:
-		return events.ChangeAvailability
-	case events.AccommodationNotAvailable:
-		return events.CancelReservation
-
-	case events.AvailabilityChanged:
 		return events.CheckUserExists
-	case events.AvailabilityNotChanged:
+	case events.AccommodationNotAvailable:
 		return events.CancelReservation
 
 	case events.UserExists:

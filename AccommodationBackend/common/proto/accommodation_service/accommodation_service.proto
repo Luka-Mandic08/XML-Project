@@ -16,6 +16,7 @@ service AccommodationService{
         rpc CheckAvailability(CheckAvailabilityRequest) returns(CheckAvailabilityResponse){}
         rpc Search(SearchRequest) returns(SearchResponse) {}
         rpc DeleteAllForHost(GetByIdRequest) returns(Response) {}
+        rpc CheckCanApprove(CheckCanApproveRequest) returns(CheckCanApproveResponse) {}
 }
 
 message Accommodation{
@@ -123,4 +124,14 @@ message GetAvailabilitiesResponse{
 message GetAllRequest{}
 message GetAllResponse{
         repeated Accommodation accommodations = 1;
+}
+
+message CheckCanApproveRequest {
+        string accommodationId = 1;
+        string start = 2;
+        string end = 3;
+        int32 numberOfGuests = 4;
+}
+message CheckCanApproveResponse {
+        string canApprove = 2;
 }

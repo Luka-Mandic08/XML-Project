@@ -38,7 +38,7 @@ func (handler *CreateReservationCommandHandler) handle(command *events.CreateRes
 	switch command.Type {
 	case events.CancelReservation:
 		println("Command: events.CancelReservation")
-		_, err := handler.reservationService.Cancel(id)
+		_, err := handler.reservationService.AutoCancel(id, command.Reservation.Price)
 		if err != nil {
 			return
 		}
@@ -46,7 +46,7 @@ func (handler *CreateReservationCommandHandler) handle(command *events.CreateRes
 		println("Reply: events.ReservationCancelled")
 	case events.ApproveReservation:
 		println("Command: events.ApproveReservation")
-		_, err := handler.reservationService.Approve(id, command.Reservation.Price)
+		_, err := handler.reservationService.AutoApprove(id, command.Reservation.Price)
 		if err != nil {
 			return
 		}
@@ -54,6 +54,10 @@ func (handler *CreateReservationCommandHandler) handle(command *events.CreateRes
 		println("Reply: events.ReservationApproved")
 	case events.PendingReservation:
 		println("Command: events.PendingReservation")
+		_, err := handler.reservationService.AutoPending(id, command.Reservation.Price)
+		if err != nil {
+			return
+		}
 		reply.Type = events.ReservationPending
 		println("Reply: events.ReservationPending")
 	default:
