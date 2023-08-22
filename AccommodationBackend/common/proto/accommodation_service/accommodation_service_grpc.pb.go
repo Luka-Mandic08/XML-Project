@@ -19,16 +19,17 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	AccommodationService_GetById_FullMethodName            = "/accommodation.AccommodationService/GetById"
-	AccommodationService_GetAll_FullMethodName             = "/accommodation.AccommodationService/GetAll"
-	AccommodationService_GetAllByHostId_FullMethodName     = "/accommodation.AccommodationService/GetAllByHostId"
-	AccommodationService_GetAvailabilities_FullMethodName  = "/accommodation.AccommodationService/GetAvailabilities"
-	AccommodationService_Create_FullMethodName             = "/accommodation.AccommodationService/Create"
-	AccommodationService_UpdateAvailability_FullMethodName = "/accommodation.AccommodationService/UpdateAvailability"
-	AccommodationService_CheckAvailability_FullMethodName  = "/accommodation.AccommodationService/CheckAvailability"
-	AccommodationService_Search_FullMethodName             = "/accommodation.AccommodationService/Search"
-	AccommodationService_DeleteAllForHost_FullMethodName   = "/accommodation.AccommodationService/DeleteAllForHost"
-	AccommodationService_CheckCanApprove_FullMethodName    = "/accommodation.AccommodationService/CheckCanApprove"
+	AccommodationService_GetById_FullMethodName                               = "/accommodation.AccommodationService/GetById"
+	AccommodationService_GetAll_FullMethodName                                = "/accommodation.AccommodationService/GetAll"
+	AccommodationService_GetAllByHostId_FullMethodName                        = "/accommodation.AccommodationService/GetAllByHostId"
+	AccommodationService_GetAvailabilities_FullMethodName                     = "/accommodation.AccommodationService/GetAvailabilities"
+	AccommodationService_Create_FullMethodName                                = "/accommodation.AccommodationService/Create"
+	AccommodationService_UpdateAvailability_FullMethodName                    = "/accommodation.AccommodationService/UpdateAvailability"
+	AccommodationService_CheckAvailability_FullMethodName                     = "/accommodation.AccommodationService/CheckAvailability"
+	AccommodationService_Search_FullMethodName                                = "/accommodation.AccommodationService/Search"
+	AccommodationService_DeleteAllForHost_FullMethodName                      = "/accommodation.AccommodationService/DeleteAllForHost"
+	AccommodationService_CheckCanApprove_FullMethodName                       = "/accommodation.AccommodationService/CheckCanApprove"
+	AccommodationService_GetAndCancelAllAvailabilitiesToCancel_FullMethodName = "/accommodation.AccommodationService/GetAndCancelAllAvailabilitiesToCancel"
 )
 
 // AccommodationServiceClient is the client API for AccommodationService service.
@@ -45,6 +46,7 @@ type AccommodationServiceClient interface {
 	Search(ctx context.Context, in *SearchRequest, opts ...grpc.CallOption) (*SearchResponse, error)
 	DeleteAllForHost(ctx context.Context, in *GetByIdRequest, opts ...grpc.CallOption) (*Response, error)
 	CheckCanApprove(ctx context.Context, in *CheckCanApproveRequest, opts ...grpc.CallOption) (*CheckCanApproveResponse, error)
+	GetAndCancelAllAvailabilitiesToCancel(ctx context.Context, in *GetAndCancelAllAvailabilitiesToCancelRequest, opts ...grpc.CallOption) (*GetAndCancelAllAvailabilitiesToCancelResponse, error)
 }
 
 type accommodationServiceClient struct {
@@ -145,6 +147,15 @@ func (c *accommodationServiceClient) CheckCanApprove(ctx context.Context, in *Ch
 	return out, nil
 }
 
+func (c *accommodationServiceClient) GetAndCancelAllAvailabilitiesToCancel(ctx context.Context, in *GetAndCancelAllAvailabilitiesToCancelRequest, opts ...grpc.CallOption) (*GetAndCancelAllAvailabilitiesToCancelResponse, error) {
+	out := new(GetAndCancelAllAvailabilitiesToCancelResponse)
+	err := c.cc.Invoke(ctx, AccommodationService_GetAndCancelAllAvailabilitiesToCancel_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AccommodationServiceServer is the server API for AccommodationService service.
 // All implementations must embed UnimplementedAccommodationServiceServer
 // for forward compatibility
@@ -159,6 +170,7 @@ type AccommodationServiceServer interface {
 	Search(context.Context, *SearchRequest) (*SearchResponse, error)
 	DeleteAllForHost(context.Context, *GetByIdRequest) (*Response, error)
 	CheckCanApprove(context.Context, *CheckCanApproveRequest) (*CheckCanApproveResponse, error)
+	GetAndCancelAllAvailabilitiesToCancel(context.Context, *GetAndCancelAllAvailabilitiesToCancelRequest) (*GetAndCancelAllAvailabilitiesToCancelResponse, error)
 	mustEmbedUnimplementedAccommodationServiceServer()
 }
 
@@ -195,6 +207,9 @@ func (UnimplementedAccommodationServiceServer) DeleteAllForHost(context.Context,
 }
 func (UnimplementedAccommodationServiceServer) CheckCanApprove(context.Context, *CheckCanApproveRequest) (*CheckCanApproveResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CheckCanApprove not implemented")
+}
+func (UnimplementedAccommodationServiceServer) GetAndCancelAllAvailabilitiesToCancel(context.Context, *GetAndCancelAllAvailabilitiesToCancelRequest) (*GetAndCancelAllAvailabilitiesToCancelResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAndCancelAllAvailabilitiesToCancel not implemented")
 }
 func (UnimplementedAccommodationServiceServer) mustEmbedUnimplementedAccommodationServiceServer() {}
 
@@ -389,6 +404,24 @@ func _AccommodationService_CheckCanApprove_Handler(srv interface{}, ctx context.
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AccommodationService_GetAndCancelAllAvailabilitiesToCancel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAndCancelAllAvailabilitiesToCancelRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AccommodationServiceServer).GetAndCancelAllAvailabilitiesToCancel(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AccommodationService_GetAndCancelAllAvailabilitiesToCancel_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AccommodationServiceServer).GetAndCancelAllAvailabilitiesToCancel(ctx, req.(*GetAndCancelAllAvailabilitiesToCancelRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AccommodationService_ServiceDesc is the grpc.ServiceDesc for AccommodationService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -435,6 +468,10 @@ var AccommodationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CheckCanApprove",
 			Handler:    _AccommodationService_CheckCanApprove_Handler,
+		},
+		{
+			MethodName: "GetAndCancelAllAvailabilitiesToCancel",
+			Handler:    _AccommodationService_GetAndCancelAllAvailabilitiesToCancel_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

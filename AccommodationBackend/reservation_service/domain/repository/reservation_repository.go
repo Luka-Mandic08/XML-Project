@@ -93,6 +93,14 @@ func (store *ReservationMongoDBStore) GetPastForAccommodations(guestId string, i
 	return store.filter(filter)
 }
 
+func (store *ReservationMongoDBStore) GetAllIntercepting(reservation *model.Reservation) ([]*model.Reservation, error) {
+	filter := bson.M{
+		"accommodation": reservation.AccommodationId,
+		"status":        "Pending",
+	}
+	return store.filter(filter)
+}
+
 func (store *ReservationMongoDBStore) filter(filter interface{}) ([]*model.Reservation, error) {
 	cursor, err := store.reservations.Find(context.TODO(), filter)
 	defer cursor.Close(context.TODO())

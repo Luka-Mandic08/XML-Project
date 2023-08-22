@@ -104,10 +104,12 @@ func (service *AccommodationService) CheckDateAvailability(request *accommodatio
 			return 0, nil, errors.New("this accommodation is unavailable")
 		}
 		if err != nil {
+			println(err.Error())
 			return 0, nil, err
 		}
 		if acc.PriceIsPerGuest {
 			totalPrice += float32(request.NumberOfGuests) * av.Price
+			availabilitiesToUpdate = append(availabilitiesToUpdate, av)
 			continue
 		}
 		totalPrice += av.Price
@@ -235,4 +237,38 @@ func (service *AccommodationService) CheckCanApprove(request *accommodation.Chec
 		CanApprove: "true",
 	}
 	return &response, nil
+}
+
+func (service *AccommodationService) GetAndCancelAllAvailabilitiesToCancel(request *accommodation.GetAndCancelAllAvailabilitiesToCancelRequest) (*accommodation.GetAndCancelAllAvailabilitiesToCancelResponse, error) {
+
+	layout := "2006-01-02T15:04:05"
+
+	dateFrom, err := time.Parse(layout, request.Start)
+	if err != nil {
+		fmt.Println("Error parsing time:", err)
+		return nil, err
+	}
+	dateTo, err := time.Parse(layout, request.End)
+	if err != nil {
+		fmt.Println("Error parsing time:", err)
+		return nil, err
+	}
+
+	toChange := []*model.Availability{}
+	response := []string{}
+	for date := dateFrom; !date.After(dateTo); date = date.Add(time.Hour * 24) {
+		av, err := service.availabilityStore.GetByDateAndAccommodationAllToCancel(request.AccommodationId, date)
+		if err != nil {
+			return nil, err
+		}
+		toChange = append(toChange, av)
+		response = append(response, av.Id.Hex())
+	}
+
+	err = service.ChangeAvailability(toChange, true)
+	if err != nil {
+		return nil, err
+	}
+
+	return &accommodation.GetAndCancelAllAvailabilitiesToCancelResponse{ToCancel: response}, nil
 }

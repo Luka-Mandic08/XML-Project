@@ -1,9 +1,11 @@
 package service
 
 import (
+	"fmt"
 	"go.mongodb.org/mongo-driver/mongo"
 	"reservation_service/domain/model"
 	"reservation_service/domain/repository"
+	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -159,6 +161,48 @@ func (service *ReservationService) Approve(id primitive.ObjectID) (*model.Reserv
 	}
 
 	return reservation, nil
+}
+
+func (service *ReservationService) GetAllIntercepting(reservation *model.Reservation) ([]*model.Reservation, error) {
+	reservations, err := service.store.GetAllIntercepting(reservation)
+	if err != nil {
+		return nil, err
+	}
+
+	result := []*model.Reservation{}
+
+	layout := "2006-01-02T15:04:05"
+	reservationFrom, err := time.Parse(layout, reservation.Start)
+	if err != nil {
+		fmt.Println("Error parsing time:", err)
+		return nil, err
+	}
+	reservationTo, err := time.Parse(layout, reservation.End)
+	if err != nil {
+		fmt.Println("Error parsing time:", err)
+		return nil, err
+	}
+	for _, currentReservation := range reservations {
+		dateFrom, err := time.Parse(layout, currentReservation.Start)
+		if err != nil {
+			fmt.Println("Error parsing time:", err)
+			return nil, err
+		}
+		dateTo, err := time.Parse(layout, currentReservation.End)
+		if err != nil {
+			fmt.Println("Error parsing time:", err)
+			return nil, err
+		}
+		if (dateFrom.Before(reservationTo) && dateFrom.After(reservationFrom)) || (dateTo.Before(reservationTo) && dateTo.After(reservationFrom)) {
+			result = append(result, currentReservation)
+		} else if dateFrom.Equal(reservationFrom) || dateTo.Equal(reservationTo) {
+			result = append(result, currentReservation)
+		} else if dateFrom.Before(reservationFrom) && dateTo.After(reservationTo) {
+			result = append(result, currentReservation)
+		}
+	}
+
+	return result, nil
 }
 
 func (service *ReservationService) Deny(id primitive.ObjectID) (*model.Reservation, error) {

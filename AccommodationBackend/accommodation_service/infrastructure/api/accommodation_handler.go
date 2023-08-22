@@ -117,3 +117,12 @@ func (handler *AccommodationHandler) CheckCanApprove(ctx context.Context, reques
 
 	return response, nil
 }
+
+func (handler *AccommodationHandler) GetAndCancelAllAvailabilitiesToCancel(ctx context.Context, request *accommodation.GetAndCancelAllAvailabilitiesToCancelRequest) (*accommodation.GetAndCancelAllAvailabilitiesToCancelResponse, error) {
+	response, err := handler.service.GetAndCancelAllAvailabilitiesToCancel(request)
+	if err != nil {
+		return nil, err
+	}
+
+	return response, nil
+}

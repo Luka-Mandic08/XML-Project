@@ -182,11 +182,20 @@ func (handler *ReservationHandler) Approve(ctx context.Context, request *pb.Appr
 		return nil, err
 	}
 
+	if reservation.Status == "Approved" {
+		return nil, errors.New("Reservation alredy Approved id: " + id)
+	}
+	if reservation.Status == "Denied" {
+		return nil, errors.New("Reservation alredy Denied id: " + id)
+	}
+	if reservation.Status == "Canceled" {
+		return nil, errors.New("Reservation alredy Canceled id: " + id)
+	}
+
 	canApprove, err := handler.accommodationClient.CheckCanApprove(ctx, &accommodation.CheckCanApproveRequest{
 		AccommodationId: reservation.AccommodationId,
 		Start:           reservation.Start,
 		End:             reservation.End,
-		NumberOfGuests:  reservation.NumberOfGuests,
 	})
 	if err != nil {
 		return nil, err
@@ -197,6 +206,21 @@ func (handler *ReservationHandler) Approve(ctx context.Context, request *pb.Appr
 	}
 
 	reservation, err = handler.reservationService.Approve(reservationId)
+	if err != nil {
+		return nil, err
+	}
+
+	interceptingReservations, err := handler.reservationService.GetAllIntercepting(reservation)
+	if err != nil {
+		return nil, err
+	}
+	for _, reservation := range interceptingReservations {
+		_, err = handler.reservationService.Deny(reservation.Id)
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	if err == mongo.ErrNoDocuments {
 		return nil, status.Error(codes.NotFound, "Unable to find reservation: id = "+request.Id)
 	}
@@ -210,7 +234,22 @@ func (handler *ReservationHandler) Deny(ctx context.Context, request *pb.DenyReq
 	if err != nil {
 		return nil, err
 	}
-	reservation, err := handler.reservationService.Deny(objectId)
+	reservation, err := handler.reservationService.Get(objectId)
+	if err != nil {
+		return nil, err
+	}
+
+	if reservation.Status == "Approved" {
+		return nil, errors.New("Reservation alredy Approved id: " + id)
+	}
+	if reservation.Status == "Denied" {
+		return nil, errors.New("Reservation alredy Denied id: " + id)
+	}
+	if reservation.Status == "Canceled" {
+		return nil, errors.New("Reservation alredy Canceled id: " + id)
+	}
+
+	reservation, err = handler.reservationService.Deny(objectId)
 	if err == mongo.ErrNoDocuments {
 		return nil, status.Error(codes.NotFound, "Unable to find reservation: id = "+request.Id)
 	}
@@ -220,12 +259,34 @@ func (handler *ReservationHandler) Deny(ctx context.Context, request *pb.DenyReq
 
 func (handler *ReservationHandler) Cancel(ctx context.Context, request *pb.CancelRequest) (*pb.CancelResponse, error) {
 	id := request.Id
-	objectId, err := primitive.ObjectIDFromHex(id)
+	reservationId, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return nil, err
+	}
+	reservation, err := handler.reservationService.Get(reservationId)
 	if err != nil {
 		return nil, err
 	}
 
-	reservation, err := handler.reservationService.Cancel(objectId)
+	if reservation.Status == "Denied" {
+		return nil, errors.New("Reservation alredy Denied id: " + id)
+	}
+	if reservation.Status == "Canceled" {
+		return nil, errors.New("Reservation alredy Canceled id: " + id)
+	}
+
+	if reservation.Status == "Approved" {
+		_, err = handler.accommodationClient.GetAndCancelAllAvailabilitiesToCancel(ctx, &accommodation.GetAndCancelAllAvailabilitiesToCancelRequest{
+			AccommodationId: reservation.AccommodationId,
+			Start:           reservation.Start,
+			End:             reservation.End,
+		})
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	_, err = handler.reservationService.Cancel(reservationId)
 	if err == mongo.ErrNoDocuments {
 		return nil, status.Error(codes.NotFound, "Unable to find reservation: id = "+request.Id)
 	}

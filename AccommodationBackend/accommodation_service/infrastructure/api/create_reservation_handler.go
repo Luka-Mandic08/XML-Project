@@ -84,7 +84,7 @@ func (handler *CreateReservationCommandHandler) handle(command *events.CreateRes
 			DateTo:          timestamppb.New(endDate),
 			NumberOfGuests:  command.Reservation.NumberOfGuests,
 		}
-
+		// TODO ne stavlja da su mi zauzeti termini ako je autoApprove...
 		accommodation, err := handler.accommodationService.CheckAccommodationAvailability(&request)
 		if err != nil {
 			reply.Type = events.AccommodationNotAvailable

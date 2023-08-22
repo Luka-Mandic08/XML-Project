@@ -131,3 +131,8 @@ func (store *AvailabilityStore) DeleteAllForAccommodation(id string) (*mongo.Del
 	filter := bson.M{"accommodationid": id}
 	return store.availabilities.DeleteMany(context.TODO(), filter)
 }
+
+func (store *AvailabilityStore) GetByDateAndAccommodationAllToCancel(id string, date time.Time) (*model.Availability, error) {
+	filter := bson.M{"accommodationid": id, "date": date, "isAvailable": false}
+	return store.filterOne(filter)
+}
