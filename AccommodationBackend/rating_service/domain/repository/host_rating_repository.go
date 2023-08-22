@@ -36,22 +36,30 @@ func (store *HostRatingMongoDBStore) GetAllForHost(hostId string) ([]*model.Host
 }
 
 func (store *HostRatingMongoDBStore) GetAverageScoreForHost(hostId string) (float32, error) {
-	result, err := store.GetAllForHost(hostId)
-	if err != nil {
-		return 0.0, err
+	pipeline := bson.A{
+		bson.D{
+			{"$match", bson.D{
+				{"hostid", hostId},
+			}},
+		},
+		bson.D{
+			{"$group", bson.D{
+				{"_id", nil},
+				{"averageScore", bson.D{
+					{"$avg", "$score"},
+				}},
+			}},
+		},
 	}
-
-	if len(result) == 0 {
-		return 0.0, nil // TODO: No ratings for the host, what to next?
+	cursor, err := store.hostRatings.Aggregate(context.TODO(), pipeline)
+	var result []bson.M
+	if err = cursor.All(context.TODO(), &result); err != nil {
+		return 0, err
 	}
-
-	totalScore := int32(0)
-	for _, rating := range result {
-		totalScore += rating.Score
+	if len(result) > 0 {
+		return float32(result[0]["averageScore"].(float64)), nil
 	}
-
-	averageScore := float32(totalScore) / float32(len(result))
-	return averageScore, nil
+	return 0.0, nil
 }
 
 func (store *HostRatingMongoDBStore) Insert(hostRating *model.HostRating) (*model.HostRating, error) {

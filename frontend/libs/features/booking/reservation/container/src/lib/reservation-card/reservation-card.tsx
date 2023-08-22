@@ -24,6 +24,21 @@ export function ReservationCard(props: ReservationItemProps) {
     }
   }, []);
 
+  const getBgColor = () => {
+    if (props.reservation.status === 'Pending') {
+      return 'yellow';
+    }
+    if (props.reservation.status === 'Accepted') {
+      return 'green';
+    }
+    if (props.reservation.status === 'Rejected') {
+      return 'red';
+    }
+    if (props.reservation.status === 'Canceled') {
+      return 'grey';
+    }
+  };
+
   const getAccommodationInfo = async () => {
     setAccommodationInfo(await GetAccommodationById(props.reservation.accommodationId));
   };
@@ -33,32 +48,43 @@ export function ReservationCard(props: ReservationItemProps) {
   };
 
   return (
-    <Paper elevation={6} className={styles.reservationCard}>
+    <Paper elevation={6} className={styles.reservationCard} style={{ border: `3px solid ${getBgColor()}`, borderRadius: '8px' }}>
       <div className={styles.reservationCardContent}>
         {props.isForGuest && <Typography variant="h4">Reservation at: {accommodationInfo?.name}</Typography>}
         <div>
           <Typography variant="h6">Check in: {props.reservation.start}</Typography>
           <Typography variant="h6">Check out: {props.reservation.end}</Typography>
         </div>
+        <Divider sx={{ backgroundColor: 'grey', width: '100%' }} />
         {props.isForGuest && (
-          <div>
-            <Typography variant="h5">Address</Typography>
-            <Typography variant="h6">Street: {accommodationInfo?.address.street}</Typography>
-            <Typography variant="h6">City: {accommodationInfo?.address.city}</Typography>
-            <Typography variant="h6">Country: {accommodationInfo?.address.country}</Typography>
-          </div>
+          <>
+            <div>
+              <Typography variant="h5">Location</Typography>
+              <Typography variant="h6">
+                {accommodationInfo?.address.street}, {accommodationInfo?.address.city}, {accommodationInfo?.address.country}
+              </Typography>
+            </div>
+            <Divider sx={{ backgroundColor: 'grey', width: '100%' }} />
+          </>
         )}
         <div>
+          <Typography variant="h5">Guest numbers</Typography>
+          <Typography variant="h6">
+            Minimun: {accommodationInfo?.minGuests} | Maximum: {accommodationInfo?.maxGuests}
+          </Typography>
           <Typography variant="h6">Number of guests: {props.reservation.numberOfGuests}</Typography>
-          <Typography variant="h6">Price: {props.reservation.price}</Typography>
         </div>
+        <Divider sx={{ backgroundColor: 'grey', width: '100%' }} />
+
+        {props.reservation.price && <Typography variant="h5">Price: {props.reservation.price}</Typography>}
+
         <div>
           <Typography variant="h6">Status: {props.reservation.status}</Typography>
         </div>
       </div>
       {props.isForGuest && (
         <div className={styles.reservationCardFooter}>
-          <Divider sx={{ backgroundColor: 'grey', flexGrow: '1', marginY: '2rem' }} />
+          <Divider sx={{ backgroundColor: 'grey', width: '100%', marginY: '1rem' }} />
           <Button
             variant="contained"
             size="large"

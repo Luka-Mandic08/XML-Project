@@ -3,6 +3,7 @@ package api
 import (
 	"accommodation_service/domain/service"
 	accommodation "common/proto/accommodation_service"
+	rating "common/proto/rating_service"
 	"context"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"google.golang.org/grpc/codes"
@@ -11,12 +12,14 @@ import (
 
 type AccommodationHandler struct {
 	accommodation.UnimplementedAccommodationServiceServer
-	service *service.AccommodationService
+	service      *service.AccommodationService
+	ratingClient rating.RatingServiceClient
 }
 
-func NewAccommodationHandler(service *service.AccommodationService) *AccommodationHandler {
+func NewAccommodationHandler(service *service.AccommodationService, ratingClient rating.RatingServiceClient) *AccommodationHandler {
 	return &AccommodationHandler{
-		service: service,
+		service:      service,
+		ratingClient: ratingClient,
 	}
 }
 
@@ -68,7 +71,12 @@ func (handler *AccommodationHandler) Search(ctx context.Context, request *accomm
 	if err != nil {
 		return nil, status.Error(codes.Aborted, err.Error())
 	}
-	return MapAccommodationsToSearchRequest(accommodations, prices, numberOfDays, int(request.NumberOfGuests)), nil
+	mapped := MapAccommodationsToSearchRequest(accommodations, prices, numberOfDays, int(request.NumberOfGuests), int(request.GetPageNumber()))
+	for _, acc := range mapped.GetAccommodations() {
+		response, _ := handler.ratingClient.GetAverageScoreForAccommodation(ctx, &rating.IdRequest{Id: acc.GetId()})
+		acc.Rating = response.GetScore()
+	}
+	return mapped, nil
 }
 
 func (handler *AccommodationHandler) GetAllByHostId(ctx context.Context, request *accommodation.GetAllByHostIdRequest) (*accommodation.GetAllByHostIdResponse, error) {
@@ -83,12 +91,16 @@ func (handler *AccommodationHandler) GetAllByHostId(ctx context.Context, request
 }
 
 func (handler *AccommodationHandler) GetAll(ctx context.Context, request *accommodation.GetAllRequest) (*accommodation.GetAllResponse, error) {
-	accommodations, err := handler.service.GetAll()
+	accommodations, err := handler.service.GetAll(int(request.GetPageNumber()))
 	if err != nil {
 		return nil, status.Error(codes.Aborted, err.Error())
 	}
 
 	_, mapped := MapAccommodations(accommodations)
+	for _, acc := range mapped.GetAccommodations() {
+		response, _ := handler.ratingClient.GetAverageScoreForAccommodation(ctx, &rating.IdRequest{Id: acc.GetId()})
+		acc.Rating = response.GetScore()
+	}
 
 	return mapped, nil
 }

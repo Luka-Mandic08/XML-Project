@@ -12,6 +12,8 @@ type Config struct {
 	NatsPass                        string
 	CreateReservationCommandSubject string
 	CreateReservationReplySubject   string
+	RatingHost                      string
+	RatingPort                      string
 }
 
 func NewConfig() *Config {
@@ -25,5 +27,7 @@ func NewConfig() *Config {
 		NatsPass:                        os.Getenv("NATS_PASS"),
 		CreateReservationCommandSubject: os.Getenv("CREATE_RESERVATION_COMMAND_SUBJECT"),
 		CreateReservationReplySubject:   os.Getenv("CREATE_RESERVATION_REPLY_SUBJECT"),
+		RatingHost:                      os.Getenv("RATING_SERVICE_HOST"),
+		RatingPort:                      os.Getenv("RATING_SERVICE_PORT"),
 	}
 }

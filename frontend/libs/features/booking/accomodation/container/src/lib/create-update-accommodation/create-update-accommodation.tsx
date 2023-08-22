@@ -12,8 +12,7 @@ export interface CreateUpdateAccommodationProps {}
 
 export function CreateUpdateAccommodation(props: CreateUpdateAccommodationProps) {
   const [amenities, setAmenities] = useState<string[]>([]);
-  const [images, setImages] = useState<File[]>([]);
-  const [imagesUrl, setImagesUrl] = useState<string[]>([]);
+  const [imagesBase64, setImagesBase64] = useState<string[]>([]);
   const [accomodationDTO, setAccomodationDTO] = useState<AccommodationCreateUpdateDTO>({
     id: '',
     name: '',
@@ -58,26 +57,24 @@ export function CreateUpdateAccommodation(props: CreateUpdateAccommodationProps)
   const {
     register: registerImages,
     handleSubmit: handleSubmitImages,
-    watch: watchImages,
     reset: resetImages,
     formState: { errors: errorsImages },
-  } = useForm({
-    defaultValues: {
-      image: File,
-    },
-  });
+  } = useForm();
 
   const onSubmitImages = (data: any) => {
-    images.push(data);
-    console.log(images);
-    setImages(images);
-    resetImages();
+    const reader = new FileReader();
+    reader.readAsDataURL(data.image[0]);
+    reader.onload = () => {
+      setImagesBase64((prevImages: any) => [...prevImages, reader.result]);
+    };
+    reader.onerror = (error) => {
+      console.error('Base64 conversion error:', error);
+    };
+    resetImages(); // Reset the form after submission
   };
 
   const deleteImages = (id: number) => {
-    images.splice(id, 1);
-    setImages(images);
-    resetImages();
+    setImagesBase64((prevImages) => prevImages.filter((_, index) => index !== id));
   };
 
   const {
@@ -103,7 +100,7 @@ export function CreateUpdateAccommodation(props: CreateUpdateAccommodationProps)
   });
 
   const onSubmit = (data: AccommodationCreateUpdateDTO) => {
-    CreateUpdateAccommodationFunction(data, amenities, images);
+    CreateUpdateAccommodationFunction(data, amenities, imagesBase64);
     navigate(BookingAppRoutes.HomeHost);
   };
 
@@ -156,7 +153,14 @@ export function CreateUpdateAccommodation(props: CreateUpdateAccommodationProps)
             variant="contained"
             size="large"
             type="submit"
-            sx={{ color: 'white', background: '#212121', height: '48px', width: '248px', ':hover': { background: 'white', color: '#212121' } }}
+            sx={{
+              marginBottom: '2rem',
+              color: 'white',
+              background: '#212121',
+              height: '48px',
+              width: '248px',
+              ':hover': { background: 'white', color: '#212121' },
+            }}
           >
             Add Amenity
           </Button>
@@ -170,13 +174,15 @@ export function CreateUpdateAccommodation(props: CreateUpdateAccommodationProps)
           </Typography>
         </Grid>
         <div className={styles.amenitiesContainer}>
-          {imagesUrl?.map((image, idx) => (
-            <div className={styles.amenityCard}>
-              <Typography>Image {idx + 1}.</Typography>
-              <IconButton onClick={() => deleteImages(idx)}>
-                <HighlightOffIcon></HighlightOffIcon>
-              </IconButton>
-              <img src={image} alt="accommodation" />
+          {imagesBase64?.map((image, idx) => (
+            <div className={styles.imageCard}>
+              <div className={styles.lineContainer}>
+                <Typography>Image {idx + 1}.</Typography>
+                <IconButton onClick={() => deleteImages(idx)}>
+                  <HighlightOffIcon></HighlightOffIcon>
+                </IconButton>
+              </div>
+              <img src={image} width={'100%'} alt="accommodation" className={styles.imageContainer} />
             </div>
           ))}
         </div>
@@ -191,16 +197,19 @@ export function CreateUpdateAccommodation(props: CreateUpdateAccommodationProps)
                 required: 'This field is required.',
               })}
             />
-            <label className={styles.label} htmlFor="image" id="label-image">
-              <div className={styles.text}>Image</div>
-            </label>
-            <label className={styles.errorLabel}>{errorsImages.image?.message}</label>
           </div>
           <Button
             variant="contained"
             size="large"
             type="submit"
-            sx={{ color: 'white', background: '#212121', height: '48px', width: '248px', ':hover': { background: 'white', color: '#212121' } }}
+            sx={{
+              color: 'white',
+              background: '#212121',
+              marginBottom: '2rem',
+              height: '48px',
+              width: '248px',
+              ':hover': { background: 'white', color: '#212121' },
+            }}
           >
             Add Image
           </Button>
@@ -320,7 +329,14 @@ export function CreateUpdateAccommodation(props: CreateUpdateAccommodationProps)
             variant="contained"
             size="large"
             type="submit"
-            sx={{ color: 'white', background: '#212121', height: '48px', width: '248px', ':hover': { background: 'white', color: '#212121' } }}
+            sx={{
+              marginTop: '2rem',
+              color: 'white',
+              background: '#212121',
+              height: '48px',
+              width: '248px',
+              ':hover': { background: 'white', color: '#212121' },
+            }}
           >
             Create Accommodation
           </Button>

@@ -13,11 +13,12 @@ func MapUserToGetResponse(u *model.User) *user.GetResponse {
 		Country: u.Address.Country,
 	}
 	response := user.GetResponse{
-		Id:      u.Id.Hex(),
-		Name:    u.Name,
-		Surname: u.Surname,
-		Email:   u.Email,
-		Address: &address,
+		Id:            u.Id.Hex(),
+		Name:          u.Name,
+		Surname:       u.Surname,
+		Email:         u.Email,
+		Address:       &address,
+		IsOutstanding: false,
 	}
 	return &response
 }

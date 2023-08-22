@@ -3,6 +3,7 @@ export interface UpdatePersonalData {
   surname: string;
   email: string;
   address: Address;
+  rating: number;
 }
 
 export interface UpdateCredentials {

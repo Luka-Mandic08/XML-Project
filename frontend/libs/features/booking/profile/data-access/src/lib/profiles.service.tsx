@@ -95,6 +95,31 @@ export async function GetProfileInformation(): Promise<UpdatePersonalData> {
     });
 }
 
+export async function GetHostInformation(hostId: string): Promise<UpdatePersonalData> {
+  return await axios({
+    method: 'get',
+    url: BookingBaseURL.URL + '/users/' + hostId,
+  })
+    .then((response) => {
+      return response.data;
+    })
+    .catch(() => {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Something went wrong, please try again',
+        showConfirmButton: false,
+        position: 'bottom-right',
+        timer: 3000,
+        timerProgressBar: true,
+        backdrop: 'none',
+        width: 300,
+        background: '#212121',
+        color: 'white',
+      });
+    });
+}
+
 export async function UpdateProfileInformation(data: UpdatePersonalData): Promise<UpdatePersonalData> {
   return await axios({
     method: 'put',

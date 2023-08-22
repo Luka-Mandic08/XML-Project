@@ -11,6 +11,7 @@ export interface AccommodationInfo {
   maxGuests: number;
   priceIsPerGuest: boolean;
   hasAutomaticReservations: boolean;
+  rating: number;
 }
 
 export interface SearchedAccommodationInfo {
@@ -21,6 +22,7 @@ export interface SearchedAccommodationInfo {
   images: string[];
   unitPrice: number;
   totalPrice: number;
+  rating: number;
 }
 
 export interface AccommodationCreateUpdateDTO {

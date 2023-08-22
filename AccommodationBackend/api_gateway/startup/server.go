@@ -75,7 +75,7 @@ func CreateRoutersAndSetRoutes(config *Config) *gin.Engine {
 	userGroup.PUT("/update", userHandler.Update)
 
 	accommodationGroup := router.Group("/accommodation")
-	accommodationGroup.GET("/all", accommodationHandler.GetAll)
+	accommodationGroup.GET("/all/:pageNumber", accommodationHandler.GetAll)
 	accommodationGroup.GET("/:id", accommodationHandler.GetById)
 	accommodationGroup.POST("/search", accommodationHandler.Search)
 	accommodationGroup.Use(services.ValidateToken())

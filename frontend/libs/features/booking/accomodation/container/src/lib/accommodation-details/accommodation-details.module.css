@@ -1,0 +1,48 @@
+.imageStyle {
+  height: 100%;
+  object-fit: cover;
+  object-position: 'center top';
+}
+
+.imageContainer {
+  display: flex;
+  justify-content: center;
+  height: 100%;
+}
+
+.detailsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 2rem;
+  margin: 2rem auto 2rem auto;
+  max-width: 1150px;
+  flex-grow: 1;
+  height: fit-content;
+}
+
+@media (max-width: 1628px) {
+  .detailsContainer {
+    margin: 2rem;
+  }
+}
+
+.amenitiesContainer {
+  justify-content: flex-start;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+
+.amenityCard {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: fit-content;
+  min-width: 100px;
+  border: 1px solid #c0c0c0;
+  border-radius: 4px;
+  box-sizing: border-box;
+  padding: 16px;
+}

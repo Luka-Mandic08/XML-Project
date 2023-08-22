@@ -6,6 +6,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 const (
@@ -117,15 +118,22 @@ func (store *AccommodationMongoDBStore) GetAllByHostId(hostId string) ([]*model.
 	return accommodations, nil
 }
 
-func (store *AccommodationMongoDBStore) GetAll() ([]*model.Accommodation, error) {
+func (store *AccommodationMongoDBStore) GetAll(page int) ([]*model.Accommodation, error) {
+	skip := (page - 1) * 9
+	findOptions := options.Find()
+	findOptions.SetSkip(int64(skip))
+	findOptions.SetLimit(int64(9))
+
 	filter := bson.D{}
-	result, err := store.accommodations.Find(context.TODO(), filter)
+	result, err := store.accommodations.Find(context.TODO(), filter, findOptions)
 	if err != nil {
 		return nil, err
 	}
+
 	accommodations, err := decode(result)
 	if err != nil {
 		return nil, err
 	}
+
 	return accommodations, nil
 }

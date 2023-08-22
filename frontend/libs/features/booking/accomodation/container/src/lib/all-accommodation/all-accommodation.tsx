@@ -8,14 +8,20 @@ import styles from './all-accommodation.module.css';
 import { Grid, Button, Typography } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { useSearchParametersStore } from '@frontend/features/booking/store/container';
+import { get } from 'http';
 
 /* eslint-disable-next-line */
 export interface AllAccommodationProps {}
 
 export function AllAccommodation(props: AllAccommodationProps) {
   const [accomodationInfo, setAccomodationInfo] = useState<AccommodationInfo[]>([]);
+  const [pageNumber, setPageNumber] = useState<number>(1);
+  const [shouldLoadMore, setShouldLoadMore] = useState<boolean>(true);
+
   const [searchedAccomodationInfo, setSearchedAccomodationInfo] = useState<SearchedAccommodationInfo[]>([]);
   const [searched, setSearched] = useState<boolean>(false);
+  const [searchPageNumber, setSearchPageNumber] = useState<number>(1);
+  const [searchShouldLoadMore, setSearchShouldLoadMore] = useState<boolean>(true);
   const setSearchParameters = useSearchParametersStore((state) => state.setSearchParameters);
 
   const navigate = useNavigate();
@@ -25,7 +31,14 @@ export function AllAccommodation(props: AllAccommodationProps) {
   }, []);
 
   const getAllAccomodation = async () => {
-    setAccomodationInfo(await GetAllAccomodation());
+    const newAccomodations = await GetAllAccomodation(pageNumber);
+    if (newAccomodations === undefined) {
+      setPageNumber(pageNumber - 1);
+      setShouldLoadMore(false);
+      return;
+    }
+    setAccomodationInfo((prevAccomodations) => [...prevAccomodations, ...newAccomodations]);
+    setPageNumber(pageNumber + 1);
   };
 
   const {
@@ -33,6 +46,7 @@ export function AllAccommodation(props: AllAccommodationProps) {
     handleSubmit,
     watch,
     reset,
+    getValues,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -46,14 +60,47 @@ export function AllAccommodation(props: AllAccommodationProps) {
 
   const onSubmit = async (data: any) => {
     setSearched(true);
-    const res = await SearchAccommodation(data);
+    const res = await SearchAccommodation(data, searchPageNumber);
+    if (res === undefined) {
+      return;
+    }
     setSearchedAccomodationInfo(res);
+    setSearchPageNumber(searchPageNumber + 1);
     setSearchParameters(data);
   };
 
   const resetSearch = () => {
     reset();
     setSearched(false);
+    setSearchedAccomodationInfo([]);
+    setSearchPageNumber(1);
+    setSearchShouldLoadMore(true);
+  };
+
+  useEffect(() => {
+    setSearchPageNumber(1);
+    setSearchedAccomodationInfo([]);
+    setSearchShouldLoadMore(true);
+  }, [watch('dateFrom'), watch('dateTo'), watch('city'), watch('country'), watch('numberOfGuests')]);
+
+  const loadMoreForSearch = async () => {
+    console.log(getValues);
+    const data = {
+      city: getValues('city'),
+      country: getValues('country'),
+      dateFrom: getValues('dateFrom'),
+      dateTo: getValues('dateTo'),
+      numberOfGuests: getValues('numberOfGuests'),
+    };
+    console.log(data);
+    const newAccomodations = await SearchAccommodation(data, searchPageNumber);
+    if (newAccomodations === undefined) {
+      setSearchPageNumber(searchPageNumber - 1);
+      setSearchShouldLoadMore(false);
+      return;
+    }
+    setSearchedAccomodationInfo((prevAccomodations) => [...prevAccomodations, ...newAccomodations]);
+    setSearchPageNumber(searchPageNumber + 1);
   };
 
   return (
@@ -145,11 +192,36 @@ export function AllAccommodation(props: AllAccommodationProps) {
       </form>
 
       {!searched && (
-        <div className={styles.cardsContainer}>
-          {accomodationInfo?.map((accomodation, key) => (
-            <AccommodationCard accomodationInfo={accomodation} isForHost={false} />
-          ))}
-        </div>
+        <>
+          <div className={styles.cardsContainer}>
+            {accomodationInfo?.map((accomodation, key) => (
+              <AccommodationCard accomodationInfo={accomodation} isForHost={false} />
+            ))}
+          </div>
+          <Grid container justifyContent={'center'} marginTop={'2rem'}>
+            {shouldLoadMore && (
+              <Button
+                variant="contained"
+                size="large"
+                onClick={() => getAllAccomodation()}
+                sx={{
+                  color: 'white',
+                  background: '#212121',
+                  height: '48px',
+                  minWidth: '200px',
+                  ':hover': { background: 'white', color: '#212121' },
+                }}
+              >
+                Load More
+              </Button>
+            )}
+            {!shouldLoadMore && (
+              <Typography variant="h5" align="center">
+                No more accomodations to load
+              </Typography>
+            )}
+          </Grid>
+        </>
       )}
 
       {searched && (
@@ -162,6 +234,29 @@ export function AllAccommodation(props: AllAccommodationProps) {
               <SearchedAccommodationCard searchedAccomodationInfo={accomodation} />
             ))}
           </div>
+          <Grid container justifyContent={'center'} marginTop={'2rem'}>
+            {searchShouldLoadMore && (
+              <Button
+                variant="contained"
+                size="large"
+                onClick={() => loadMoreForSearch()}
+                sx={{
+                  color: 'white',
+                  background: '#212121',
+                  height: '48px',
+                  minWidth: '200px',
+                  ':hover': { background: 'white', color: '#212121' },
+                }}
+              >
+                Load More
+              </Button>
+            )}
+            {!searchShouldLoadMore && (
+              <Typography variant="h5" align="center">
+                No more accomodations to load
+              </Typography>
+            )}
+          </Grid>
         </>
       )}
     </>

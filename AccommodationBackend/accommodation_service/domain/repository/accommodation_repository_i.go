@@ -13,6 +13,6 @@ type AccommodationStore interface {
 	Update(*model.Accommodation) (*mongo.UpdateResult, error)
 	Delete(id string) (*mongo.DeleteResult, error)
 	GetAllByHostId(hostId string) ([]*model.Accommodation, error)
-	GetAll() ([]*model.Accommodation, error)
+	GetAll(page int) ([]*model.Accommodation, error)
 	DeleteAllForHost(id string) (*mongo.DeleteResult, error)
 }

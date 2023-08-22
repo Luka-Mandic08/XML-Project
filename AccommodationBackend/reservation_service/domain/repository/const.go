@@ -1,6 +1,7 @@
 package repository
 
 const (
-	DATABASE   = "reservation"
-	COLLECTION = "reservation"
+	DATABASE       = "reservation"
+	COLLECTION     = "reservation"
+	HOSTCOLLECTION = "outstanding_host"
 )

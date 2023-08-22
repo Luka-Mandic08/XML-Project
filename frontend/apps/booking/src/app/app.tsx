@@ -5,9 +5,16 @@ import { Routes, Route } from 'react-router-dom';
 import { RegisterPage } from '@frontend/features/booking/register/container';
 import { BookingNavBar } from '@frontend/features/booking/navigation/container';
 import { ProfileInfo } from '@frontend/features/booking/profile/container';
+import styles from './app.module.css';
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
-import { AllAccommodation, AvailabilityCalendar, CreateUpdateAccommodation, HostAccomodation } from '@frontend/features/booking/accomodation/container';
-import { AccommodationReservations, GuestReservations } from '@frontend/features/booking/reservation/container';
+import {
+  AccommodationDetails,
+  AllAccommodation,
+  CreateUpdateAccommodation,
+  HostAccomodation,
+  UpdateAccommodationAvailability,
+} from '@frontend/features/booking/accomodation/container';
+import { AccommodationReservations, GuestReservations, MakeReservation } from '@frontend/features/booking/reservation/container';
 
 export function App() {
   return (
@@ -20,9 +27,11 @@ export function App() {
         <Route path={BookingAppRoutes.HomeHost} element={<HostAccomodation />} />
         <Route path={BookingAppRoutes.CreateAccommodation} element={<CreateUpdateAccommodation />} />
         <Route path={BookingAppRoutes.Profile} element={<ProfileInfo />} />
-        <Route path={BookingAppRoutes.AvailabilityCalendar} element={<AvailabilityCalendar />} />
+        <Route path={BookingAppRoutes.AvailabilityCalendar} element={<UpdateAccommodationAvailability />} />
         <Route path={BookingAppRoutes.GuestReservations} element={<GuestReservations />} />
         <Route path={BookingAppRoutes.AccommodationReservations} element={<AccommodationReservations />} />
+        <Route path={BookingAppRoutes.AccommodationDetails} element={<AccommodationDetails />} />
+        <Route path={BookingAppRoutes.MakeReservation} element={<MakeReservation />} />
       </Routes>
     </>
   );

@@ -1,6 +1,7 @@
 import { SearchedAccommodationInfo } from '@frontend/models';
 import styles from './searched-accommodation-card.module.css';
 import { Paper, Grid, Typography, Divider, Button } from '@mui/material';
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { MakeReservationDialog } from '@frontend/features/booking/reservation/container';
 import { useState } from 'react';
 
@@ -30,22 +31,23 @@ export function SearchedAccommodationCard(props: SearchedAccommodationCardProps)
             </Typography>
           </Grid>
 
+          <Grid container justifyContent={'center'}>
+            {props.searchedAccomodationInfo.images !== undefined && (
+              <img src={props.searchedAccomodationInfo.images[0]} alt="Accomodation image" className={styles.imageContainer} />
+            )}
+          </Grid>
+
           <Grid item direction={'row'} xs={12} marginTop={'1.25rem'}>
             <Grid item xs={12}>
               <Typography variant="h5" align="left">
-                Address
+                Location
               </Typography>
             </Grid>
             <Grid item xs={12}>
               <div className={styles.lineContainer}>
                 <Typography variant="subtitle1" align="left">
-                  Street: {props.searchedAccomodationInfo.address.street}
-                </Typography>
-                <Typography variant="subtitle1" align="left">
-                  City: {props.searchedAccomodationInfo.address.city}
-                </Typography>
-                <Typography variant="subtitle1" align="left">
-                  Country: {props.searchedAccomodationInfo.address.country}
+                  {props.searchedAccomodationInfo.address.street}, {props.searchedAccomodationInfo.address.city},{' '}
+                  {props.searchedAccomodationInfo.address.country}
                 </Typography>
               </div>
             </Grid>
@@ -55,33 +57,21 @@ export function SearchedAccommodationCard(props: SearchedAccommodationCardProps)
             <Divider sx={{ backgroundColor: 'grey', width: '100%', marginTop: '1.25rem', marginBottom: '1.25rem' }} />
           </Grid>
 
-          <Grid item direction={'row'} xs={12}>
-            <Grid item>
-              <Typography variant="h5">Amenities</Typography>
+          <Grid container marginY={'1rem'} alignItems={'left'} direction={'column'}>
+            <Grid item marginBottom={'1rem'}>
+              <Typography variant="h4" align="left">
+                Amenities
+              </Typography>
             </Grid>
-            <Grid container direction={'row'} xs={12} gap={2}>
-              {props.searchedAccomodationInfo.amenities.map((amenity, key) => (
-                <Typography variant="subtitle1">
-                  {key + 1}) {amenity}
-                </Typography>
+            <div className={styles.amenitiesContainer}>
+              {props.searchedAccomodationInfo.amenities?.map((amenity, idx) => (
+                <div className={styles.amenityCard}>
+                  <Typography>
+                    {idx + 1}. {amenity}
+                  </Typography>
+                </div>
               ))}
-            </Grid>
-          </Grid>
-
-          <Grid item xs={12}>
-            <Divider sx={{ backgroundColor: 'grey', width: '100%', marginTop: '1.25rem', marginBottom: '1.25rem' }} />
-          </Grid>
-
-          <Grid container direction={'row'} xs={12}>
-            <Grid item xs={12}>
-              <Typography variant="h5">Images</Typography>
-            </Grid>
-            <Grid container direction={'row'} xs={12} gap={2}>
-              {props.searchedAccomodationInfo.images?.map((image, key) => (
-                // eslint-disable-next-line jsx-a11y/img-redundant-alt
-                <img src={image} alt="Accomodation image" width="100%" />
-              ))}
-            </Grid>
+            </div>
           </Grid>
 
           <Grid item xs={12}>
@@ -95,14 +85,12 @@ export function SearchedAccommodationCard(props: SearchedAccommodationCardProps)
               </Typography>
             </Grid>
             <Grid item xs={12}>
-              <div className={styles.lineContainer}>
-                <Typography variant="subtitle1" align="left">
-                  Price per day: {props.searchedAccomodationInfo.unitPrice}
-                </Typography>
-                <Typography variant="subtitle1" align="left">
-                  Total price: {props.searchedAccomodationInfo.totalPrice}
-                </Typography>
-              </div>
+              <Typography variant="subtitle1" align="left">
+                Price per day: {props.searchedAccomodationInfo.unitPrice}
+              </Typography>
+              <Typography variant="subtitle1" align="left">
+                Total price: {props.searchedAccomodationInfo.totalPrice}
+              </Typography>
             </Grid>
           </Grid>
 

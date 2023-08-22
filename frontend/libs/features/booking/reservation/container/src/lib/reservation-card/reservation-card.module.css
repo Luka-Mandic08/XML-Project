@@ -1,7 +1,7 @@
 .reservationCardContent {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1rem;
 }
 
 .reservationCardFooter {
@@ -12,4 +12,16 @@
 
 .reservationCard {
   padding: 2rem;
+}
+
+.reservationCardpending {
+  background-color: #ffcc80; /* Example color for pending status */
+}
+
+.reservationCardaccepted {
+  background-color: #a5d6a7; /* Example color for accepted status */
+}
+
+.reservationCardcanceled {
+  background-color: #ffcdd2; /* Example color for canceled status */
 }

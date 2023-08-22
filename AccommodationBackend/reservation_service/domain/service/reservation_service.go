@@ -11,14 +11,16 @@ import (
 )
 
 type ReservationService struct {
-	store        repository.ReservationStore
-	orchestrator *CreateReservationOrchestrator
+	store                repository.ReservationStore
+	outstandingHostStore repository.OutstandingHostMongoDBStore
+	orchestrator         *CreateReservationOrchestrator
 }
 
-func NewReservationService(store repository.ReservationStore, orchestrator *CreateReservationOrchestrator) *ReservationService {
+func NewReservationService(store repository.ReservationStore, outstandingHostStore repository.OutstandingHostMongoDBStore, orchestrator *CreateReservationOrchestrator) *ReservationService {
 	return &ReservationService{
-		store:        store,
-		orchestrator: orchestrator,
+		store:                store,
+		orchestrator:         orchestrator,
+		outstandingHostStore: outstandingHostStore,
 	}
 }
 
@@ -84,6 +86,7 @@ func (service *ReservationService) AutoApprove(id primitive.ObjectID, price floa
 	if err != nil {
 		return nil, err
 	}
+	//TODO Add CheckOutstandingHost Saga :(
 
 	return reservation, nil
 }
@@ -233,4 +236,64 @@ func (service *ReservationService) Cancel(id primitive.ObjectID) (*model.Reserva
 	}
 
 	return reservation, nil
+}
+
+func (service *ReservationService) CheckOutstandingHostStatus(accommodationIds []string) (bool, error) {
+	approvedReservation, err := service.store.GetReservationsForAccommodationsByStatus(accommodationIds, "Approved")
+	if err != nil {
+		return false, err
+	}
+	if len(approvedReservation) < 5 {
+		return false, nil
+	}
+
+	var totalDuration int32
+	for _, r := range approvedReservation {
+		totalDuration += r.CalculateDuration()
+	}
+	if totalDuration < 50 {
+		return false, nil
+	}
+
+	canceledReservation, err := service.store.GetReservationsForAccommodationsByStatus(accommodationIds, "Canceled")
+	if err != nil {
+		return false, err
+	}
+	if float32(len(canceledReservation))/float32(len(approvedReservation)) >= 0.05 {
+		return false, nil
+	}
+
+	return true, nil
+}
+
+func (service *ReservationService) ChangeOutstandingHostStatus(status bool, hostId string) error {
+	id, err := primitive.ObjectIDFromHex(hostId)
+	if err != nil {
+		return err
+	}
+	if !status {
+		response, _ := service.outstandingHostStore.Delete(id)
+		if response.DeletedCount == 1 {
+			//TODO Send notification to host
+		}
+	}
+	if status {
+		response, err := service.outstandingHostStore.Insert(&model.OutstandingHost{Id: id})
+		if err != nil {
+			return err
+		}
+		if response {
+			//TODO Send notification to host
+		}
+	}
+	return nil
+}
+
+func (service *ReservationService) GetOutstandingHost(hostId string) (*model.OutstandingHost, error) {
+	id, _ := primitive.ObjectIDFromHex(hostId)
+	return service.outstandingHostStore.Get(id)
+}
+
+func (service *ReservationService) GetAllOutstandingHosts() ([]*model.OutstandingHost, error) {
+	return service.outstandingHostStore.GetAll()
 }

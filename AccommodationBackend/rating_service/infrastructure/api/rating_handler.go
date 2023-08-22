@@ -67,7 +67,7 @@ func (handler *RatingHandler) GetAverageScoreForHost(ctx context.Context, reques
 }
 
 func (handler *RatingHandler) CreateHostRating(ctx context.Context, request *pb.CreateHostRatingRequest) (*pb.HostRating, error) {
-	_, err := handler.reservationClient.CheckIfGuestVisitedAccommodation(ctx, &reservation.CheckPreviousReservationRequest{
+	_, err := handler.reservationClient.CheckIfGuestVisitedHost(ctx, &reservation.CheckPreviousReservationRequest{
 		Id:      request.HostId,
 		GuestId: request.GuestId,
 	})
@@ -75,11 +75,16 @@ func (handler *RatingHandler) CreateHostRating(ctx context.Context, request *pb.
 		return nil, err
 	}
 	hostRating := MapCreateRequestToHostRating(request)
+	oldRating, _ := handler.service.GetAverageScoreForHost(hostRating.HostId)
 	hostRating, err = handler.service.InsertHostRating(hostRating)
 	if err != nil {
 		return nil, status.Error(codes.AlreadyExists, "Unable to insert host rating into database")
 	}
-
+	newRating, _ := handler.service.GetAverageScoreForHost(hostRating.HostId)
+	shouldSendRequest, newStatus := CompareAverageRatings(oldRating, newRating)
+	if shouldSendRequest {
+		handler.reservationClient.UpdateOutstandingHostStatus(ctx, &reservation.UpdateOutstandingHostStatusRequest{HostId: request.GetHostId(), ShouldUpdate: newStatus})
+	}
 	response := MapHostRatingToResponse(hostRating)
 	return response, nil
 }

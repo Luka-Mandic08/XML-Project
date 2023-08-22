@@ -220,7 +220,7 @@ func (handler *ReservationHandler) Approve(ctx context.Context, request *pb.Appr
 			return nil, err
 		}
 	}
-
+	//TODO Add CheckOutstandingHost
 	if err == mongo.ErrNoDocuments {
 		return nil, status.Error(codes.NotFound, "Unable to find reservation: id = "+request.Id)
 	}
@@ -285,6 +285,7 @@ func (handler *ReservationHandler) Cancel(ctx context.Context, request *pb.Cance
 			return nil, err
 		}
 	}
+	//TODO Add CheckOutstandingHost
 
 	_, err = handler.reservationService.Cancel(reservationId)
 	if err == mongo.ErrNoDocuments {
@@ -292,4 +293,54 @@ func (handler *ReservationHandler) Cancel(ctx context.Context, request *pb.Cance
 	}
 	response := MapReservationToCancelResponse(reservation)
 	return response, nil
+}
+
+func (handler *ReservationHandler) UpdateOutstandingHostStatus(ctx context.Context, request *pb.UpdateOutstandingHostStatusRequest) (*pb.UpdateOutstandingHostStatusResponse, error) {
+	if !request.GetShouldUpdate() {
+		err := handler.reservationService.ChangeOutstandingHostStatus(false, request.GetHostId())
+		if err != nil {
+			return nil, err
+		}
+		return &pb.UpdateOutstandingHostStatusResponse{Message: "Status changed"}, nil
+	}
+	response, err := handler.accommodationClient.GetAllByHostId(ctx, &accommodation.GetAllByHostIdRequest{HostId: request.GetHostId()})
+	if err != nil {
+		return nil, err
+	}
+	var ids []string
+	for _, acc := range response.GetAccommodations() {
+		ids = append(ids, acc.Id)
+	}
+	res, err := handler.reservationService.CheckOutstandingHostStatus(ids)
+	if err != nil {
+		return nil, err
+	}
+	if res {
+		err = handler.reservationService.ChangeOutstandingHostStatus(true, request.GetHostId())
+		if err != nil {
+			return nil, err
+		}
+		return &pb.UpdateOutstandingHostStatusResponse{Message: "Status changed"}, nil
+	}
+	return &pb.UpdateOutstandingHostStatusResponse{Message: "Status unchanged"}, nil
+}
+
+func (handler *ReservationHandler) GetOutstandingHost(ctx context.Context, request *pb.GetRequest) (*pb.GetRequest, error) {
+	response, err := handler.reservationService.GetOutstandingHost(request.GetId())
+	if err != nil {
+		return nil, err
+	}
+	return &pb.GetRequest{Id: response.Id.Hex()}, nil
+}
+
+func (handler *ReservationHandler) GetAllOutstandingHosts(ctx context.Context, request *pb.GetAllOutstandingHostsRequest) (*pb.GetAllOutstandingHostsResponse, error) {
+	response, err := handler.reservationService.GetAllOutstandingHosts()
+	if err != nil {
+		return nil, err
+	}
+	var ids []string
+	for _, id := range response {
+		ids = append(ids, id.Id.Hex())
+	}
+	return &pb.GetAllOutstandingHostsResponse{Ids: ids}, nil
 }

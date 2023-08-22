@@ -1,5 +1,5 @@
 import { UpdatePersonalData, UpdateCredentials } from '@frontend/models';
-import { Button, Paper, Typography } from '@mui/material';
+import { Button, Paper, Rating, Typography } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import styles from './profile-info.module.css';
 import { useState, useEffect } from 'react';
@@ -24,6 +24,7 @@ export function ProfileInfo(props: ProfileInfoProps) {
       city: '',
       country: '',
     },
+    rating: 0,
   });
   const [accountInfo, setAccountInfo] = useState<UpdateCredentials>({
     username: '',
@@ -72,6 +73,7 @@ export function ProfileInfo(props: ProfileInfoProps) {
         city: '',
         country: '',
       },
+      rating: userInfo.rating,
     },
   });
 
@@ -112,9 +114,8 @@ export function ProfileInfo(props: ProfileInfoProps) {
   return (
     <>
       <div className={styles.headerContainer}>
-        <Typography variant="h4" marginBottom={'1rem'}>
-          {accountInfo.username}'s Profile
-        </Typography>
+        <Typography variant="h4">{accountInfo.username}'s Profile</Typography>
+
         <div className={styles.buttonTopContainer}>
           <Button
             variant="contained"
@@ -138,6 +139,12 @@ export function ProfileInfo(props: ProfileInfoProps) {
           </Button>
         </div>
       </div>
+
+      <div className={styles.ratingContainer}>
+        <Typography variant="h4">Rating: {userInfo.rating}</Typography>
+        <Rating name="half-rating-read" value={userInfo.rating} precision={0.1} readOnly size="large" />
+      </div>
+
       <div className={styles.bodyContainer}>
         <Paper elevation={6}>
           <form onSubmit={handleSubmitProfile(onSubmitProfile)} className={styles.formContainer}>

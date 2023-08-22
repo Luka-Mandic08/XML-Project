@@ -57,13 +57,22 @@ input:focus + .label .text {
   margin: 2rem 2rem 1rem 2rem;
 }
 
+.ratingContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: fit-content;
+  gap: 1rem;
+  margin-left: 2rem;
+  margin-bottom: 1rem;
+}
+
 .buttonTopContainer {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   width: fit-content;
   gap: 1rem;
-  margin-bottom: 1rem;
 }
 
 .bodyContainer {

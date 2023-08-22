@@ -18,6 +18,9 @@ service ReservationService{
         rpc Approve(ApproveRequest) returns(ApproveResponse) {}
         rpc Deny(DenyRequest) returns(DenyResponse) {}
         rpc Cancel(CancelRequest) returns(CancelResponse) {}
+        rpc UpdateOutstandingHostStatus(UpdateOutstandingHostStatusRequest) returns(UpdateOutstandingHostStatusResponse) {}
+        rpc GetOutstandingHost(GetRequest) returns(GetRequest) {}
+        rpc GetAllOutstandingHosts(GetAllOutstandingHostsRequest) returns(GetAllOutstandingHostsResponse) {}
 }
 
 message Reservation {
@@ -105,7 +108,6 @@ message RequestResponse {
 message CheckReservationRequest {
         string id = 1;
 }
-
 message CheckReservationResponse {
         string message = 1;
 }
@@ -134,4 +136,17 @@ message CancelRequest{
 }
 message CancelResponse {
         string id = 1;
+}
+
+message UpdateOutstandingHostStatusRequest{
+        string hostId = 1;
+        bool shouldUpdate = 2;
+}
+message UpdateOutstandingHostStatusResponse{
+        string message = 1;
+}
+
+message GetAllOutstandingHostsRequest{}
+message GetAllOutstandingHostsResponse{
+        repeated string ids = 1;
 }
