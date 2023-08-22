@@ -5,7 +5,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 	"reservation_service/domain/model"
 )
 
@@ -30,16 +29,17 @@ func (store *OutstandingHostMongoDBStore) GetAll() ([]*model.OutstandingHost, er
 	return store.filter(filter)
 }
 
-func (store *OutstandingHostMongoDBStore) Insert(outstandingHost *model.OutstandingHost) (*mongo.UpdateResult, error) {
+func (store *OutstandingHostMongoDBStore) Insert(outstandingHost *model.OutstandingHost) (bool, error) {
 	filter := bson.M{"_id": outstandingHost.Id}
-	opts := options.Update().SetUpsert(true)
-
-	result, err := store.outstandingHosts.UpdateOne(context.TODO(), filter, opts)
-	if err != nil {
-		return nil, err
+	res, _ := store.filter(filter)
+	if res == nil {
+		_, err := store.outstandingHosts.InsertOne(context.TODO(), outstandingHost)
+		if err != nil {
+			return false, nil
+		}
+		return true, nil
 	}
-
-	return result, nil
+	return false, nil
 }
 
 func (store *OutstandingHostMongoDBStore) Delete(id primitive.ObjectID) (*mongo.DeleteResult, error) {

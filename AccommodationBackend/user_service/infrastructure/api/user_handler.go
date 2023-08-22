@@ -41,6 +41,10 @@ func (handler *UserHandler) Get(ctx context.Context, request *pb.GetRequest) (*p
 	mapped := MapUserToGetResponse(user)
 	response, _ := handler.ratingClient.GetAverageScoreForHost(ctx, &rating.IdRequest{Id: mapped.GetId()})
 	mapped.Rating = response.GetScore()
+	outstanding, _ := handler.reservationClient.GetOutstandingHost(ctx, &reservation.GetRequest{Id: id})
+	if outstanding.GetId() != "" {
+		mapped.IsOutstanding = true
+	}
 	return mapped, nil
 }
 

@@ -158,3 +158,35 @@ func (service *ReservationService) CheckOutstandingHostStatus(accommodationIds [
 
 	return true, nil
 }
+
+func (service *ReservationService) ChangeOutstandingHostStatus(status bool, hostId string) error {
+	id, err := primitive.ObjectIDFromHex(hostId)
+	if err != nil {
+		return err
+	}
+	if !status {
+		response, _ := service.outstandingHostStore.Delete(id)
+		if response.DeletedCount == 1 {
+			//TODO Send notification to host
+		}
+	}
+	if status {
+		response, err := service.outstandingHostStore.Insert(&model.OutstandingHost{Id: id})
+		if err != nil {
+			return err
+		}
+		if response {
+			//TODO Send notification to host
+		}
+	}
+	return nil
+}
+
+func (service *ReservationService) GetOutstandingHost(hostId string) (*model.OutstandingHost, error) {
+	id, _ := primitive.ObjectIDFromHex(hostId)
+	return service.outstandingHostStore.Get(id)
+}
+
+func (service *ReservationService) GetAllOutstandingHosts() ([]*model.OutstandingHost, error) {
+	return service.outstandingHostStore.GetAll()
+}

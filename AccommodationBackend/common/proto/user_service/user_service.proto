@@ -22,6 +22,7 @@ message GetResponse {
         string email = 4;
         Address address = 5;
         float rating = 6;
+        bool isOutstanding = 7;
 }
 
 message Address {

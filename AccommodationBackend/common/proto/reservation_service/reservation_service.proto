@@ -15,6 +15,9 @@ service ReservationService{
         rpc CheckIfHostHasReservations(CheckReservationRequest) returns(CheckReservationResponse) {}
         rpc CheckIfGuestVisitedAccommodation(CheckPreviousReservationRequest) returns(CheckReservationResponse) {}
         rpc CheckIfGuestVisitedHost(CheckPreviousReservationRequest) returns(CheckReservationResponse) {}
+        rpc UpdateOutstandingHostStatus(UpdateOutstandingHostStatusRequest) returns(UpdateOutstandingHostStatusResponse) {}
+        rpc GetOutstandingHost(GetRequest) returns(GetRequest) {}
+        rpc GetAllOutstandingHosts(GetAllOutstandingHostsRequest) returns(GetAllOutstandingHostsResponse) {}
 }
 
 message Reservation {
@@ -102,7 +105,6 @@ message RequestResponse {
 message CheckReservationRequest {
         string id = 1;
 }
-
 message CheckReservationResponse {
         string message = 1;
 }
@@ -113,8 +115,14 @@ message CheckPreviousReservationRequest{
 }
 
 message UpdateOutstandingHostStatusRequest{
-        bool shouldUpdate = 1;
+        string hostId = 1;
+        bool shouldUpdate = 2;
 }
 message UpdateOutstandingHostStatusResponse{
         string message = 1;
+}
+
+message GetAllOutstandingHostsRequest{}
+message GetAllOutstandingHostsResponse{
+        repeated string ids = 1;
 }

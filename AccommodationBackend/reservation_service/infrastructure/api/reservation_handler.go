@@ -171,21 +171,52 @@ func (handler *ReservationHandler) CheckIfGuestVisitedHost(ctx context.Context, 
 	return &pb.CheckReservationResponse{Message: "Success"}, nil
 }
 
-func (handler *ReservationHandler) UpdateOutstandingHostStatus(ctx context.Context, request *pb.CheckPreviousReservationRequest) (*pb.CheckReservationResponse, error) {
-	accommodations, err := handler.accommodationClient.GetAllByHostId(ctx, &accommodation.GetAllByHostIdRequest{HostId: request.GetId()})
-	var ids []string
-	for _, a := range accommodations.GetAccommodations() {
-		ids = append(ids, a.GetId())
+func (handler *ReservationHandler) UpdateOutstandingHostStatus(ctx context.Context, request *pb.UpdateOutstandingHostStatusRequest) (*pb.UpdateOutstandingHostStatusResponse, error) {
+	if !request.GetShouldUpdate() {
+		err := handler.reservationService.ChangeOutstandingHostStatus(false, request.GetHostId())
+		if err != nil {
+			return nil, err
+		}
+		return &pb.UpdateOutstandingHostStatusResponse{Message: "Status changed"}, nil
 	}
-	if len(ids) == 0 {
-		return nil, status.Error(codes.Canceled, "User has no previous reservations")
-	}
-	hasReservations, err := handler.reservationService.GetPastForAccommodations(request.GetGuestId(), ids)
+	response, err := handler.accommodationClient.GetAllByHostId(ctx, &accommodation.GetAllByHostIdRequest{HostId: request.GetHostId()})
 	if err != nil {
 		return nil, err
 	}
-	if !hasReservations {
-		return nil, status.Error(codes.Canceled, "User has no previous reservations")
+	var ids []string
+	for _, acc := range response.GetAccommodations() {
+		ids = append(ids, acc.Id)
 	}
-	return &pb.CheckReservationResponse{Message: "Success"}, nil
+	res, err := handler.reservationService.CheckOutstandingHostStatus(ids)
+	if err != nil {
+		return nil, err
+	}
+	if res {
+		err = handler.reservationService.ChangeOutstandingHostStatus(true, request.GetHostId())
+		if err != nil {
+			return nil, err
+		}
+		return &pb.UpdateOutstandingHostStatusResponse{Message: "Status changed"}, nil
+	}
+	return &pb.UpdateOutstandingHostStatusResponse{Message: "Status unchanged"}, nil
+}
+
+func (handler *ReservationHandler) GetOutstandingHost(ctx context.Context, request *pb.GetRequest) (*pb.GetRequest, error) {
+	response, err := handler.reservationService.GetOutstandingHost(request.GetId())
+	if err != nil {
+		return nil, err
+	}
+	return &pb.GetRequest{Id: response.Id.Hex()}, nil
+}
+
+func (handler *ReservationHandler) GetAllOutstandingHosts(ctx context.Context, request *pb.GetAllOutstandingHostsRequest) (*pb.GetAllOutstandingHostsResponse, error) {
+	response, err := handler.reservationService.GetAllOutstandingHosts()
+	if err != nil {
+		return nil, err
+	}
+	var ids []string
+	for _, id := range response {
+		ids = append(ids, id.Id.Hex())
+	}
+	return &pb.GetAllOutstandingHostsResponse{Ids: ids}, nil
 }

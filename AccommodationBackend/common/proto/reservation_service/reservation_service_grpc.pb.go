@@ -29,6 +29,9 @@ const (
 	ReservationService_CheckIfHostHasReservations_FullMethodName       = "/reservation.ReservationService/CheckIfHostHasReservations"
 	ReservationService_CheckIfGuestVisitedAccommodation_FullMethodName = "/reservation.ReservationService/CheckIfGuestVisitedAccommodation"
 	ReservationService_CheckIfGuestVisitedHost_FullMethodName          = "/reservation.ReservationService/CheckIfGuestVisitedHost"
+	ReservationService_UpdateOutstandingHostStatus_FullMethodName      = "/reservation.ReservationService/UpdateOutstandingHostStatus"
+	ReservationService_GetOutstandingHost_FullMethodName               = "/reservation.ReservationService/GetOutstandingHost"
+	ReservationService_GetAllOutstandingHosts_FullMethodName           = "/reservation.ReservationService/GetAllOutstandingHosts"
 )
 
 // ReservationServiceClient is the client API for ReservationService service.
@@ -45,6 +48,9 @@ type ReservationServiceClient interface {
 	CheckIfHostHasReservations(ctx context.Context, in *CheckReservationRequest, opts ...grpc.CallOption) (*CheckReservationResponse, error)
 	CheckIfGuestVisitedAccommodation(ctx context.Context, in *CheckPreviousReservationRequest, opts ...grpc.CallOption) (*CheckReservationResponse, error)
 	CheckIfGuestVisitedHost(ctx context.Context, in *CheckPreviousReservationRequest, opts ...grpc.CallOption) (*CheckReservationResponse, error)
+	UpdateOutstandingHostStatus(ctx context.Context, in *UpdateOutstandingHostStatusRequest, opts ...grpc.CallOption) (*UpdateOutstandingHostStatusResponse, error)
+	GetOutstandingHost(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetRequest, error)
+	GetAllOutstandingHosts(ctx context.Context, in *GetAllOutstandingHostsRequest, opts ...grpc.CallOption) (*GetAllOutstandingHostsResponse, error)
 }
 
 type reservationServiceClient struct {
@@ -145,6 +151,33 @@ func (c *reservationServiceClient) CheckIfGuestVisitedHost(ctx context.Context, 
 	return out, nil
 }
 
+func (c *reservationServiceClient) UpdateOutstandingHostStatus(ctx context.Context, in *UpdateOutstandingHostStatusRequest, opts ...grpc.CallOption) (*UpdateOutstandingHostStatusResponse, error) {
+	out := new(UpdateOutstandingHostStatusResponse)
+	err := c.cc.Invoke(ctx, ReservationService_UpdateOutstandingHostStatus_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *reservationServiceClient) GetOutstandingHost(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetRequest, error) {
+	out := new(GetRequest)
+	err := c.cc.Invoke(ctx, ReservationService_GetOutstandingHost_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *reservationServiceClient) GetAllOutstandingHosts(ctx context.Context, in *GetAllOutstandingHostsRequest, opts ...grpc.CallOption) (*GetAllOutstandingHostsResponse, error) {
+	out := new(GetAllOutstandingHostsResponse)
+	err := c.cc.Invoke(ctx, ReservationService_GetAllOutstandingHosts_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ReservationServiceServer is the server API for ReservationService service.
 // All implementations must embed UnimplementedReservationServiceServer
 // for forward compatibility
@@ -159,6 +192,9 @@ type ReservationServiceServer interface {
 	CheckIfHostHasReservations(context.Context, *CheckReservationRequest) (*CheckReservationResponse, error)
 	CheckIfGuestVisitedAccommodation(context.Context, *CheckPreviousReservationRequest) (*CheckReservationResponse, error)
 	CheckIfGuestVisitedHost(context.Context, *CheckPreviousReservationRequest) (*CheckReservationResponse, error)
+	UpdateOutstandingHostStatus(context.Context, *UpdateOutstandingHostStatusRequest) (*UpdateOutstandingHostStatusResponse, error)
+	GetOutstandingHost(context.Context, *GetRequest) (*GetRequest, error)
+	GetAllOutstandingHosts(context.Context, *GetAllOutstandingHostsRequest) (*GetAllOutstandingHostsResponse, error)
 	mustEmbedUnimplementedReservationServiceServer()
 }
 
@@ -195,6 +231,15 @@ func (UnimplementedReservationServiceServer) CheckIfGuestVisitedAccommodation(co
 }
 func (UnimplementedReservationServiceServer) CheckIfGuestVisitedHost(context.Context, *CheckPreviousReservationRequest) (*CheckReservationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CheckIfGuestVisitedHost not implemented")
+}
+func (UnimplementedReservationServiceServer) UpdateOutstandingHostStatus(context.Context, *UpdateOutstandingHostStatusRequest) (*UpdateOutstandingHostStatusResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateOutstandingHostStatus not implemented")
+}
+func (UnimplementedReservationServiceServer) GetOutstandingHost(context.Context, *GetRequest) (*GetRequest, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetOutstandingHost not implemented")
+}
+func (UnimplementedReservationServiceServer) GetAllOutstandingHosts(context.Context, *GetAllOutstandingHostsRequest) (*GetAllOutstandingHostsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllOutstandingHosts not implemented")
 }
 func (UnimplementedReservationServiceServer) mustEmbedUnimplementedReservationServiceServer() {}
 
@@ -389,6 +434,60 @@ func _ReservationService_CheckIfGuestVisitedHost_Handler(srv interface{}, ctx co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ReservationService_UpdateOutstandingHostStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateOutstandingHostStatusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ReservationServiceServer).UpdateOutstandingHostStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ReservationService_UpdateOutstandingHostStatus_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ReservationServiceServer).UpdateOutstandingHostStatus(ctx, req.(*UpdateOutstandingHostStatusRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ReservationService_GetOutstandingHost_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ReservationServiceServer).GetOutstandingHost(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ReservationService_GetOutstandingHost_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ReservationServiceServer).GetOutstandingHost(ctx, req.(*GetRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ReservationService_GetAllOutstandingHosts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAllOutstandingHostsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ReservationServiceServer).GetAllOutstandingHosts(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ReservationService_GetAllOutstandingHosts_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ReservationServiceServer).GetAllOutstandingHosts(ctx, req.(*GetAllOutstandingHostsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ReservationService_ServiceDesc is the grpc.ServiceDesc for ReservationService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -435,6 +534,18 @@ var ReservationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CheckIfGuestVisitedHost",
 			Handler:    _ReservationService_CheckIfGuestVisitedHost_Handler,
+		},
+		{
+			MethodName: "UpdateOutstandingHostStatus",
+			Handler:    _ReservationService_UpdateOutstandingHostStatus_Handler,
+		},
+		{
+			MethodName: "GetOutstandingHost",
+			Handler:    _ReservationService_GetOutstandingHost_Handler,
+		},
+		{
+			MethodName: "GetAllOutstandingHosts",
+			Handler:    _ReservationService_GetAllOutstandingHosts_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

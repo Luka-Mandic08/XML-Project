@@ -114,3 +114,19 @@ func MapToAccommodationRating(r *rating.AccommodationRating, objectId primitive.
 	}
 	return &mappedAccommodationRating
 }
+
+func CompareAverageRatings(old, new float32) (bool, bool) {
+	if old > 4.7 && new > 4.7 {
+		return false, false
+	}
+	if old <= 4.7 && new <= 4.7 {
+		return false, false
+	}
+	if old > 4.7 && new <= 4.7 {
+		return true, false
+	}
+	if old <= 4.7 && new > 4.7 {
+		return true, true
+	}
+	return false, false
+}
