@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-//Status types: Approved, Pending, Rejected(when host rejects), Canceled(when guest cancels)
+//Status types: Approved, Pending, Denied(when host rejects), Canceled(when guest cancels)
 
 type Reservation struct {
 	Id              primitive.ObjectID `bson:"_id,omitempty"`

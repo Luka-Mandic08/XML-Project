@@ -4,6 +4,8 @@ option go_package = "common/reservation";
 
 package reservation;
 
+import "google/protobuf/timestamp.proto";
+
 service ReservationService{
         rpc Get(GetRequest) returns(GetResponse) {}
         rpc Create(CreateRequest) returns(CreateResponse) {}
@@ -21,6 +23,7 @@ service ReservationService{
         rpc UpdateOutstandingHostStatus(UpdateOutstandingHostStatusRequest) returns(UpdateOutstandingHostStatusResponse) {}
         rpc GetOutstandingHost(GetRequest) returns(GetRequest) {}
         rpc GetAllOutstandingHosts(GetAllOutstandingHostsRequest) returns(GetAllOutstandingHostsResponse) {}
+        rpc GetAllForDateRange(GetAllForDateRangeRequest) returns(GetAllForDateRangeResponse) {}
 }
 
 message Reservation {
@@ -149,4 +152,13 @@ message UpdateOutstandingHostStatusResponse{
 message GetAllOutstandingHostsRequest{}
 message GetAllOutstandingHostsResponse{
         repeated string ids = 1;
+}
+
+message GetAllForDateRangeRequest{
+        google.protobuf.Timestamp from = 1;
+        google.protobuf.Timestamp to = 2;
+        string accommodationId = 3;
+}
+message GetAllForDateRangeResponse{
+        repeated Reservation reservations = 1;
 }

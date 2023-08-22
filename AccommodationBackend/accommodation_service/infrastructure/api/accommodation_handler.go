@@ -4,6 +4,7 @@ import (
 	"accommodation_service/domain/service"
 	accommodation "common/proto/accommodation_service"
 	rating "common/proto/rating_service"
+	reservation "common/proto/reservation_service"
 	"context"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"google.golang.org/grpc/codes"
@@ -12,14 +13,16 @@ import (
 
 type AccommodationHandler struct {
 	accommodation.UnimplementedAccommodationServiceServer
-	service      *service.AccommodationService
-	ratingClient rating.RatingServiceClient
+	service           *service.AccommodationService
+	ratingClient      rating.RatingServiceClient
+	reservationClient reservation.ReservationServiceClient
 }
 
-func NewAccommodationHandler(service *service.AccommodationService, ratingClient rating.RatingServiceClient) *AccommodationHandler {
+func NewAccommodationHandler(service *service.AccommodationService, ratingClient rating.RatingServiceClient, reservationClient reservation.ReservationServiceClient) *AccommodationHandler {
 	return &AccommodationHandler{
-		service:      service,
-		ratingClient: ratingClient,
+		service:           service,
+		ratingClient:      ratingClient,
+		reservationClient: reservationClient,
 	}
 }
 
@@ -51,7 +54,18 @@ func (handler *AccommodationHandler) Create(ctx context.Context, request *accomm
 }
 
 func (handler *AccommodationHandler) UpdateAvailability(ctx context.Context, request *accommodation.UpdateAvailabilityRequest) (*accommodation.Response, error) {
-	err := handler.service.UpdateAvailability(*request)
+	response, err := handler.reservationClient.GetAllForDateRange(ctx, &reservation.GetAllForDateRangeRequest{
+		From:            request.DateFrom,
+		To:              request.DateTo,
+		AccommodationId: request.Accommodationid,
+	})
+	if err != nil {
+		return nil, status.Error(codes.Aborted, err.Error())
+	}
+	if len(response.GetReservations()) > 0 {
+		return nil, status.Error(codes.Canceled, "Unable to update availability because there are already existing reservations for this period")
+	}
+	err = handler.service.UpdateAvailability(*request)
 	if err != nil {
 		return nil, status.Error(codes.AlreadyExists, err.Error())
 	}
@@ -126,7 +140,6 @@ func (handler *AccommodationHandler) CheckCanApprove(ctx context.Context, reques
 	if err != nil {
 		return nil, err
 	}
-
 	return response, nil
 }
 
@@ -135,6 +148,13 @@ func (handler *AccommodationHandler) GetAndCancelAllAvailabilitiesToCancel(ctx c
 	if err != nil {
 		return nil, err
 	}
+	return response, nil
+}
 
+func (handler *AccommodationHandler) GetAllForHostByAccommodationId(ctx context.Context, request *accommodation.GetByIdRequest) (*accommodation.GetAllForHostByAccommodationIdResponse, error) {
+	response, err := handler.service.GetAllForHostByAccommodationId(request)
+	if err != nil {
+		return nil, err
+	}
 	return response, nil
 }

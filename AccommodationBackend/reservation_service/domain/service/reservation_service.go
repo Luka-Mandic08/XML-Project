@@ -1,6 +1,7 @@
 package service
 
 import (
+	reservation "common/proto/reservation_service"
 	"fmt"
 	"go.mongodb.org/mongo-driver/mongo"
 	"reservation_service/domain/model"
@@ -296,4 +297,33 @@ func (service *ReservationService) GetOutstandingHost(hostId string) (*model.Out
 
 func (service *ReservationService) GetAllOutstandingHosts() ([]*model.OutstandingHost, error) {
 	return service.outstandingHostStore.GetAll()
+}
+
+func (service *ReservationService) GetAllOverlapping(request reservation.GetAllForDateRangeRequest) ([]*model.Reservation, error) {
+	reservations, err := service.store.GetAllOverlapping(request.GetAccommodationId())
+	if err != nil {
+		return nil, err
+	}
+	result := []*model.Reservation{}
+	layout := "2006-01-02T15:04:05"
+	for _, currentReservation := range reservations {
+		dateFrom, err := time.Parse(layout, currentReservation.Start)
+		if err != nil {
+			fmt.Println("Error parsing time:", err)
+			return nil, err
+		}
+		dateTo, err := time.Parse(layout, currentReservation.End)
+		if err != nil {
+			fmt.Println("Error parsing time:", err)
+			return nil, err
+		}
+		if (dateFrom.Before(request.To.AsTime()) && dateFrom.After(request.From.AsTime())) || (dateTo.Before(request.To.AsTime()) && dateTo.After(request.From.AsTime())) {
+			result = append(result, currentReservation)
+		} else if dateFrom.Equal(request.From.AsTime()) || dateTo.Equal(request.To.AsTime()) {
+			result = append(result, currentReservation)
+		} else if dateFrom.Before(request.From.AsTime()) && dateTo.After(request.To.AsTime()) {
+			result = append(result, currentReservation)
+		}
+	}
+	return result, nil
 }

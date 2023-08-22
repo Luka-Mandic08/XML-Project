@@ -101,6 +101,15 @@ func (store *ReservationMongoDBStore) GetAllIntercepting(reservation *model.Rese
 	return store.filter(filter)
 }
 
+func (store *ReservationMongoDBStore) GetAllOverlapping(id string) ([]*model.Reservation, error) {
+	statuses := []string{"Pending", "Accepted"}
+	filter := bson.M{
+		"accommodation": id,
+		"status":        bson.M{"$in": statuses},
+	}
+	return store.filter(filter)
+}
+
 func (store *ReservationMongoDBStore) filter(filter interface{}) ([]*model.Reservation, error) {
 	cursor, err := store.reservations.Find(context.TODO(), filter)
 	defer cursor.Close(context.TODO())

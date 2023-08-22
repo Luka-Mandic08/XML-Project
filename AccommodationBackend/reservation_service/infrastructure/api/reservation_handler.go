@@ -10,6 +10,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"reservation_service/domain/model"
 	"reservation_service/domain/service"
 )
 
@@ -224,9 +225,7 @@ func (handler *ReservationHandler) Approve(ctx context.Context, request *pb.Appr
 		}
 	}
 	//TODO Add CheckOutstandingHost
-	if err == mongo.ErrNoDocuments {
-		return nil, status.Error(codes.NotFound, "Unable to find reservation: id = "+request.Id)
-	}
+	handler.ChangeOutstandingHostStatus(ctx, reservation)
 	response := MapReservationToApproveResponse(reservation)
 	return response, nil
 }
@@ -288,15 +287,12 @@ func (handler *ReservationHandler) Cancel(ctx context.Context, request *pb.Cance
 			return nil, err
 		}
 	}
-	//TODO: Add CheckOutstandingHost
-	handler.accommodationClient.
-	handler.ratingClient.GetAverageScoreForHost(reservation.)
-
 	_, err = handler.reservationService.Cancel(reservationId)
 	if err == mongo.ErrNoDocuments {
 		return nil, status.Error(codes.NotFound, "Unable to find reservation: id = "+request.Id)
 	}
 	response := MapReservationToCancelResponse(reservation)
+	handler.ChangeOutstandingHostStatus(ctx, reservation)
 	return response, nil
 }
 
@@ -348,4 +344,31 @@ func (handler *ReservationHandler) GetAllOutstandingHosts(ctx context.Context, r
 		ids = append(ids, id.Id.Hex())
 	}
 	return &pb.GetAllOutstandingHostsResponse{Ids: ids}, nil
+}
+
+func (handler *ReservationHandler) ChangeOutstandingHostStatus(ctx context.Context, reservation *model.Reservation) {
+	accResponse, err := handler.accommodationClient.GetAllForHostByAccommodationId(ctx, &accommodation.GetByIdRequest{Id: reservation.AccommodationId})
+	if err != nil {
+		return
+	}
+	ratingResponse, err := handler.ratingClient.GetAverageScoreForHost(ctx, &rating.IdRequest{Id: accResponse.GetHostId()})
+	if err != nil {
+		return
+	}
+	if ratingResponse.GetScore() <= 4.7 {
+		handler.reservationService.ChangeOutstandingHostStatus(false, accResponse.HostId)
+		return
+	}
+	shouldBeOutstanding, _ := handler.reservationService.CheckOutstandingHostStatus(accResponse.AccommodationIds)
+	handler.reservationService.ChangeOutstandingHostStatus(shouldBeOutstanding, accResponse.HostId)
+	return
+}
+
+func (handler *ReservationHandler) GetAllForDateRange(ctx context.Context, request *pb.GetAllForDateRangeRequest) (*pb.GetAllForDateRangeResponse, error) {
+	res, err := handler.reservationService.GetAllOverlapping(*request)
+	if err != nil {
+		return nil, err
+	}
+	mapped := MapReservationsToGetAllByUserIdResponse(res)
+	return &pb.GetAllForDateRangeResponse{Reservations: mapped.GetReservation()}, nil
 }
