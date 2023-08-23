@@ -42,15 +42,16 @@ func (server *Server) Start() {
 	replySubscriber := server.initSubscriber(server.config.CreateReservationReplySubject, QUEUE_GROUP)
 	createReservationOrchestrator := server.initCreateReservationOrchestrator(commandPublisher, replySubscriber)
 
-	reservationService := server.initReservationService(reservationStore, *outstandingHostStore, createReservationOrchestrator)
+	accommodationClient := persistence.NewAccommodationClient(server.config.AccommodationHost, server.config.AccommodationPort)
+	ratingClient := persistence.NewRatingClient(server.config.RatingHost, server.config.RatingPort)
+
+	reservationService := server.initReservationService(reservationStore, *outstandingHostStore, createReservationOrchestrator, accommodationClient, ratingClient)
 
 	commandSubscriber := server.initSubscriber(server.config.CreateReservationCommandSubject, QUEUE_GROUP)
 	replyPublisher := server.initPublisher(server.config.CreateReservationReplySubject)
 	server.initCreateReservationHandler(reservationService, replyPublisher, commandSubscriber)
 
-	accommodationClient := persistence.NewAccommodationClient(server.config.AccommodationHost, server.config.AccommodationPort)
-	ratingClient := persistence.NewRatingClient(server.config.RatingHost, server.config.RatingPort)
-	reservationHandler := server.initReservationHandler(reservationService, accommodationClient, ratingClient)
+	reservationHandler := server.initReservationHandler(reservationService)
 
 	server.startGrpcServer(reservationHandler)
 }
@@ -97,8 +98,8 @@ func (server *Server) initCreateReservationOrchestrator(publisher saga.Publisher
 	return orchestrator
 }
 
-func (server *Server) initReservationService(store repository.ReservationStore, outstandingHostStore repository.OutstandingHostMongoDBStore, reservationOrchestrator *service.CreateReservationOrchestrator) *service.ReservationService {
-	return service.NewReservationService(store, outstandingHostStore, reservationOrchestrator)
+func (server *Server) initReservationService(store repository.ReservationStore, outstandingHostStore repository.OutstandingHostMongoDBStore, reservationOrchestrator *service.CreateReservationOrchestrator, accommodationClient accommodation.AccommodationServiceClient, ratingClient rating.RatingServiceClient) *service.ReservationService {
+	return service.NewReservationService(store, outstandingHostStore, reservationOrchestrator, accommodationClient, ratingClient)
 }
 
 func (server *Server) initCreateReservationHandler(service *service.ReservationService, publisher saga.Publisher, subscriber saga.Subscriber) {
@@ -108,8 +109,8 @@ func (server *Server) initCreateReservationHandler(service *service.ReservationS
 	}
 }
 
-func (server *Server) initReservationHandler(reservationService *service.ReservationService, accommodationClient accommodation.AccommodationServiceClient, ratingClient rating.RatingServiceClient) *api.ReservationHandler {
-	return api.NewReservationHandler(reservationService, accommodationClient, ratingClient)
+func (server *Server) initReservationHandler(reservationService *service.ReservationService) *api.ReservationHandler {
+	return api.NewReservationHandler(reservationService)
 }
 
 func (server *Server) startGrpcServer(reservationHandler *api.ReservationHandler) {

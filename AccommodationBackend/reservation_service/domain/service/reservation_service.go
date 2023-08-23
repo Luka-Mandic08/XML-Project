@@ -1,7 +1,10 @@
 package service
 
 import (
+	accommodation "common/proto/accommodation_service"
+	rating "common/proto/rating_service"
 	reservation "common/proto/reservation_service"
+	"context"
 	"fmt"
 	"go.mongodb.org/mongo-driver/mongo"
 	"reservation_service/domain/model"
@@ -15,13 +18,17 @@ type ReservationService struct {
 	store                repository.ReservationStore
 	outstandingHostStore repository.OutstandingHostMongoDBStore
 	orchestrator         *CreateReservationOrchestrator
+	AccommodationClient  accommodation.AccommodationServiceClient
+	ratingClient         rating.RatingServiceClient
 }
 
-func NewReservationService(store repository.ReservationStore, outstandingHostStore repository.OutstandingHostMongoDBStore, orchestrator *CreateReservationOrchestrator) *ReservationService {
+func NewReservationService(store repository.ReservationStore, outstandingHostStore repository.OutstandingHostMongoDBStore, orchestrator *CreateReservationOrchestrator, accommodationClient accommodation.AccommodationServiceClient, ratingClient rating.RatingServiceClient) *ReservationService {
 	return &ReservationService{
 		store:                store,
 		orchestrator:         orchestrator,
 		outstandingHostStore: outstandingHostStore,
+		AccommodationClient:  accommodationClient,
+		ratingClient:         ratingClient,
 	}
 }
 
@@ -326,4 +333,22 @@ func (service *ReservationService) GetAllOverlapping(request reservation.GetAllF
 		}
 	}
 	return result, nil
+}
+
+func (service *ReservationService) UpdateOutstandingHostStatus(reservation *model.Reservation) {
+	accResponse, err := service.AccommodationClient.GetAllForHostByAccommodationId(context.TODO(), &accommodation.GetByIdRequest{Id: reservation.AccommodationId})
+	if err != nil {
+		return
+	}
+	ratingResponse, err := service.ratingClient.GetAverageScoreForHost(context.TODO(), &rating.IdRequest{Id: accResponse.GetHostId()})
+	if err != nil {
+		return
+	}
+	if ratingResponse.GetScore() <= 4.7 {
+		service.ChangeOutstandingHostStatus(false, accResponse.HostId)
+		return
+	}
+	shouldBeOutstanding, _ := service.CheckOutstandingHostStatus(accResponse.AccommodationIds)
+	service.ChangeOutstandingHostStatus(shouldBeOutstanding, accResponse.HostId)
+	return
 }
