@@ -7,7 +7,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"log"
 )
 
 const (
@@ -144,20 +143,15 @@ func (store *AccommodationMongoDBStore) GetAllForHostByAccommodationId(id primit
 	if err != nil {
 		return nil, "", err
 	}
-	filter := bson.M{"hostid": accommodation.HostId}
-	projection := bson.D{{"_id", 1}}
-
-	// Execute the query
-	cur, err := store.accommodations.Find(context.Background(), filter, options.Find().SetProjection(projection))
+	allAccommodations, err := store.GetAllByHostId(accommodation.HostId)
+	if err != nil {
+		return nil, "", err
+	}
 
 	var results []string
-	for cur.Next(context.TODO()) {
-		var result bson.M
-		err := cur.Decode(&result)
-		if err != nil {
-			log.Fatal(err)
-		}
-		results = append(results, result["_id"].(string))
+
+	for _, accomm := range allAccommodations {
+		results = append(results, accomm.Id.Hex())
 	}
 
 	return results, accommodation.HostId, nil

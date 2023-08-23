@@ -6,6 +6,7 @@ package accommodation;
 
 import "google/protobuf/timestamp.proto";
 
+//TODO: Change accommodation_service.pb.go for Availability, remove omitempty
 service AccommodationService{
         rpc GetById(GetByIdRequest) returns(GetByIdResponse) {}
         rpc GetAll(GetAllRequest) returns(GetAllResponse) {}

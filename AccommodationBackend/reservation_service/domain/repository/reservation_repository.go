@@ -102,7 +102,7 @@ func (store *ReservationMongoDBStore) GetAllIntercepting(reservation *model.Rese
 }
 
 func (store *ReservationMongoDBStore) GetAllOverlapping(id string) ([]*model.Reservation, error) {
-	statuses := []string{"Pending", "Accepted"}
+	statuses := []string{"Pending", "Approved"}
 	filter := bson.M{
 		"accommodation": id,
 		"status":        bson.M{"$in": statuses},

@@ -4,6 +4,7 @@ export interface UpdatePersonalData {
   email: string;
   address: Address;
   rating: number;
+  isOutstanding: boolean;
 }
 
 export interface UpdateCredentials {

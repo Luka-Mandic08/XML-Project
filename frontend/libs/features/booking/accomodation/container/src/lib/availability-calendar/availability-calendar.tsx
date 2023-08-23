@@ -70,13 +70,14 @@ export function AvailabilityCalendar(props: AvailabilityCalendarProps) {
   };
 
   const setColor = (isAvailable: boolean | undefined) => {
-    if (isAvailable === undefined) {
-      return 'lightgray';
+    if (isAvailable === false) {
+      return 'lightcoral';
     }
-    if (isAvailable) {
+    if (isAvailable === true) {
       return 'lightgreen';
     }
-    return 'lightcoral';
+    return 'lightgrey';
+    //return isAvailable ? (isAvailable === true ? 'lightgreen' : 'lightgrey') : isAvailable === false ? 'lightcoral' : 'lightgrey';
   };
 
   const getNumberOfDaysInMonth = (month: string, year: number) => {

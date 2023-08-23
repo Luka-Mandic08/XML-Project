@@ -47,7 +47,7 @@ func (handler *ReservationHandler) Create(ctx context.Context, request *pb.Creat
 		return nil, status.Error(codes.AlreadyExists, "Unable to insert reservation into database")
 	}
 
-	// OVDE SE POZIVA SAGA
+	//TODO OVDE SE POZIVA SAGA IVANEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
 
 	response := MapReservationToCreateResponse(reservation)
 	return response, nil
@@ -157,14 +157,14 @@ func (handler *ReservationHandler) CheckIfGuestVisitedHost(ctx context.Context, 
 		ids = append(ids, a.GetId())
 	}
 	if len(ids) == 0 {
-		return nil, status.Error(codes.Canceled, "User has no previous reservations")
+		return nil, status.Error(codes.Canceled, "User has no previous reservations 1")
 	}
 	hasReservations, err := handler.reservationService.GetPastForAccommodations(request.GetGuestId(), ids)
 	if err != nil {
 		return nil, err
 	}
 	if !hasReservations {
-		return nil, status.Error(codes.Canceled, "User has no previous reservations")
+		return nil, status.Error(codes.Canceled, "User has no previous reservations 2")
 	}
 	return &pb.CheckReservationResponse{Message: "Success"}, nil
 }

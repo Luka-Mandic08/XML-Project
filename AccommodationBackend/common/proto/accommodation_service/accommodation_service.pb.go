@@ -217,7 +217,7 @@ type Availability struct {
 	unknownFields protoimpl.UnknownFields
 
 	Date        *timestamppb.Timestamp `protobuf:"bytes,1,opt,name=date,proto3" json:"date,omitempty"`
-	IsAvailable bool                   `protobuf:"varint,2,opt,name=isAvailable,proto3" json:"isAvailable,omitempty"`
+	IsAvailable bool                   `protobuf:"varint,2,opt,name=isAvailable,proto3" json:"isAvailable"`
 	Price       float32                `protobuf:"fixed32,3,opt,name=price,proto3" json:"price,omitempty"`
 }
 

@@ -95,7 +95,7 @@ func (service *ReservationService) AutoApprove(id primitive.ObjectID, price floa
 		return nil, err
 	}
 	//TODO Add CheckOutstandingHost Saga :(
-
+	service.UpdateOutstandingHostStatus(reservation)
 	return reservation, nil
 }
 
@@ -251,6 +251,9 @@ func (service *ReservationService) CheckOutstandingHostStatus(accommodationIds [
 	if err != nil {
 		return false, err
 	}
+	println(len(approvedReservation))
+	fmt.Printf("Len of reservations: %d\n", len(approvedReservation))
+
 	if len(approvedReservation) < 5 {
 		return false, nil
 	}
@@ -258,6 +261,9 @@ func (service *ReservationService) CheckOutstandingHostStatus(accommodationIds [
 	var totalDuration int32
 	for _, r := range approvedReservation {
 		totalDuration += r.CalculateDuration()
+		println("Total duration: %d", totalDuration)
+		fmt.Printf("Total duration: %d\n", totalDuration)
+
 	}
 	if totalDuration < 50 {
 		return false, nil

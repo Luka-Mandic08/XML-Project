@@ -3,7 +3,7 @@ import styles from './make-reservation-dialog.module.css';
 import { useForm } from 'react-hook-form';
 import { useSearchParametersStore } from '@frontend/features/booking/store/container';
 import { Dialog, DialogTitle, DialogContent, Button, Typography } from '@mui/material';
-import { MakeReservation } from '@frontend/features/booking/reservation/data-access';
+import { MakeReservationFunction } from '@frontend/features/booking/reservation/data-access';
 import { useNavigate } from 'react-router-dom';
 
 /* eslint-disable-next-line */
@@ -40,7 +40,7 @@ export function MakeReservationDialog(props: MakeReservationDialogProps) {
     data.startDate = new Date(data.startDate).toISOString().replace('Z', '000000');
     data.endDate = new Date(data.endDate).toISOString().replace('Z', '000000');
     console.log(data);
-    const res = await MakeReservation(data);
+    const res = await MakeReservationFunction(data);
     console.log(res);
     if (res) {
       navigate(BookingAppRoutes.GuestReservations);

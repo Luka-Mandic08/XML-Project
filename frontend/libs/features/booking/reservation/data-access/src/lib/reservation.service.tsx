@@ -2,7 +2,7 @@ import { BookingBaseURL, ReservationInfo } from '@frontend/models';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 
-export async function MakeReservation(data: any): Promise<string> {
+export async function MakeReservationFunction(data: any): Promise<string> {
   return await axios({
     method: 'post',
     url: BookingBaseURL.URL + '/reservation/request',
@@ -79,6 +79,120 @@ export async function GetAccommodationReservations(id: string): Promise<Reservat
   })
     .then((response) => {
       return response.data.reservation;
+    })
+    .catch(() => {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Something went wrong, please try again',
+        showConfirmButton: false,
+        position: 'bottom-right',
+        timer: 3000,
+        timerProgressBar: true,
+        backdrop: 'none',
+        width: 300,
+        background: '#212121',
+        color: 'white',
+      });
+    });
+}
+
+export async function CancelReservation(id: string): Promise<string> {
+  return await axios({
+    method: 'put',
+    url: BookingBaseURL.URL + '/reservation/cancel/' + id,
+  })
+    .then((response) => {
+      Swal.fire({
+        icon: 'success',
+        title: 'Success',
+        text: 'Reservation canceled',
+        showConfirmButton: false,
+        position: 'bottom-right',
+        timer: 3000,
+        timerProgressBar: true,
+        backdrop: 'none',
+        width: 300,
+        background: '#212121',
+        color: 'white',
+      });
+      return response.data;
+    })
+    .catch(() => {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Something went wrong, please try again',
+        showConfirmButton: false,
+        position: 'bottom-right',
+        timer: 3000,
+        timerProgressBar: true,
+        backdrop: 'none',
+        width: 300,
+        background: '#212121',
+        color: 'white',
+      });
+    });
+}
+
+export async function ApproveReservation(id: string): Promise<string> {
+  return await axios({
+    method: 'put',
+    url: BookingBaseURL.URL + '/reservation/approve/' + id,
+  })
+    .then((response) => {
+      Swal.fire({
+        icon: 'success',
+        title: 'Success',
+        text: 'Reservation approved',
+        showConfirmButton: false,
+        position: 'bottom-right',
+        timer: 3000,
+        timerProgressBar: true,
+        backdrop: 'none',
+        width: 300,
+        background: '#212121',
+        color: 'white',
+      });
+      return response.data;
+    })
+    .catch(() => {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Something went wrong, please try again',
+        showConfirmButton: false,
+        position: 'bottom-right',
+        timer: 3000,
+        timerProgressBar: true,
+        backdrop: 'none',
+        width: 300,
+        background: '#212121',
+        color: 'white',
+      });
+    });
+}
+
+export async function DenyReservation(id: string): Promise<string> {
+  return await axios({
+    method: 'put',
+    url: BookingBaseURL.URL + '/reservation/deny/' + id,
+  })
+    .then((response) => {
+      Swal.fire({
+        icon: 'success',
+        title: 'Success',
+        text: 'Reservation denied',
+        showConfirmButton: false,
+        position: 'bottom-right',
+        timer: 3000,
+        timerProgressBar: true,
+        backdrop: 'none',
+        width: 300,
+        background: '#212121',
+        color: 'white',
+      });
+      return response.data;
     })
     .catch(() => {
       Swal.fire({
