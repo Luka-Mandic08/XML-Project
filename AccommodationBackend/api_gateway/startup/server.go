@@ -88,6 +88,7 @@ func CreateRoutersAndSetRoutes(config *Config) *gin.Engine {
 	reservationGroup := router.Group("/reservation")
 	reservationGroup.Use(services.ValidateToken())
 	reservationGroup.GET("/getAllByUserId/:id", reservationHandler.GetAllByUserId)
+	reservationGroup.GET("/getAllByAccommodationId/:id", reservationHandler.GetAllByAccommodationId)
 	reservationGroup.POST("/request", services.AuthorizeRole("Guest"), reservationHandler.Request)
 	reservationGroup.PUT("/approve/:id", services.AuthorizeRole("Host"), reservationHandler.Approve)
 	reservationGroup.PUT("/deny/:id", services.AuthorizeRole("Host"), reservationHandler.Deny)
