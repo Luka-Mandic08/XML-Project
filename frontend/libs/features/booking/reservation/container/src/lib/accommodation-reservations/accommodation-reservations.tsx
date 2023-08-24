@@ -18,7 +18,21 @@ export function AccommodationReservations(props: AccommodationReservationsProps)
   }, []);
 
   const getAccommodationReservations = async () => {
-    setReservations(await GetAccommodationReservations(selectedAccommodation.id));
+    const res = await GetAccommodationReservations(selectedAccommodation.id);
+    const newReservations: ReservationInfo[] = [];
+    res.reservation?.forEach((reservation: any) => {
+      newReservations.push({
+        id: reservation.id,
+        accommodationId: reservation.accommodationId,
+        userId: reservation.userId,
+        numberOfGuests: reservation.numberOfGuests,
+        start: new Date(reservation.start.seconds * 1000),
+        end: new Date(reservation.end.seconds * 1000),
+        status: reservation.status,
+        price: reservation.price,
+      });
+    });
+    setReservations(newReservations);
   };
 
   return (

@@ -14,6 +14,8 @@ type Config struct {
 	CreateReservationReplySubject   string
 	AccommodationHost               string
 	AccommodationPort               string
+	RatingHost                      string
+	RatingPort                      string
 }
 
 func NewConfig() *Config {
@@ -29,5 +31,7 @@ func NewConfig() *Config {
 		CreateReservationReplySubject:   os.Getenv("CREATE_RESERVATION_REPLY_SUBJECT"),
 		AccommodationHost:               os.Getenv("ACCOMMODATION_SERVICE_HOST"),
 		AccommodationPort:               os.Getenv("ACCOMMODATION_SERVICE_PORT"),
+		RatingHost:                      os.Getenv("RATING_SERVICE_HOST"),
+		RatingPort:                      os.Getenv("RATING_SERVICE_PORT"),
 	}
 }

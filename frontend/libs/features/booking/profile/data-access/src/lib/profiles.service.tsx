@@ -10,11 +10,11 @@ export async function GetAccountInformation(): Promise<UpdateCredentials> {
     .then((response) => {
       return response.data;
     })
-    .catch(() => {
+    .catch((err) => {
       Swal.fire({
         icon: 'error',
         title: 'Error',
-        text: 'Something went wrong, please try again',
+        text: 'Something went wrong, please try again\n' + err.message,
         showConfirmButton: false,
         position: 'bottom-right',
         timer: 3000,
@@ -41,7 +41,7 @@ export async function UpdateAccountInformation(data: UpdateCredentials): Promise
       Swal.fire({
         icon: 'success',
         title: 'Success',
-        text: response.data.message,
+        text: 'Your account information has been updated',
         showConfirmButton: false,
         position: 'bottom-right',
         timer: 3000,
@@ -53,11 +53,11 @@ export async function UpdateAccountInformation(data: UpdateCredentials): Promise
       });
       return response.data;
     })
-    .catch(() => {
+    .catch((err) => {
       Swal.fire({
         icon: 'error',
         title: 'Error',
-        text: 'Something went wrong, please try again',
+        text: 'Something went wrong, please try again\n' + err.message,
         showConfirmButton: false,
         position: 'bottom-right',
         timer: 3000,
@@ -78,11 +78,11 @@ export async function GetProfileInformation(): Promise<UpdatePersonalData> {
     .then((response) => {
       return response.data;
     })
-    .catch(() => {
+    .catch((err) => {
       Swal.fire({
         icon: 'error',
         title: 'Error',
-        text: 'Something went wrong, please try again',
+        text: 'Something went wrong, please try again\n' + err.message,
         showConfirmButton: false,
         position: 'bottom-right',
         timer: 3000,
@@ -103,11 +103,11 @@ export async function GetHostInformation(hostId: string): Promise<UpdatePersonal
     .then((response) => {
       return response.data;
     })
-    .catch(() => {
+    .catch((err) => {
       Swal.fire({
         icon: 'error',
         title: 'Error',
-        text: 'Something went wrong, please try again',
+        text: 'Something went wrong, please try again\n' + err.message,
         showConfirmButton: false,
         position: 'bottom-right',
         timer: 3000,
@@ -152,11 +152,11 @@ export async function UpdateProfileInformation(data: UpdatePersonalData): Promis
       });
       return response.data;
     })
-    .catch(() => {
+    .catch((err) => {
       Swal.fire({
         icon: 'error',
         title: 'Error',
-        text: 'Something went wrong, please try again',
+        text: 'Something went wrong, please try again\n' + err.message,
         showConfirmButton: false,
         position: 'bottom-right',
         timer: 3000,
@@ -189,11 +189,11 @@ export async function DeleteAccount(): Promise<void> {
         color: 'white',
       });
     })
-    .catch(() => {
+    .catch((err) => {
       Swal.fire({
         icon: 'error',
         title: 'Error',
-        text: 'Something went wrong, please try again',
+        text: 'Something went wrong, please try again\n' + err.message,
         showConfirmButton: false,
         position: 'bottom-right',
         timer: 3000,

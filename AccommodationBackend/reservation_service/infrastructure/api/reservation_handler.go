@@ -5,6 +5,7 @@ import (
 	pb "common/proto/reservation_service"
 	"context"
 	"errors"
+	"github.com/golang/protobuf/ptypes"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"google.golang.org/grpc/codes"
@@ -14,14 +15,12 @@ import (
 
 type ReservationHandler struct {
 	pb.UnimplementedReservationServiceServer
-	reservationService  *service.ReservationService
-	accommodationClient accommodation.AccommodationServiceClient
+	reservationService *service.ReservationService
 }
 
-func NewReservationHandler(reservationService *service.ReservationService, accommodationClient accommodation.AccommodationServiceClient) *ReservationHandler {
+func NewReservationHandler(reservationService *service.ReservationService) *ReservationHandler {
 	return &ReservationHandler{
-		reservationService:  reservationService,
-		accommodationClient: accommodationClient,
+		reservationService: reservationService,
 	}
 }
 
@@ -49,7 +48,7 @@ func (handler *ReservationHandler) Create(ctx context.Context, request *pb.Creat
 		return nil, status.Error(codes.AlreadyExists, "Unable to insert reservation into database")
 	}
 
-	// OVDE SE POZIVA SAGA
+	//TODO OVDE SE POZIVA SAGA IVANEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
 
 	response := MapReservationToCreateResponse(reservation)
 	return response, nil
@@ -122,7 +121,7 @@ func (handler *ReservationHandler) CheckIfGuestHasReservations(ctx context.Conte
 }
 
 func (handler *ReservationHandler) CheckIfHostHasReservations(ctx context.Context, request *pb.CheckReservationRequest) (*pb.CheckReservationResponse, error) {
-	accommodations, err := handler.accommodationClient.GetAllByHostId(ctx, &accommodation.GetAllByHostIdRequest{HostId: request.GetId()})
+	accommodations, err := handler.reservationService.AccommodationClient.GetAllByHostId(ctx, &accommodation.GetAllByHostIdRequest{HostId: request.GetId()})
 	var ids []string
 	for _, a := range accommodations.GetAccommodations() {
 		ids = append(ids, a.GetId())
@@ -137,7 +136,7 @@ func (handler *ReservationHandler) CheckIfHostHasReservations(ctx context.Contex
 	if hasReservations {
 		return nil, status.Error(codes.Canceled, "User has active reservations")
 	}
-	handler.accommodationClient.DeleteAllForHost(ctx, &accommodation.GetByIdRequest{Id: request.GetId()})
+	handler.reservationService.AccommodationClient.DeleteAllForHost(ctx, &accommodation.GetByIdRequest{Id: request.GetId()})
 	return &pb.CheckReservationResponse{Message: "Success"}, nil
 }
 
@@ -153,20 +152,20 @@ func (handler *ReservationHandler) CheckIfGuestVisitedAccommodation(ctx context.
 }
 
 func (handler *ReservationHandler) CheckIfGuestVisitedHost(ctx context.Context, request *pb.CheckPreviousReservationRequest) (*pb.CheckReservationResponse, error) {
-	accommodations, err := handler.accommodationClient.GetAllByHostId(ctx, &accommodation.GetAllByHostIdRequest{HostId: request.GetId()})
+	accommodations, err := handler.reservationService.AccommodationClient.GetAllByHostId(ctx, &accommodation.GetAllByHostIdRequest{HostId: request.GetId()})
 	var ids []string
 	for _, a := range accommodations.GetAccommodations() {
 		ids = append(ids, a.GetId())
 	}
 	if len(ids) == 0 {
-		return nil, status.Error(codes.Canceled, "User has no previous reservations")
+		return nil, status.Error(codes.Canceled, "User has no previous reservations 1")
 	}
 	hasReservations, err := handler.reservationService.GetPastForAccommodations(request.GetGuestId(), ids)
 	if err != nil {
 		return nil, err
 	}
 	if !hasReservations {
-		return nil, status.Error(codes.Canceled, "User has no previous reservations")
+		return nil, status.Error(codes.Canceled, "User has no previous reservations 2")
 	}
 	return &pb.CheckReservationResponse{Message: "Success"}, nil
 }
@@ -192,10 +191,12 @@ func (handler *ReservationHandler) Approve(ctx context.Context, request *pb.Appr
 		return nil, errors.New("Reservation alredy Canceled id: " + id)
 	}
 
-	canApprove, err := handler.accommodationClient.CheckCanApprove(ctx, &accommodation.CheckCanApproveRequest{
+	start, _ := ptypes.TimestampProto(reservation.Start)
+	end, _ := ptypes.TimestampProto(reservation.End)
+	canApprove, err := handler.reservationService.AccommodationClient.CheckCanApprove(ctx, &accommodation.CheckCanApproveRequest{
 		AccommodationId: reservation.AccommodationId,
-		Start:           reservation.Start,
-		End:             reservation.End,
+		Start:           start,
+		End:             end,
 	})
 	if err != nil {
 		return nil, err
@@ -221,9 +222,7 @@ func (handler *ReservationHandler) Approve(ctx context.Context, request *pb.Appr
 		}
 	}
 	//TODO Add CheckOutstandingHost
-	if err == mongo.ErrNoDocuments {
-		return nil, status.Error(codes.NotFound, "Unable to find reservation: id = "+request.Id)
-	}
+	handler.reservationService.UpdateOutstandingHostStatus(reservation)
 	response := MapReservationToApproveResponse(reservation)
 	return response, nil
 }
@@ -276,22 +275,23 @@ func (handler *ReservationHandler) Cancel(ctx context.Context, request *pb.Cance
 	}
 
 	if reservation.Status == "Approved" {
-		_, err = handler.accommodationClient.GetAndCancelAllAvailabilitiesToCancel(ctx, &accommodation.GetAndCancelAllAvailabilitiesToCancelRequest{
+		start, _ := ptypes.TimestampProto(reservation.Start)
+		end, _ := ptypes.TimestampProto(reservation.End)
+		_, err = handler.reservationService.AccommodationClient.GetAndCancelAllAvailabilitiesToCancel(ctx, &accommodation.GetAndCancelAllAvailabilitiesToCancelRequest{
 			AccommodationId: reservation.AccommodationId,
-			Start:           reservation.Start,
-			End:             reservation.End,
+			Start:           start,
+			End:             end,
 		})
 		if err != nil {
 			return nil, err
 		}
 	}
-	//TODO Add CheckOutstandingHost
-
 	_, err = handler.reservationService.Cancel(reservationId)
 	if err == mongo.ErrNoDocuments {
 		return nil, status.Error(codes.NotFound, "Unable to find reservation: id = "+request.Id)
 	}
 	response := MapReservationToCancelResponse(reservation)
+	handler.reservationService.UpdateOutstandingHostStatus(reservation)
 	return response, nil
 }
 
@@ -303,7 +303,7 @@ func (handler *ReservationHandler) UpdateOutstandingHostStatus(ctx context.Conte
 		}
 		return &pb.UpdateOutstandingHostStatusResponse{Message: "Status changed"}, nil
 	}
-	response, err := handler.accommodationClient.GetAllByHostId(ctx, &accommodation.GetAllByHostIdRequest{HostId: request.GetHostId()})
+	response, err := handler.reservationService.AccommodationClient.GetAllByHostId(ctx, &accommodation.GetAllByHostIdRequest{HostId: request.GetHostId()})
 	if err != nil {
 		return nil, err
 	}
@@ -343,4 +343,13 @@ func (handler *ReservationHandler) GetAllOutstandingHosts(ctx context.Context, r
 		ids = append(ids, id.Id.Hex())
 	}
 	return &pb.GetAllOutstandingHostsResponse{Ids: ids}, nil
+}
+
+func (handler *ReservationHandler) GetAllForDateRange(ctx context.Context, request *pb.GetAllForDateRangeRequest) (*pb.GetAllForDateRangeResponse, error) {
+	res, err := handler.reservationService.GetAllOverlapping(*request)
+	if err != nil {
+		return nil, err
+	}
+	mapped := MapReservationsToGetAllByUserIdResponse(res)
+	return &pb.GetAllForDateRangeResponse{Reservations: mapped.GetReservation()}, nil
 }

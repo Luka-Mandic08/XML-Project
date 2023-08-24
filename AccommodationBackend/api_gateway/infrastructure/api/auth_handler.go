@@ -131,7 +131,6 @@ func (handler *AuthHandler) Update(ctx *gin.Context) {
 }
 
 func (handler *AuthHandler) Delete(ctx *gin.Context) {
-	//TODO izvrsiti provere da li se nalog sme obrisati
 	id := ctx.Param("userId")
 	if services.AuthorizeId(id, ctx) {
 		ctx.JSON(http.StatusUnauthorized, "Not allowed")

@@ -2,6 +2,7 @@ package persistence
 
 import (
 	accommodation "common/proto/accommodation_service"
+	rating "common/proto/rating_service"
 	"context"
 	"fmt"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -24,6 +25,15 @@ func NewAccommodationClient(host, port string) accommodation.AccommodationServic
 		log.Fatalf("Failed to start gRPC connection to Accommodation service: %v", err)
 	}
 	return accommodation.NewAccommodationServiceClient(conn)
+}
+
+func NewRatingClient(host, port string) rating.RatingServiceClient {
+	address := fmt.Sprintf("%s:%s", host, port)
+	conn, err := getConnection(address)
+	if err != nil {
+		log.Fatalf("Failed to start gRPC connection to Accommodation service: %v", err)
+	}
+	return rating.NewRatingServiceClient(conn)
 }
 
 func getConnection(address string) (*grpc.ClientConn, error) {

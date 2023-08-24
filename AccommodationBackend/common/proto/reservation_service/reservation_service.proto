@@ -4,6 +4,8 @@ option go_package = "common/reservation";
 
 package reservation;
 
+import "google/protobuf/timestamp.proto";
+
 service ReservationService{
         rpc Get(GetRequest) returns(GetResponse) {}
         rpc Create(CreateRequest) returns(CreateResponse) {}
@@ -21,13 +23,14 @@ service ReservationService{
         rpc UpdateOutstandingHostStatus(UpdateOutstandingHostStatusRequest) returns(UpdateOutstandingHostStatusResponse) {}
         rpc GetOutstandingHost(GetRequest) returns(GetRequest) {}
         rpc GetAllOutstandingHosts(GetAllOutstandingHostsRequest) returns(GetAllOutstandingHostsResponse) {}
+        rpc GetAllForDateRange(GetAllForDateRangeRequest) returns(GetAllForDateRangeResponse) {}
 }
 
 message Reservation {
         string id = 1;
         string accommodationId = 2;
-        string start = 3;
-        string end = 4;
+        google.protobuf.Timestamp start = 3;
+        google.protobuf.Timestamp end = 4;
         string userId = 5;
         int32 numberOfGuests = 6;
         string status = 7;
@@ -40,8 +43,8 @@ message GetRequest {
 message GetResponse {
         string id = 1;
         string accommodationId = 2;
-        string start = 3;
-        string end = 4;
+        google.protobuf.Timestamp start = 3;
+        google.protobuf.Timestamp end = 4;
         string userId = 5;
         int32 numberOfGuests = 6;
         string status = 7;
@@ -50,8 +53,8 @@ message GetResponse {
 
 message CreateRequest{
         string accommodationId = 2;
-        string start = 3;
-        string end = 4;
+        google.protobuf.Timestamp start = 3;
+        google.protobuf.Timestamp end = 4;
         string userId = 5;
         int32 numberOfGuests = 6;
 }
@@ -62,8 +65,8 @@ message CreateResponse {
 message UpdateRequest{
         string id = 1;
         string accommodationId = 2;
-        string start = 3;
-        string end = 4;
+        google.protobuf.Timestamp start = 3;
+        google.protobuf.Timestamp end = 4;
         string userId = 5;
         int32 numberOfGuests = 6;
         string status = 7;
@@ -72,8 +75,8 @@ message UpdateRequest{
 message UpdateResponse {
         string id = 1;
         string accommodationId = 2;
-        string start = 3;
-        string end = 4;
+        google.protobuf.Timestamp start = 3;
+        google.protobuf.Timestamp end = 4;
         string userId = 5;
         int32 numberOfGuests = 6;
         string status = 7;
@@ -96,8 +99,8 @@ message GetAllByUserIdResponse {
 
 message RequestRequest{
         string accommodationId = 2;
-        string start = 3;
-        string end = 4;
+        google.protobuf.Timestamp start = 3;
+        google.protobuf.Timestamp end = 4;
         string userId = 5;
         int32 numberOfGuests = 6;
 }
@@ -149,4 +152,13 @@ message UpdateOutstandingHostStatusResponse{
 message GetAllOutstandingHostsRequest{}
 message GetAllOutstandingHostsResponse{
         repeated string ids = 1;
+}
+
+message GetAllForDateRangeRequest{
+        google.protobuf.Timestamp from = 1;
+        google.protobuf.Timestamp to = 2;
+        string accommodationId = 3;
+}
+message GetAllForDateRangeResponse{
+        repeated Reservation reservations = 1;
 }

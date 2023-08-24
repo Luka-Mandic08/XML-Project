@@ -60,6 +60,7 @@ func (handler *CreateReservationCommandHandler) handle(command *events.CreateRes
 		}
 		reply.Type = events.ReservationPending
 		println("Reply: events.ReservationPending")
+
 	default:
 		reply.Type = create_reservation.UnknownReply
 	}

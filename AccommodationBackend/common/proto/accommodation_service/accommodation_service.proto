@@ -6,6 +6,7 @@ package accommodation;
 
 import "google/protobuf/timestamp.proto";
 
+//TODO: Change accommodation_service.pb.go for Availability, remove omitempty
 service AccommodationService{
         rpc GetById(GetByIdRequest) returns(GetByIdResponse) {}
         rpc GetAll(GetAllRequest) returns(GetAllResponse) {}
@@ -18,6 +19,7 @@ service AccommodationService{
         rpc DeleteAllForHost(GetByIdRequest) returns(Response) {}
         rpc CheckCanApprove(CheckCanApproveRequest) returns(CheckCanApproveResponse) {}
         rpc GetAndCancelAllAvailabilitiesToCancel(GetAndCancelAllAvailabilitiesToCancelRequest) returns(GetAndCancelAllAvailabilitiesToCancelResponse) {}
+        rpc GetAllForHostByAccommodationId(GetByIdRequest) returns(GetAllForHostByAccommodationIdResponse) {}
 }
 
 message Accommodation{
@@ -134,8 +136,8 @@ message GetAllResponse{
 
 message CheckCanApproveRequest {
         string accommodationId = 1;
-        string start = 2;
-        string end = 3;
+        google.protobuf.Timestamp start = 2;
+        google.protobuf.Timestamp end = 3;
 }
 message CheckCanApproveResponse {
         string canApprove = 2;
@@ -143,9 +145,14 @@ message CheckCanApproveResponse {
 
 message GetAndCancelAllAvailabilitiesToCancelRequest {
         string accommodationId = 1;
-        string start = 2;
-        string end = 3;
+        google.protobuf.Timestamp start = 2;
+        google.protobuf.Timestamp end = 3;
 }
 message GetAndCancelAllAvailabilitiesToCancelResponse {
         repeated string toCancel = 1;
+}
+
+message GetAllForHostByAccommodationIdResponse{
+        repeated string accommodationIds = 1;
+        string hostId = 2;
 }

@@ -2,16 +2,19 @@ package api
 
 import (
 	reservation "common/proto/reservation_service"
+	"github.com/golang/protobuf/ptypes"
 	"reservation_service/domain/model"
 )
 
 // OUTGOING MAPPING
 func MapReservationToGetResponse(u *model.Reservation) *reservation.GetResponse {
+	start, _ := ptypes.TimestampProto(u.Start)
+	end, _ := ptypes.TimestampProto(u.End)
 	result := reservation.GetResponse{
 		Id:              u.Id.Hex(),
 		AccommodationId: u.AccommodationId,
-		Start:           u.Start,
-		End:             u.End,
+		Start:           start,
+		End:             end,
 		UserId:          u.UserId,
 		NumberOfGuests:  u.NumberOfGuests,
 		Status:          u.Status,
@@ -28,11 +31,13 @@ func MapReservationToCreateResponse(u *model.Reservation) *reservation.CreateRes
 }
 
 func MapReservationToUpdateResponse(u *model.Reservation) *reservation.UpdateResponse {
+	start, _ := ptypes.TimestampProto(u.Start)
+	end, _ := ptypes.TimestampProto(u.End)
 	result := reservation.UpdateResponse{
 		Id:              u.Id.Hex(),
 		AccommodationId: u.AccommodationId,
-		Start:           u.Start,
-		End:             u.End,
+		Start:           start,
+		End:             end,
 		UserId:          u.UserId,
 		NumberOfGuests:  u.NumberOfGuests,
 		Status:          u.Status,
@@ -60,11 +65,13 @@ func MapReservationsToGetAllByUserIdResponse(u []*model.Reservation) *reservatio
 	reservations := []*reservation.Reservation{}
 
 	for _, currentReservation := range u {
+		start, _ := ptypes.TimestampProto(currentReservation.Start)
+		end, _ := ptypes.TimestampProto(currentReservation.End)
 		reservation := reservation.Reservation{
 			Id:              currentReservation.Id.Hex(),
 			AccommodationId: currentReservation.AccommodationId,
-			Start:           currentReservation.Start,
-			End:             currentReservation.End,
+			Start:           start,
+			End:             end,
 			UserId:          currentReservation.UserId,
 			NumberOfGuests:  currentReservation.NumberOfGuests,
 			Status:          currentReservation.Status,

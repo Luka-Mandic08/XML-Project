@@ -3,6 +3,7 @@ import styles from './reservation-card.module.css';
 import { Button, Divider, Paper, Typography } from '@mui/material';
 import { useState, useEffect } from 'react';
 import { GetAccommodationById } from '@frontend/features/booking/accomodation/data';
+import { CancelReservation, ApproveReservation, DenyReservation } from '@frontend/features/booking/reservation/data-access';
 
 /* eslint-disable-next-line */
 export interface ReservationItemProps {
@@ -14,10 +15,15 @@ export interface ReservationItemProps {
 
 export function ReservationCard(props: ReservationItemProps) {
   const [accommodationInfo, setAccommodationInfo] = useState<AccommodationInfo>();
+  const [canCancel, setCanCancel] = useState<boolean>(true);
 
   useEffect(() => {
     if (props.isForGuest) {
       getAccommodationInfo();
+      const today = new Date();
+      if (today > props.reservation.start || props.reservation.status === 'Canceled' || props.reservation.status === 'Denied') {
+        setCanCancel(false);
+      }
     }
     if (props.isForHost) {
       setAccommodationInfo(props.accommodationInfo);
@@ -28,10 +34,10 @@ export function ReservationCard(props: ReservationItemProps) {
     if (props.reservation.status === 'Pending') {
       return 'yellow';
     }
-    if (props.reservation.status === 'Accepted') {
+    if (props.reservation.status === 'Approved') {
       return 'green';
     }
-    if (props.reservation.status === 'Rejected') {
+    if (props.reservation.status === 'Denied') {
       return 'red';
     }
     if (props.reservation.status === 'Canceled') {
@@ -44,7 +50,15 @@ export function ReservationCard(props: ReservationItemProps) {
   };
 
   const cancelReservation = async () => {
-    //await CancelReservation(props.reservation.id);
+    await CancelReservation(props.reservation.id);
+  };
+
+  const acceptReservation = async () => {
+    await ApproveReservation(props.reservation.id);
+  };
+
+  const denyReservation = async () => {
+    await DenyReservation(props.reservation.id);
   };
 
   return (
@@ -52,8 +66,8 @@ export function ReservationCard(props: ReservationItemProps) {
       <div className={styles.reservationCardContent}>
         {props.isForGuest && <Typography variant="h4">Reservation at: {accommodationInfo?.name}</Typography>}
         <div>
-          <Typography variant="h6">Check in: {props.reservation.start}</Typography>
-          <Typography variant="h6">Check out: {props.reservation.end}</Typography>
+          <Typography variant="h6">Check in: {props.reservation.start.toDateString()}</Typography>
+          <Typography variant="h6">Check out: {props.reservation.end.toDateString()}</Typography>
         </div>
         <Divider sx={{ backgroundColor: 'grey', width: '100%' }} />
         {props.isForGuest && (
@@ -68,11 +82,7 @@ export function ReservationCard(props: ReservationItemProps) {
           </>
         )}
         <div>
-          <Typography variant="h5">Guest numbers</Typography>
-          <Typography variant="h6">
-            Minimun: {accommodationInfo?.minGuests} | Maximum: {accommodationInfo?.maxGuests}
-          </Typography>
-          <Typography variant="h6">Number of guests: {props.reservation.numberOfGuests}</Typography>
+          <Typography variant="h5">Number of guests: {props.reservation.numberOfGuests}</Typography>
         </div>
         <Divider sx={{ backgroundColor: 'grey', width: '100%' }} />
 
@@ -82,16 +92,38 @@ export function ReservationCard(props: ReservationItemProps) {
           <Typography variant="h6">Status: {props.reservation.status}</Typography>
         </div>
       </div>
-      {props.isForGuest && (
+      {props.isForGuest && canCancel && (
         <div className={styles.reservationCardFooter}>
           <Divider sx={{ backgroundColor: 'grey', width: '100%', marginY: '1rem' }} />
           <Button
             variant="contained"
             size="large"
             onClick={cancelReservation}
-            sx={{ color: 'white', background: 'red', width: 'fit-content', marginLeft: 'auto', ':hover': { background: 'white', color: 'red' } }}
+            sx={{ color: 'white', background: '#212121', width: 'fit-content', alignSelf: 'center', ':hover': { background: 'white', color: '#212121' } }}
           >
             Cancel reservation
+          </Button>
+        </div>
+      )}
+
+      {props.isForHost && (
+        <div className={styles.reservationCardFooter}>
+          <Divider sx={{ backgroundColor: 'grey', width: '100%', marginY: '1rem' }} />
+          <Button
+            variant="contained"
+            size="large"
+            onClick={acceptReservation}
+            sx={{ color: 'white', background: '#212121', width: 'fit-content', alignSelf: 'center', ':hover': { background: 'white', color: '#212121' } }}
+          >
+            Accept reservation
+          </Button>
+          <Button
+            variant="contained"
+            size="large"
+            onClick={denyReservation}
+            sx={{ color: 'white', background: '#212121', width: 'fit-content', alignSelf: 'center', ':hover': { background: 'white', color: '#212121' } }}
+          >
+            Deny reservation
           </Button>
         </div>
       )}

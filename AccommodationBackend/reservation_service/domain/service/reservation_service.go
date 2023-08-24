@@ -1,26 +1,31 @@
 package service
 
 import (
-	"fmt"
+	accommodation "common/proto/accommodation_service"
+	rating "common/proto/rating_service"
+	reservation "common/proto/reservation_service"
+	"context"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"reservation_service/domain/model"
 	"reservation_service/domain/repository"
-	"time"
-
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type ReservationService struct {
 	store                repository.ReservationStore
 	outstandingHostStore repository.OutstandingHostMongoDBStore
 	orchestrator         *CreateReservationOrchestrator
+	AccommodationClient  accommodation.AccommodationServiceClient
+	ratingClient         rating.RatingServiceClient
 }
 
-func NewReservationService(store repository.ReservationStore, outstandingHostStore repository.OutstandingHostMongoDBStore, orchestrator *CreateReservationOrchestrator) *ReservationService {
+func NewReservationService(store repository.ReservationStore, outstandingHostStore repository.OutstandingHostMongoDBStore, orchestrator *CreateReservationOrchestrator, accommodationClient accommodation.AccommodationServiceClient, ratingClient rating.RatingServiceClient) *ReservationService {
 	return &ReservationService{
 		store:                store,
 		orchestrator:         orchestrator,
 		outstandingHostStore: outstandingHostStore,
+		AccommodationClient:  accommodationClient,
+		ratingClient:         ratingClient,
 	}
 }
 
@@ -87,7 +92,7 @@ func (service *ReservationService) AutoApprove(id primitive.ObjectID, price floa
 		return nil, err
 	}
 	//TODO Add CheckOutstandingHost Saga :(
-
+	service.UpdateOutstandingHostStatus(reservation)
 	return reservation, nil
 }
 
@@ -167,45 +172,7 @@ func (service *ReservationService) Approve(id primitive.ObjectID) (*model.Reserv
 }
 
 func (service *ReservationService) GetAllIntercepting(reservation *model.Reservation) ([]*model.Reservation, error) {
-	reservations, err := service.store.GetAllIntercepting(reservation)
-	if err != nil {
-		return nil, err
-	}
-
-	result := []*model.Reservation{}
-
-	layout := "2006-01-02T15:04:05"
-	reservationFrom, err := time.Parse(layout, reservation.Start)
-	if err != nil {
-		fmt.Println("Error parsing time:", err)
-		return nil, err
-	}
-	reservationTo, err := time.Parse(layout, reservation.End)
-	if err != nil {
-		fmt.Println("Error parsing time:", err)
-		return nil, err
-	}
-	for _, currentReservation := range reservations {
-		dateFrom, err := time.Parse(layout, currentReservation.Start)
-		if err != nil {
-			fmt.Println("Error parsing time:", err)
-			return nil, err
-		}
-		dateTo, err := time.Parse(layout, currentReservation.End)
-		if err != nil {
-			fmt.Println("Error parsing time:", err)
-			return nil, err
-		}
-		if (dateFrom.Before(reservationTo) && dateFrom.After(reservationFrom)) || (dateTo.Before(reservationTo) && dateTo.After(reservationFrom)) {
-			result = append(result, currentReservation)
-		} else if dateFrom.Equal(reservationFrom) || dateTo.Equal(reservationTo) {
-			result = append(result, currentReservation)
-		} else if dateFrom.Before(reservationFrom) && dateTo.After(reservationTo) {
-			result = append(result, currentReservation)
-		}
-	}
-
-	return result, nil
+	return service.store.GetAllOverlapping(reservation.AccommodationId, []string{"Pending"}, reservation.Start, reservation.End)
 }
 
 func (service *ReservationService) Deny(id primitive.ObjectID) (*model.Reservation, error) {
@@ -243,6 +210,7 @@ func (service *ReservationService) CheckOutstandingHostStatus(accommodationIds [
 	if err != nil {
 		return false, err
 	}
+
 	if len(approvedReservation) < 5 {
 		return false, nil
 	}
@@ -250,6 +218,7 @@ func (service *ReservationService) CheckOutstandingHostStatus(accommodationIds [
 	var totalDuration int32
 	for _, r := range approvedReservation {
 		totalDuration += r.CalculateDuration()
+
 	}
 	if totalDuration < 50 {
 		return false, nil
@@ -296,4 +265,26 @@ func (service *ReservationService) GetOutstandingHost(hostId string) (*model.Out
 
 func (service *ReservationService) GetAllOutstandingHosts() ([]*model.OutstandingHost, error) {
 	return service.outstandingHostStore.GetAll()
+}
+
+func (service *ReservationService) GetAllOverlapping(request reservation.GetAllForDateRangeRequest) ([]*model.Reservation, error) {
+	return service.store.GetAllOverlapping(request.GetAccommodationId(), []string{"Approved", "Pending"}, request.GetFrom().AsTime(), request.GetTo().AsTime())
+}
+
+func (service *ReservationService) UpdateOutstandingHostStatus(reservation *model.Reservation) {
+	accResponse, err := service.AccommodationClient.GetAllForHostByAccommodationId(context.TODO(), &accommodation.GetByIdRequest{Id: reservation.AccommodationId})
+	if err != nil {
+		return
+	}
+	ratingResponse, err := service.ratingClient.GetAverageScoreForHost(context.TODO(), &rating.IdRequest{Id: accResponse.GetHostId()})
+	if err != nil {
+		return
+	}
+	if ratingResponse.GetScore() <= 4.7 {
+		service.ChangeOutstandingHostStatus(false, accResponse.HostId)
+		return
+	}
+	shouldBeOutstanding, _ := service.CheckOutstandingHostStatus(accResponse.AccommodationIds)
+	service.ChangeOutstandingHostStatus(shouldBeOutstanding, accResponse.HostId)
+	return
 }

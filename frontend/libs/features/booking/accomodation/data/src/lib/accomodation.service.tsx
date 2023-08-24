@@ -10,11 +10,11 @@ export async function GetAccomodationForHost(): Promise<AccommodationInfo[]> {
     .then((response) => {
       return response.data.accommodations;
     })
-    .catch(() => {
+    .catch((err) => {
       Swal.fire({
         icon: 'error',
         title: 'Error',
-        text: 'Something went wrong, please try again',
+        text: 'Something went wrong, please try again\n' + err.message,
         showConfirmButton: false,
         position: 'bottom-right',
         timer: 3000,
@@ -36,11 +36,11 @@ export async function GetAllAccomodation(pageNumber: number): Promise<Accommodat
       console.log(response.data.accommodations);
       return response.data.accommodations;
     })
-    .catch(() => {
+    .catch((err) => {
       Swal.fire({
         icon: 'error',
         title: 'Error',
-        text: 'Something went wrong, please try again',
+        text: 'Something went wrong, please try again\n' + err.message,
         showConfirmButton: false,
         position: 'bottom-right',
         timer: 3000,
@@ -69,7 +69,7 @@ export async function CreateUpdateAccommodationFunction(data: AccommodationCreat
       hasAutomaticReservations: data.hasAutomaticReservations,
     },
   })
-    .then((response) => {
+    .then(() => {
       Swal.fire({
         icon: 'success',
         title: 'Success',
@@ -84,11 +84,11 @@ export async function CreateUpdateAccommodationFunction(data: AccommodationCreat
         color: 'white',
       });
     })
-    .catch(() => {
+    .catch((err) => {
       Swal.fire({
         icon: 'error',
         title: 'Error',
-        text: 'Something went wrong, please try again',
+        text: 'Something went wrong, please try again\n' + err.message,
         showConfirmButton: false,
         position: 'bottom-right',
         timer: 3000,
@@ -112,26 +112,13 @@ export async function GetAvailableDatesForAccommodation(data: any): Promise<Avai
     },
   })
     .then((response) => {
-      Swal.fire({
-        icon: 'success',
-        title: 'Success',
-        text: 'Accommodation created successfully',
-        showConfirmButton: false,
-        position: 'bottom-right',
-        timer: 3000,
-        timerProgressBar: true,
-        backdrop: 'none',
-        width: 300,
-        background: '#212121',
-        color: 'white',
-      });
       return response.data;
     })
-    .catch(() => {
+    .catch((err) => {
       Swal.fire({
         icon: 'error',
         title: 'Error',
-        text: 'Something went wrong, please try again',
+        text: 'Something went wrong, please try again\n' + err.message,
         showConfirmButton: false,
         position: 'bottom-right',
         timer: 3000,
@@ -159,7 +146,7 @@ export async function UpdateAvailableDatesForAccommodation(data: any): Promise<s
       Swal.fire({
         icon: 'success',
         title: 'Success',
-        text: 'Availability updated successfully\n' + response.data,
+        text: 'Availability updated successfully',
         showConfirmButton: false,
         position: 'bottom-right',
         timer: 3000,
@@ -202,26 +189,13 @@ export async function SearchAccommodation(data: any, pageNumber: number): Promis
     },
   })
     .then((response) => {
-      Swal.fire({
-        icon: 'success',
-        title: 'Success',
-        text: 'Accommodation created successfully',
-        showConfirmButton: false,
-        position: 'bottom-right',
-        timer: 3000,
-        timerProgressBar: true,
-        backdrop: 'none',
-        width: 300,
-        background: '#212121',
-        color: 'white',
-      });
       return response.data.accommodations;
     })
-    .catch(() => {
+    .catch((err) => {
       Swal.fire({
         icon: 'error',
         title: 'Error',
-        text: 'Something went wrong, please try again',
+        text: 'Something went wrong, please try again\n' + err.message,
         showConfirmButton: false,
         position: 'bottom-right',
         timer: 3000,
@@ -242,11 +216,11 @@ export async function GetAccommodationById(id: string): Promise<AccommodationInf
     .then((response) => {
       return response.data.accommodation;
     })
-    .catch(() => {
+    .catch((err) => {
       Swal.fire({
         icon: 'error',
         title: 'Error',
-        text: 'Something went wrong, please try again',
+        text: 'Something went wrong, please try again\n' + err.message,
         showConfirmButton: false,
         position: 'bottom-right',
         timer: 3000,

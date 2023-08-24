@@ -142,3 +142,22 @@ func (store *AccommodationMongoDBStore) GetAll(page int) ([]*model.Accommodation
 
 	return accommodations, nil
 }
+
+func (store *AccommodationMongoDBStore) GetAllForHostByAccommodationId(id primitive.ObjectID) ([]string, string, error) {
+	accommodation, err := store.GetById(id)
+	if err != nil {
+		return nil, "", err
+	}
+	allAccommodations, err := store.GetAllByHostId(accommodation.HostId)
+	if err != nil {
+		return nil, "", err
+	}
+
+	var results []string
+
+	for _, accomm := range allAccommodations {
+		results = append(results, accomm.Id.Hex())
+	}
+
+	return results, accommodation.HostId, nil
+}

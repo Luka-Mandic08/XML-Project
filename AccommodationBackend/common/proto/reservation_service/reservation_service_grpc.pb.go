@@ -35,6 +35,7 @@ const (
 	ReservationService_UpdateOutstandingHostStatus_FullMethodName      = "/reservation.ReservationService/UpdateOutstandingHostStatus"
 	ReservationService_GetOutstandingHost_FullMethodName               = "/reservation.ReservationService/GetOutstandingHost"
 	ReservationService_GetAllOutstandingHosts_FullMethodName           = "/reservation.ReservationService/GetAllOutstandingHosts"
+	ReservationService_GetAllForDateRange_FullMethodName               = "/reservation.ReservationService/GetAllForDateRange"
 )
 
 // ReservationServiceClient is the client API for ReservationService service.
@@ -57,6 +58,7 @@ type ReservationServiceClient interface {
 	UpdateOutstandingHostStatus(ctx context.Context, in *UpdateOutstandingHostStatusRequest, opts ...grpc.CallOption) (*UpdateOutstandingHostStatusResponse, error)
 	GetOutstandingHost(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetRequest, error)
 	GetAllOutstandingHosts(ctx context.Context, in *GetAllOutstandingHostsRequest, opts ...grpc.CallOption) (*GetAllOutstandingHostsResponse, error)
+	GetAllForDateRange(ctx context.Context, in *GetAllForDateRangeRequest, opts ...grpc.CallOption) (*GetAllForDateRangeResponse, error)
 }
 
 type reservationServiceClient struct {
@@ -211,6 +213,15 @@ func (c *reservationServiceClient) GetAllOutstandingHosts(ctx context.Context, i
 	return out, nil
 }
 
+func (c *reservationServiceClient) GetAllForDateRange(ctx context.Context, in *GetAllForDateRangeRequest, opts ...grpc.CallOption) (*GetAllForDateRangeResponse, error) {
+	out := new(GetAllForDateRangeResponse)
+	err := c.cc.Invoke(ctx, ReservationService_GetAllForDateRange_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ReservationServiceServer is the server API for ReservationService service.
 // All implementations must embed UnimplementedReservationServiceServer
 // for forward compatibility
@@ -231,6 +242,7 @@ type ReservationServiceServer interface {
 	UpdateOutstandingHostStatus(context.Context, *UpdateOutstandingHostStatusRequest) (*UpdateOutstandingHostStatusResponse, error)
 	GetOutstandingHost(context.Context, *GetRequest) (*GetRequest, error)
 	GetAllOutstandingHosts(context.Context, *GetAllOutstandingHostsRequest) (*GetAllOutstandingHostsResponse, error)
+	GetAllForDateRange(context.Context, *GetAllForDateRangeRequest) (*GetAllForDateRangeResponse, error)
 	mustEmbedUnimplementedReservationServiceServer()
 }
 
@@ -285,6 +297,9 @@ func (UnimplementedReservationServiceServer) GetOutstandingHost(context.Context,
 }
 func (UnimplementedReservationServiceServer) GetAllOutstandingHosts(context.Context, *GetAllOutstandingHostsRequest) (*GetAllOutstandingHostsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllOutstandingHosts not implemented")
+}
+func (UnimplementedReservationServiceServer) GetAllForDateRange(context.Context, *GetAllForDateRangeRequest) (*GetAllForDateRangeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllForDateRange not implemented")
 }
 func (UnimplementedReservationServiceServer) mustEmbedUnimplementedReservationServiceServer() {}
 
@@ -587,6 +602,24 @@ func _ReservationService_GetAllOutstandingHosts_Handler(srv interface{}, ctx con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ReservationService_GetAllForDateRange_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAllForDateRangeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ReservationServiceServer).GetAllForDateRange(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ReservationService_GetAllForDateRange_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ReservationServiceServer).GetAllForDateRange(ctx, req.(*GetAllForDateRangeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ReservationService_ServiceDesc is the grpc.ServiceDesc for ReservationService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -657,6 +690,10 @@ var ReservationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetAllOutstandingHosts",
 			Handler:    _ReservationService_GetAllOutstandingHosts_Handler,
+		},
+		{
+			MethodName: "GetAllForDateRange",
+			Handler:    _ReservationService_GetAllForDateRange_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
