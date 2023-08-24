@@ -75,8 +75,16 @@ func (service *ReservationService) AutoCancel(id primitive.ObjectID, price float
 	return reservation, nil
 }
 
-func (service *ReservationService) GetAllByUserId(id primitive.ObjectID) ([]*model.Reservation, error) {
-	return service.store.GetAllByUserId(id)
+func (service *ReservationService) GetAllByUserId(id string) ([]*model.Reservation, []*model.Reservation, error) {
+	past, err := service.store.GetAllPastByUserId(id)
+	if err != nil {
+		return nil, nil, err
+	}
+	future, err := service.store.GetAllFutureByUserId(id)
+	if err != nil {
+		return nil, nil, err
+	}
+	return past, future, nil
 }
 
 func (service *ReservationService) AutoApprove(id primitive.ObjectID, price float32) (*model.Reservation, error) {
@@ -287,4 +295,16 @@ func (service *ReservationService) UpdateOutstandingHostStatus(reservation *mode
 	shouldBeOutstanding, _ := service.CheckOutstandingHostStatus(accResponse.AccommodationIds)
 	service.ChangeOutstandingHostStatus(shouldBeOutstanding, accResponse.HostId)
 	return
+}
+
+func (service *ReservationService) GetAllByAccommodationId(id string) ([]*model.Reservation, []*model.Reservation, error) {
+	past, err := service.store.GetAllPastByAccommodationId(id)
+	if err != nil {
+		return nil, nil, err
+	}
+	future, err := service.store.GetAllFutureByAccommodationId(id)
+	if err != nil {
+		return nil, nil, err
+	}
+	return past, future, nil
 }

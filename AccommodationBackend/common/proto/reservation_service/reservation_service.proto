@@ -11,7 +11,7 @@ service ReservationService{
         rpc Create(CreateRequest) returns(CreateResponse) {}
         rpc Update(UpdateRequest) returns(UpdateResponse) {}
         rpc Delete(DeleteRequest) returns(DeleteResponse) {}
-        rpc GetAllByUserId(GetAllByUserIdRequest) returns(GetAllByUserIdResponse) {}
+        rpc GetAllByUserId(GetAllByUserIdRequest) returns(GetAllByAccommodationIdResponse) {}
         rpc Request(RequestRequest) returns(RequestResponse) {}
         rpc CheckIfGuestHasReservations(CheckReservationRequest) returns(CheckReservationResponse) {}
         rpc CheckIfHostHasReservations(CheckReservationRequest) returns(CheckReservationResponse) {}
@@ -24,6 +24,7 @@ service ReservationService{
         rpc GetOutstandingHost(GetRequest) returns(GetRequest) {}
         rpc GetAllOutstandingHosts(GetAllOutstandingHostsRequest) returns(GetAllOutstandingHostsResponse) {}
         rpc GetAllForDateRange(GetAllForDateRangeRequest) returns(GetAllForDateRangeResponse) {}
+        rpc GetAllByAccommodationId(GetRequest) returns(GetAllByAccommodationIdResponse) {}
 }
 
 message Reservation {
@@ -161,4 +162,9 @@ message GetAllForDateRangeRequest{
 }
 message GetAllForDateRangeResponse{
         repeated Reservation reservations = 1;
+}
+
+message GetAllByAccommodationIdResponse{
+        repeated Reservation pastReservations = 1;
+        repeated Reservation futureReservations = 2;
 }

@@ -106,3 +106,46 @@ func MapReservationToCancelResponse(u *model.Reservation) *reservation.CancelRes
 	}
 	return &result
 }
+
+func MapToGetAllByAccommodationIdResponse(past, future []*model.Reservation) *reservation.GetAllByAccommodationIdResponse {
+	pastResponse := []*reservation.Reservation{}
+	for _, currentReservation := range past {
+		start, _ := ptypes.TimestampProto(currentReservation.Start)
+		end, _ := ptypes.TimestampProto(currentReservation.End)
+		reservation := reservation.Reservation{
+			Id:              currentReservation.Id.Hex(),
+			AccommodationId: currentReservation.AccommodationId,
+			Start:           start,
+			End:             end,
+			UserId:          currentReservation.UserId,
+			NumberOfGuests:  currentReservation.NumberOfGuests,
+			Status:          currentReservation.Status,
+			Price:           currentReservation.Price,
+		}
+		pastResponse = append(pastResponse, &reservation)
+
+	}
+
+	futureResponse := []*reservation.Reservation{}
+	for _, currentReservation := range future {
+		start, _ := ptypes.TimestampProto(currentReservation.Start)
+		end, _ := ptypes.TimestampProto(currentReservation.End)
+		reservation := reservation.Reservation{
+			Id:              currentReservation.Id.Hex(),
+			AccommodationId: currentReservation.AccommodationId,
+			Start:           start,
+			End:             end,
+			UserId:          currentReservation.UserId,
+			NumberOfGuests:  currentReservation.NumberOfGuests,
+			Status:          currentReservation.Status,
+			Price:           currentReservation.Price,
+		}
+		futureResponse = append(futureResponse, &reservation)
+
+	}
+	result := reservation.GetAllByAccommodationIdResponse{
+		PastReservations:   pastResponse,
+		FutureReservations: futureResponse,
+	}
+	return &result
+}

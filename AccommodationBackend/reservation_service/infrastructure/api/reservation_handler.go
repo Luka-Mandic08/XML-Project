@@ -82,17 +82,12 @@ func (handler *ReservationHandler) Delete(ctx context.Context, request *pb.Delet
 	return response, nil
 }
 
-func (handler *ReservationHandler) GetAllByUserId(ctx context.Context, request *pb.GetAllByUserIdRequest) (*pb.GetAllByUserIdResponse, error) {
-	userId := request.UserId
-	objectId, err := primitive.ObjectIDFromHex(userId)
+func (handler *ReservationHandler) GetAllByUserId(ctx context.Context, request *pb.GetAllByUserIdRequest) (*pb.GetAllByAccommodationIdResponse, error) {
+	past, future, err := handler.reservationService.GetAllByUserId(request.UserId)
 	if err != nil {
-		return nil, err
-	}
-	reservations, err := handler.reservationService.GetAllByUserId(objectId)
-	if err == mongo.ErrNoDocuments {
 		return nil, status.Error(codes.NotFound, "Unable to find reservations for user: id = "+request.UserId)
 	}
-	response := MapReservationsToGetAllByUserIdResponse(reservations)
+	response := MapToGetAllByAccommodationIdResponse(past, future)
 	return response, nil
 }
 
@@ -352,4 +347,13 @@ func (handler *ReservationHandler) GetAllForDateRange(ctx context.Context, reque
 	}
 	mapped := MapReservationsToGetAllByUserIdResponse(res)
 	return &pb.GetAllForDateRangeResponse{Reservations: mapped.GetReservation()}, nil
+}
+
+func (handler *ReservationHandler) GetAllByAccommodationId(ctx context.Context, request *pb.GetRequest) (*pb.GetAllByAccommodationIdResponse, error) {
+	past, future, err := handler.reservationService.GetAllByAccommodationId(request.GetId())
+	if err != nil {
+		return nil, status.Error(codes.Aborted, "Error while reading reservations for accommodations")
+	}
+	response := MapToGetAllByAccommodationIdResponse(past, future)
+	return response, nil
 }
