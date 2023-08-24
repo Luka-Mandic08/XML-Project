@@ -29,8 +29,8 @@ export function MakeReservation(props: MakeReservationProps) {
 
   const onSubmitAvailabilityDates = async (data: any) => {
     console.log(data);
-    data.startDate = new Date(data.startDate).toISOString().replace('Z', '000000');
-    data.endDate = new Date(data.endDate).toISOString().replace('Z', '000000');
+    data.startDate = new Date(data.startDate);
+    data.endDate = new Date(data.endDate);
     data.userId = localStorage.getItem('userId');
     console.log(data);
     const res = await MakeReservationFunction(data);

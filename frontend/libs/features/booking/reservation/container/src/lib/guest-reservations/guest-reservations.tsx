@@ -16,7 +16,21 @@ export function GuestReservations(props: GuestReservationsProps) {
   }, []);
 
   const getGuestReservations = async () => {
-    setReservations(await GetReservationsForGuest());
+    const res = await GetReservationsForGuest();
+    const newReservations: ReservationInfo[] = [];
+    res?.forEach((reservation: any) => {
+      newReservations.push({
+        id: reservation.id,
+        accommodationId: reservation.accommodationId,
+        userId: reservation.userId,
+        numberOfGuests: reservation.numberOfGuests,
+        start: new Date(reservation.start.seconds * 1000),
+        end: new Date(reservation.end.seconds * 1000),
+        status: reservation.status,
+        price: reservation.price,
+      });
+    });
+    setReservations(newReservations);
   };
 
   return (

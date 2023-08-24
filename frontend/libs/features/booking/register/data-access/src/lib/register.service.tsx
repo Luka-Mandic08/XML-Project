@@ -35,11 +35,11 @@ export async function RegisterNewUser(user: RegisterUser) {
         color: 'white',
       });
     })
-    .catch(() => {
+    .catch((err) => {
       Swal.fire({
         icon: 'error',
         title: 'Error',
-        text: 'Something went wrong while registering, please try again',
+        text: 'Something went wrong while registering, please try again\n' + err.message,
         showConfirmButton: false,
         position: 'bottom-right',
         timer: 3000,

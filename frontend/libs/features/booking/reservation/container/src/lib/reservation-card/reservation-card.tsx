@@ -21,8 +21,7 @@ export function ReservationCard(props: ReservationItemProps) {
     if (props.isForGuest) {
       getAccommodationInfo();
       const today = new Date();
-      const checkInDate = new Date(props.reservation.start);
-      if (today > checkInDate || props.reservation.status === 'Canceled' || props.reservation.status === 'Denied') {
+      if (today > props.reservation.start || props.reservation.status === 'Canceled' || props.reservation.status === 'Denied') {
         setCanCancel(false);
       }
     }
@@ -67,8 +66,8 @@ export function ReservationCard(props: ReservationItemProps) {
       <div className={styles.reservationCardContent}>
         {props.isForGuest && <Typography variant="h4">Reservation at: {accommodationInfo?.name}</Typography>}
         <div>
-          <Typography variant="h6">Check in: {props.reservation.start.split('T')[0]}</Typography>
-          <Typography variant="h6">Check out: {props.reservation.end.split('T')[0]}</Typography>
+          <Typography variant="h6">Check in: {props.reservation.start.toDateString()}</Typography>
+          <Typography variant="h6">Check out: {props.reservation.end.toDateString()}</Typography>
         </div>
         <Divider sx={{ backgroundColor: 'grey', width: '100%' }} />
         {props.isForGuest && (

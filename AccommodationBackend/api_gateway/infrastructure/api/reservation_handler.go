@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/encoding/protojson"
 	"net/http"
 )
 
@@ -130,7 +131,8 @@ func (handler *ReservationHandler) GetAllByUserId(ctx *gin.Context) {
 
 func (handler *ReservationHandler) Request(ctx *gin.Context) {
 	var reservation reservation.RequestRequest
-	err := ctx.ShouldBindJSON(&reservation)
+	num, _ := ctx.GetRawData()
+	err := protojson.Unmarshal(num, &reservation)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, err.Error())
 		return

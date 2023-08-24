@@ -142,11 +142,13 @@ export function ProfileInfo(props: ProfileInfoProps) {
         </div>
       </div>
 
-      <div className={styles.ratingContainer}>
-        <Typography variant="h4">Rating: {userInfo.rating}</Typography>
-        <Rating name="half-rating-read" value={userInfo.rating} precision={0.1} readOnly size="large" />
-        <Typography variant="subtitle1">{userInfo.isOutstanding ? 'Outstanding host' : 'Regular host'}</Typography>
-      </div>
+      {localStorage.getItem('role') === 'Host' && (
+        <div className={styles.ratingContainer}>
+          <Typography variant="h4">Rating: {userInfo.rating}</Typography>
+          <Rating name="half-rating-read" value={userInfo.rating} precision={0.1} readOnly size="large" />
+          <Typography variant="h5">{userInfo.isOutstanding ? 'Outstanding host' : ''}</Typography>
+        </div>
+      )}
 
       <div className={styles.bodyContainer}>
         <Paper elevation={6}>

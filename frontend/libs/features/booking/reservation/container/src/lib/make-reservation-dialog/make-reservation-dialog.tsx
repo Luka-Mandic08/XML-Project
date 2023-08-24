@@ -20,10 +20,7 @@ export function MakeReservationDialog(props: MakeReservationDialogProps) {
   const navigate = useNavigate();
 
   const {
-    register,
     handleSubmit,
-    watch,
-    reset,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -37,8 +34,8 @@ export function MakeReservationDialog(props: MakeReservationDialogProps) {
 
   const onSubmit = async (data: any) => {
     console.log(data);
-    data.startDate = new Date(data.startDate).toISOString().replace('Z', '000000');
-    data.endDate = new Date(data.endDate).toISOString().replace('Z', '000000');
+    data.startDate = new Date(data.startDate);
+    data.endDate = new Date(data.endDate);
     console.log(data);
     const res = await MakeReservationFunction(data);
     console.log(res);

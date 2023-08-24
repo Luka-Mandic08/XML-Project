@@ -1,4 +1,4 @@
-import { BookingBaseURL, ReservationInfo } from '@frontend/models';
+import { BookingBaseURL } from '@frontend/models';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 
@@ -47,7 +47,7 @@ export async function MakeReservationFunction(data: any): Promise<string> {
     });
 }
 
-export async function GetReservationsForGuest(): Promise<ReservationInfo[]> {
+export async function GetReservationsForGuest(): Promise<any> {
   return await axios({
     method: 'get',
     url: BookingBaseURL.URL + '/reservation/getAllByUserId/' + localStorage.getItem('userId'),
@@ -55,11 +55,11 @@ export async function GetReservationsForGuest(): Promise<ReservationInfo[]> {
     .then((response) => {
       return response.data.reservation;
     })
-    .catch(() => {
+    .catch((err) => {
       Swal.fire({
         icon: 'error',
         title: 'Error',
-        text: 'Something went wrong, please try again',
+        text: 'Something went wrong, please try again\n' + err.message,
         showConfirmButton: false,
         position: 'bottom-right',
         timer: 3000,
@@ -72,7 +72,7 @@ export async function GetReservationsForGuest(): Promise<ReservationInfo[]> {
     });
 }
 
-export async function GetAccommodationReservations(id: string): Promise<ReservationInfo[]> {
+export async function GetAccommodationReservations(id: string): Promise<any> {
   return await axios({
     method: 'get',
     url: BookingBaseURL.URL + '/reservation/all/accommodation/' + id,
@@ -80,11 +80,11 @@ export async function GetAccommodationReservations(id: string): Promise<Reservat
     .then((response) => {
       return response.data.reservation;
     })
-    .catch(() => {
+    .catch((err) => {
       Swal.fire({
         icon: 'error',
         title: 'Error',
-        text: 'Something went wrong, please try again',
+        text: 'Something went wrong, please try again\n' + err.message,
         showConfirmButton: false,
         position: 'bottom-right',
         timer: 3000,
@@ -118,11 +118,11 @@ export async function CancelReservation(id: string): Promise<string> {
       });
       return response.data;
     })
-    .catch(() => {
+    .catch((err) => {
       Swal.fire({
         icon: 'error',
         title: 'Error',
-        text: 'Something went wrong, please try again',
+        text: 'Something went wrong, please try again\n' + err.message,
         showConfirmButton: false,
         position: 'bottom-right',
         timer: 3000,
@@ -156,11 +156,11 @@ export async function ApproveReservation(id: string): Promise<string> {
       });
       return response.data;
     })
-    .catch(() => {
+    .catch((err) => {
       Swal.fire({
         icon: 'error',
         title: 'Error',
-        text: 'Something went wrong, please try again',
+        text: 'Something went wrong, please try again\n' + err.message,
         showConfirmButton: false,
         position: 'bottom-right',
         timer: 3000,
@@ -194,11 +194,11 @@ export async function DenyReservation(id: string): Promise<string> {
       });
       return response.data;
     })
-    .catch(() => {
+    .catch((err) => {
       Swal.fire({
         icon: 'error',
         title: 'Error',
-        text: 'Something went wrong, please try again',
+        text: 'Something went wrong, please try again\n' + err.message,
         showConfirmButton: false,
         position: 'bottom-right',
         timer: 3000,
