@@ -4,6 +4,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"reservation_service/domain/model"
+	"time"
 )
 
 type ReservationStore interface {
@@ -17,7 +18,6 @@ type ReservationStore interface {
 	GetActiveForAccommodations(ids []string) ([]*model.Reservation, error)
 	GetPastByUserId(guestId, accommodationId string) ([]*model.Reservation, error)
 	GetPastForAccommodations(guestId string, ids []string) ([]*model.Reservation, error)
-	GetAllIntercepting(reservation *model.Reservation) ([]*model.Reservation, error)
 	GetReservationsForAccommodationsByStatus(accommodationIds []string, status string) ([]*model.Reservation, error)
-	GetAllOverlapping(id string) ([]*model.Reservation, error)
+	GetAllOverlapping(id string, statuses []string, from, to time.Time) ([]*model.Reservation, error)
 }

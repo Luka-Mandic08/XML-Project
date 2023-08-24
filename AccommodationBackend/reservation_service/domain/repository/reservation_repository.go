@@ -93,19 +93,22 @@ func (store *ReservationMongoDBStore) GetPastForAccommodations(guestId string, i
 	return store.filter(filter)
 }
 
-func (store *ReservationMongoDBStore) GetAllIntercepting(reservation *model.Reservation) ([]*model.Reservation, error) {
-	filter := bson.M{
-		"accommodation": reservation.AccommodationId,
-		"status":        "Pending",
-	}
-	return store.filter(filter)
-}
-
-func (store *ReservationMongoDBStore) GetAllOverlapping(id string) ([]*model.Reservation, error) {
-	statuses := []string{"Pending", "Approved"}
+func (store *ReservationMongoDBStore) GetAllOverlapping(id string, statuses []string, from, to time.Time) ([]*model.Reservation, error) {
 	filter := bson.M{
 		"accommodation": id,
 		"status":        bson.M{"$in": statuses},
+		"$or": []bson.M{
+			{
+				"start": bson.M{"$gte": from, "$lte": to},
+			},
+			{
+				"End": bson.M{"$gte": from, "$lte": to},
+			},
+			{
+				"Start": bson.M{"$lte": from},
+				"End":   bson.M{"$gte": to},
+			},
+		},
 	}
 	return store.filter(filter)
 }

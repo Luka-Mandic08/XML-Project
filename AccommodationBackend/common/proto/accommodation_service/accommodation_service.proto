@@ -136,8 +136,8 @@ message GetAllResponse{
 
 message CheckCanApproveRequest {
         string accommodationId = 1;
-        string start = 2;
-        string end = 3;
+        google.protobuf.Timestamp start = 2;
+        google.protobuf.Timestamp end = 3;
 }
 message CheckCanApproveResponse {
         string canApprove = 2;
@@ -145,8 +145,8 @@ message CheckCanApproveResponse {
 
 message GetAndCancelAllAvailabilitiesToCancelRequest {
         string accommodationId = 1;
-        string start = 2;
-        string end = 3;
+        google.protobuf.Timestamp start = 2;
+        google.protobuf.Timestamp end = 3;
 }
 message GetAndCancelAllAvailabilitiesToCancelResponse {
         repeated string toCancel = 1;

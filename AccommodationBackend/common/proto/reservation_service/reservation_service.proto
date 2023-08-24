@@ -29,8 +29,8 @@ service ReservationService{
 message Reservation {
         string id = 1;
         string accommodationId = 2;
-        string start = 3;
-        string end = 4;
+        google.protobuf.Timestamp start = 3;
+        google.protobuf.Timestamp end = 4;
         string userId = 5;
         int32 numberOfGuests = 6;
         string status = 7;
@@ -43,8 +43,8 @@ message GetRequest {
 message GetResponse {
         string id = 1;
         string accommodationId = 2;
-        string start = 3;
-        string end = 4;
+        google.protobuf.Timestamp start = 3;
+        google.protobuf.Timestamp end = 4;
         string userId = 5;
         int32 numberOfGuests = 6;
         string status = 7;
@@ -53,8 +53,8 @@ message GetResponse {
 
 message CreateRequest{
         string accommodationId = 2;
-        string start = 3;
-        string end = 4;
+        google.protobuf.Timestamp start = 3;
+        google.protobuf.Timestamp end = 4;
         string userId = 5;
         int32 numberOfGuests = 6;
 }
@@ -65,8 +65,8 @@ message CreateResponse {
 message UpdateRequest{
         string id = 1;
         string accommodationId = 2;
-        string start = 3;
-        string end = 4;
+        google.protobuf.Timestamp start = 3;
+        google.protobuf.Timestamp end = 4;
         string userId = 5;
         int32 numberOfGuests = 6;
         string status = 7;
@@ -75,8 +75,8 @@ message UpdateRequest{
 message UpdateResponse {
         string id = 1;
         string accommodationId = 2;
-        string start = 3;
-        string end = 4;
+        google.protobuf.Timestamp start = 3;
+        google.protobuf.Timestamp end = 4;
         string userId = 5;
         int32 numberOfGuests = 6;
         string status = 7;
@@ -99,8 +99,8 @@ message GetAllByUserIdResponse {
 
 message RequestRequest{
         string accommodationId = 2;
-        string start = 3;
-        string end = 4;
+        google.protobuf.Timestamp start = 3;
+        google.protobuf.Timestamp end = 4;
         string userId = 5;
         int32 numberOfGuests = 6;
 }

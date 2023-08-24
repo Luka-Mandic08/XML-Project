@@ -5,6 +5,7 @@ import (
 	pb "common/proto/reservation_service"
 	"context"
 	"errors"
+	"github.com/golang/protobuf/ptypes"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"google.golang.org/grpc/codes"
@@ -190,10 +191,12 @@ func (handler *ReservationHandler) Approve(ctx context.Context, request *pb.Appr
 		return nil, errors.New("Reservation alredy Canceled id: " + id)
 	}
 
+	start, _ := ptypes.TimestampProto(reservation.Start)
+	end, _ := ptypes.TimestampProto(reservation.End)
 	canApprove, err := handler.reservationService.AccommodationClient.CheckCanApprove(ctx, &accommodation.CheckCanApproveRequest{
 		AccommodationId: reservation.AccommodationId,
-		Start:           reservation.Start,
-		End:             reservation.End,
+		Start:           start,
+		End:             end,
 	})
 	if err != nil {
 		return nil, err
@@ -272,10 +275,12 @@ func (handler *ReservationHandler) Cancel(ctx context.Context, request *pb.Cance
 	}
 
 	if reservation.Status == "Approved" {
+		start, _ := ptypes.TimestampProto(reservation.Start)
+		end, _ := ptypes.TimestampProto(reservation.End)
 		_, err = handler.reservationService.AccommodationClient.GetAndCancelAllAvailabilitiesToCancel(ctx, &accommodation.GetAndCancelAllAvailabilitiesToCancelRequest{
 			AccommodationId: reservation.AccommodationId,
-			Start:           reservation.Start,
-			End:             reservation.End,
+			Start:           start,
+			End:             end,
 		})
 		if err != nil {
 			return nil, err

@@ -5,13 +5,10 @@ import (
 	rating "common/proto/rating_service"
 	reservation "common/proto/reservation_service"
 	"context"
-	"fmt"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"reservation_service/domain/model"
 	"reservation_service/domain/repository"
-	"time"
-
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type ReservationService struct {
@@ -175,45 +172,7 @@ func (service *ReservationService) Approve(id primitive.ObjectID) (*model.Reserv
 }
 
 func (service *ReservationService) GetAllIntercepting(reservation *model.Reservation) ([]*model.Reservation, error) {
-	reservations, err := service.store.GetAllIntercepting(reservation)
-	if err != nil {
-		return nil, err
-	}
-
-	result := []*model.Reservation{}
-
-	layout := "2006-01-02T15:04:05"
-	reservationFrom, err := time.Parse(layout, reservation.Start)
-	if err != nil {
-		fmt.Println("Error parsing time:", err)
-		return nil, err
-	}
-	reservationTo, err := time.Parse(layout, reservation.End)
-	if err != nil {
-		fmt.Println("Error parsing time:", err)
-		return nil, err
-	}
-	for _, currentReservation := range reservations {
-		dateFrom, err := time.Parse(layout, currentReservation.Start)
-		if err != nil {
-			fmt.Println("Error parsing time:", err)
-			return nil, err
-		}
-		dateTo, err := time.Parse(layout, currentReservation.End)
-		if err != nil {
-			fmt.Println("Error parsing time:", err)
-			return nil, err
-		}
-		if (dateFrom.Before(reservationTo) && dateFrom.After(reservationFrom)) || (dateTo.Before(reservationTo) && dateTo.After(reservationFrom)) {
-			result = append(result, currentReservation)
-		} else if dateFrom.Equal(reservationFrom) || dateTo.Equal(reservationTo) {
-			result = append(result, currentReservation)
-		} else if dateFrom.Before(reservationFrom) && dateTo.After(reservationTo) {
-			result = append(result, currentReservation)
-		}
-	}
-
-	return result, nil
+	return service.store.GetAllOverlapping(reservation.AccommodationId, []string{"Pending"}, reservation.Start, reservation.End)
 }
 
 func (service *ReservationService) Deny(id primitive.ObjectID) (*model.Reservation, error) {
@@ -251,8 +210,6 @@ func (service *ReservationService) CheckOutstandingHostStatus(accommodationIds [
 	if err != nil {
 		return false, err
 	}
-	println(len(approvedReservation))
-	fmt.Printf("Len of reservations: %d\n", len(approvedReservation))
 
 	if len(approvedReservation) < 5 {
 		return false, nil
@@ -261,8 +218,6 @@ func (service *ReservationService) CheckOutstandingHostStatus(accommodationIds [
 	var totalDuration int32
 	for _, r := range approvedReservation {
 		totalDuration += r.CalculateDuration()
-		println("Total duration: %d", totalDuration)
-		fmt.Printf("Total duration: %d\n", totalDuration)
 
 	}
 	if totalDuration < 50 {
@@ -313,32 +268,7 @@ func (service *ReservationService) GetAllOutstandingHosts() ([]*model.Outstandin
 }
 
 func (service *ReservationService) GetAllOverlapping(request reservation.GetAllForDateRangeRequest) ([]*model.Reservation, error) {
-	reservations, err := service.store.GetAllOverlapping(request.GetAccommodationId())
-	if err != nil {
-		return nil, err
-	}
-	result := []*model.Reservation{}
-	layout := "2006-01-02T15:04:05"
-	for _, currentReservation := range reservations {
-		dateFrom, err := time.Parse(layout, currentReservation.Start)
-		if err != nil {
-			fmt.Println("Error parsing time:", err)
-			return nil, err
-		}
-		dateTo, err := time.Parse(layout, currentReservation.End)
-		if err != nil {
-			fmt.Println("Error parsing time:", err)
-			return nil, err
-		}
-		if (dateFrom.Before(request.To.AsTime()) && dateFrom.After(request.From.AsTime())) || (dateTo.Before(request.To.AsTime()) && dateTo.After(request.From.AsTime())) {
-			result = append(result, currentReservation)
-		} else if dateFrom.Equal(request.From.AsTime()) || dateTo.Equal(request.To.AsTime()) {
-			result = append(result, currentReservation)
-		} else if dateFrom.Before(request.From.AsTime()) && dateTo.After(request.To.AsTime()) {
-			result = append(result, currentReservation)
-		}
-	}
-	return result, nil
+	return service.store.GetAllOverlapping(request.GetAccommodationId(), []string{"Approved", "Pending"}, request.GetFrom().AsTime(), request.GetTo().AsTime())
 }
 
 func (service *ReservationService) UpdateOutstandingHostStatus(reservation *model.Reservation) {

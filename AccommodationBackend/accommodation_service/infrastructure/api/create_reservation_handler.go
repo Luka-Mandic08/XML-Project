@@ -5,9 +5,8 @@ import (
 	accommodation "common/proto/accommodation_service"
 	events "common/saga/create_reservation"
 	saga "common/saga/messaging"
+	"github.com/golang/protobuf/ptypes"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"google.golang.org/protobuf/types/known/timestamppb"
-	"time"
 )
 
 type CreateReservationCommandHandler struct {
@@ -65,23 +64,21 @@ func (handler *CreateReservationCommandHandler) handle(command *events.CreateRes
 	case events.CheckAvailableAccommodation:
 		println("Command: events.CheckAvailableAccommodation")
 
-		startDate, err := time.Parse("2006-01-02T15:04:05.000000000", command.Reservation.Start)
+		startDate, err := ptypes.TimestampProto(command.Reservation.Start)
 		if err != nil {
 			println(err)
-			println(command.Reservation.Start)
 			break
 		}
-		endDate, err := time.Parse("2006-01-02T15:04:05.000000000", command.Reservation.End)
+		endDate, err := ptypes.TimestampProto(command.Reservation.End)
 		if err != nil {
 			println(err)
-			println(command.Reservation.End)
 			break
 		}
 
 		request := accommodation.CheckAvailabilityRequest{
 			Accommodationid: command.Reservation.AccommodationId,
-			DateFrom:        timestamppb.New(startDate),
-			DateTo:          timestamppb.New(endDate),
+			DateFrom:        startDate,
+			DateTo:          endDate,
 			NumberOfGuests:  command.Reservation.NumberOfGuests,
 		}
 
@@ -112,23 +109,21 @@ func (handler *CreateReservationCommandHandler) handle(command *events.CreateRes
 	case events.RevertAvailability:
 		println("Command: events.RevertAvailability")
 
-		startDate, err := time.Parse("2006-01-02T15:04:05.000000000", command.Reservation.Start)
+		startDate, err := ptypes.TimestampProto(command.Reservation.Start)
 		if err != nil {
 			println(err)
-			println(command.Reservation.Start)
 			break
 		}
-		endDate, err := time.Parse("2006-01-02T15:04:05.000000000", command.Reservation.End)
+		endDate, err := ptypes.TimestampProto(command.Reservation.End)
 		if err != nil {
 			println(err)
-			println(command.Reservation.End)
 			break
 		}
 
 		accommodationAvailability := accommodation.CheckAvailabilityRequest{
 			Accommodationid: command.Reservation.Id,
-			DateFrom:        timestamppb.New(startDate),
-			DateTo:          timestamppb.New(endDate),
+			DateFrom:        startDate,
+			DateTo:          endDate,
 			NumberOfGuests:  0,
 		}
 
