@@ -10,6 +10,14 @@
   flex-grow: 1;
 }
 
+.lineContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
 .reservationCard {
   padding: 2rem;
 }

@@ -18,11 +18,6 @@ type AccommodationMongoDBStore struct {
 	accommodations *mongo.Collection
 }
 
-func (store *AccommodationMongoDBStore) GetAllForHostByAccommodationId(id primitive.ObjectID) ([]string, error) {
-	//TODO implement me
-	panic("implement me")
-}
-
 func NewAccommodationMongoDBStore(client *mongo.Client) AccommodationStore {
 	accommodations := client.Database(DATABASE).Collection(COLLECTION)
 	return &AccommodationMongoDBStore{

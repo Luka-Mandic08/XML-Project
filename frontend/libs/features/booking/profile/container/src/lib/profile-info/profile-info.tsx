@@ -39,7 +39,7 @@ export function ProfileInfo(props: ProfileInfoProps) {
       setAccountInfo(data);
     });
 
-    GetProfileInformation().then((data) => {
+    GetProfileInformation(localStorage.getItem('userId')!).then((data) => {
       setUserInfo(data);
     });
   }, []);

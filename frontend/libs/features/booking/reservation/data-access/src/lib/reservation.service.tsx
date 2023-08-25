@@ -18,7 +18,7 @@ export async function MakeReservationFunction(data: any): Promise<string> {
       Swal.fire({
         icon: 'success',
         title: 'Success',
-        text: 'Reservation request sent.\n' + response.data,
+        text: 'Reservation request sent.',
         showConfirmButton: false,
         position: 'bottom-right',
         timer: 3000,
@@ -53,7 +53,7 @@ export async function GetReservationsForGuest(): Promise<any> {
     url: BookingBaseURL.URL + '/reservation/getAllByUserId/' + localStorage.getItem('userId'),
   })
     .then((response) => {
-      return response.data.reservation;
+      return response.data;
     })
     .catch((err) => {
       Swal.fire({
@@ -75,10 +75,10 @@ export async function GetReservationsForGuest(): Promise<any> {
 export async function GetAccommodationReservations(id: string): Promise<any> {
   return await axios({
     method: 'get',
-    url: BookingBaseURL.URL + '/reservation/all/accommodation/' + id,
+    url: BookingBaseURL.URL + '/reservation/getAllByAccommodationId/' + id,
   })
     .then((response) => {
-      return response.data.reservation;
+      return response.data;
     })
     .catch((err) => {
       Swal.fire({

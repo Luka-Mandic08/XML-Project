@@ -70,10 +70,10 @@ export async function UpdateAccountInformation(data: UpdateCredentials): Promise
     });
 }
 
-export async function GetProfileInformation(): Promise<UpdatePersonalData> {
+export async function GetProfileInformation(userId: string): Promise<UpdatePersonalData> {
   return await axios({
     method: 'get',
-    url: BookingBaseURL.URL + '/users/' + localStorage.getItem('userId'),
+    url: BookingBaseURL.URL + '/users/' + userId,
   })
     .then((response) => {
       return response.data;

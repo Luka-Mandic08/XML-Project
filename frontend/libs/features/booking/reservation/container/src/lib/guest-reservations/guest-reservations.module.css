@@ -4,3 +4,12 @@
   gap: 2rem;
   margin: 2rem;
 }
+
+.lineContainer {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  margin: 2rem;
+}
