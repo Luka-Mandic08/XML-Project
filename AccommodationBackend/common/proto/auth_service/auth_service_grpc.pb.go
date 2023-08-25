@@ -19,11 +19,13 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	AuthService_Login_FullMethodName       = "/auth.AuthService/Login"
-	AuthService_Register_FullMethodName    = "/auth.AuthService/Register"
-	AuthService_Update_FullMethodName      = "/auth.AuthService/Update"
-	AuthService_GetByUserId_FullMethodName = "/auth.AuthService/GetByUserId"
-	AuthService_Delete_FullMethodName      = "/auth.AuthService/Delete"
+	AuthService_Login_FullMethodName          = "/auth.AuthService/Login"
+	AuthService_Register_FullMethodName       = "/auth.AuthService/Register"
+	AuthService_Update_FullMethodName         = "/auth.AuthService/Update"
+	AuthService_GetByUserId_FullMethodName    = "/auth.AuthService/GetByUserId"
+	AuthService_Delete_FullMethodName         = "/auth.AuthService/Delete"
+	AuthService_GenerateAPIKey_FullMethodName = "/auth.AuthService/GenerateAPIKey"
+	AuthService_LinkAPIKey_FullMethodName     = "/auth.AuthService/LinkAPIKey"
 )
 
 // AuthServiceClient is the client API for AuthService service.
@@ -35,6 +37,8 @@ type AuthServiceClient interface {
 	Update(ctx context.Context, in *UpdateRequest, opts ...grpc.CallOption) (*UpdateResponse, error)
 	GetByUserId(ctx context.Context, in *GetByUserIdRequest, opts ...grpc.CallOption) (*GetByUserIdResponse, error)
 	Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*DeleteResponse, error)
+	GenerateAPIKey(ctx context.Context, in *GenerateAPIKeyRequest, opts ...grpc.CallOption) (*GenerateAPIKeyResponse, error)
+	LinkAPIKey(ctx context.Context, in *LinkAPIKeyRequest, opts ...grpc.CallOption) (*LinkAPIKeyResponse, error)
 }
 
 type authServiceClient struct {
@@ -90,6 +94,24 @@ func (c *authServiceClient) Delete(ctx context.Context, in *DeleteRequest, opts 
 	return out, nil
 }
 
+func (c *authServiceClient) GenerateAPIKey(ctx context.Context, in *GenerateAPIKeyRequest, opts ...grpc.CallOption) (*GenerateAPIKeyResponse, error) {
+	out := new(GenerateAPIKeyResponse)
+	err := c.cc.Invoke(ctx, AuthService_GenerateAPIKey_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *authServiceClient) LinkAPIKey(ctx context.Context, in *LinkAPIKeyRequest, opts ...grpc.CallOption) (*LinkAPIKeyResponse, error) {
+	out := new(LinkAPIKeyResponse)
+	err := c.cc.Invoke(ctx, AuthService_LinkAPIKey_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuthServiceServer is the server API for AuthService service.
 // All implementations must embed UnimplementedAuthServiceServer
 // for forward compatibility
@@ -99,6 +121,8 @@ type AuthServiceServer interface {
 	Update(context.Context, *UpdateRequest) (*UpdateResponse, error)
 	GetByUserId(context.Context, *GetByUserIdRequest) (*GetByUserIdResponse, error)
 	Delete(context.Context, *DeleteRequest) (*DeleteResponse, error)
+	GenerateAPIKey(context.Context, *GenerateAPIKeyRequest) (*GenerateAPIKeyResponse, error)
+	LinkAPIKey(context.Context, *LinkAPIKeyRequest) (*LinkAPIKeyResponse, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }
 
@@ -120,6 +144,12 @@ func (UnimplementedAuthServiceServer) GetByUserId(context.Context, *GetByUserIdR
 }
 func (UnimplementedAuthServiceServer) Delete(context.Context, *DeleteRequest) (*DeleteResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
+}
+func (UnimplementedAuthServiceServer) GenerateAPIKey(context.Context, *GenerateAPIKeyRequest) (*GenerateAPIKeyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GenerateAPIKey not implemented")
+}
+func (UnimplementedAuthServiceServer) LinkAPIKey(context.Context, *LinkAPIKeyRequest) (*LinkAPIKeyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method LinkAPIKey not implemented")
 }
 func (UnimplementedAuthServiceServer) mustEmbedUnimplementedAuthServiceServer() {}
 
@@ -224,6 +254,42 @@ func _AuthService_Delete_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AuthService_GenerateAPIKey_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GenerateAPIKeyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).GenerateAPIKey(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthService_GenerateAPIKey_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).GenerateAPIKey(ctx, req.(*GenerateAPIKeyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AuthService_LinkAPIKey_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LinkAPIKeyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).LinkAPIKey(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthService_LinkAPIKey_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).LinkAPIKey(ctx, req.(*LinkAPIKeyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AuthService_ServiceDesc is the grpc.ServiceDesc for AuthService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -250,6 +316,14 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Delete",
 			Handler:    _AuthService_Delete_Handler,
+		},
+		{
+			MethodName: "GenerateAPIKey",
+			Handler:    _AuthService_GenerateAPIKey_Handler,
+		},
+		{
+			MethodName: "LinkAPIKey",
+			Handler:    _AuthService_LinkAPIKey_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

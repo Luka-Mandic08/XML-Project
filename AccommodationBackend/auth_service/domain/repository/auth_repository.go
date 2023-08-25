@@ -75,6 +75,32 @@ func (store *AuthMongoDBStore) Delete(id string) (*mongo.DeleteResult, error) {
 	return result, nil
 }
 
+func (store *AuthMongoDBStore) GenerateAPIKey(userId string, apiKey string) (*mongo.UpdateResult, error) {
+	filter := bson.M{"userid": userId}
+	update := bson.D{{"$set",
+		bson.D{
+			{"apikey", apiKey},
+		},
+	}}
+	result, err := store.accounts.UpdateOne(context.TODO(), filter, update)
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+func (store *AuthMongoDBStore) LinkAPIKey(userId string) (string, error) {
+	filter := bson.M{"userid": userId}
+	account, err := store.filterOne(filter)
+	if err != nil {
+		return "", err
+	}
+	if account.APIKey == "" {
+		return "No apiKey for this account", nil
+	}
+	return account.APIKey, nil
+}
+
 func (store *AuthMongoDBStore) filter(filter interface{}) ([]*model.Account, error) {
 	cursor, err := store.accounts.Find(context.TODO(), filter)
 	defer cursor.Close(context.TODO())

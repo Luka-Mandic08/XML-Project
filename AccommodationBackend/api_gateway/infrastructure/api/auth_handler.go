@@ -185,3 +185,43 @@ func (handler *AuthHandler) GetByUserId(ctx *gin.Context) {
 	}
 	ctx.JSON(http.StatusOK, response)
 }
+
+func (handler *AuthHandler) GenerateAPIKey(ctx *gin.Context) {
+	userId := ctx.Param("userId")
+	if services.AuthorizeId(userId, ctx) {
+		ctx.JSON(http.StatusUnauthorized, "Not allowed to generate APIKey")
+		return
+	}
+	request := auth.GenerateAPIKeyRequest{UserId: userId}
+	response, err := handler.authClient.GenerateAPIKey(ctx, &request)
+	if err != nil {
+		grpcError, ok := status.FromError(err)
+		if ok {
+			ctx.JSON(http.StatusBadRequest, grpcError.Message())
+			return
+		}
+		ctx.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+	ctx.JSON(http.StatusOK, response)
+}
+
+func (handler *AuthHandler) LinkAPIKey(ctx *gin.Context) {
+	userId := ctx.Param("userId")
+	if services.AuthorizeId(userId, ctx) {
+		ctx.JSON(http.StatusUnauthorized, "Not allowed to generate APIKey")
+		return
+	}
+	request := auth.LinkAPIKeyRequest{UserId: userId}
+	response, err := handler.authClient.LinkAPIKey(ctx, &request)
+	if err != nil {
+		grpcError, ok := status.FromError(err)
+		if ok {
+			ctx.JSON(http.StatusBadRequest, grpcError.Message())
+			return
+		}
+		ctx.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+	ctx.JSON(http.StatusOK, response)
+}
