@@ -2,6 +2,7 @@ package api
 
 import (
 	reservation "common/proto/reservation_service"
+	user "common/proto/user_service"
 	"github.com/golang/protobuf/ptypes"
 	"reservation_service/domain/model"
 )
@@ -107,7 +108,56 @@ func MapReservationToCancelResponse(u *model.Reservation) *reservation.CancelRes
 	return &result
 }
 
-func MapToGetAllByAccommodationIdResponse(past, future []*model.Reservation) *reservation.GetAllByAccommodationIdResponse {
+func MapToGetAllByAccommodationIdResponse(past, future []*model.Reservation, pastUsers, futureUsers []*user.GetForReservationResponse, cancellations []int32) *reservation.GetAllByAccommodationIdResponse {
+	pastResponse := []*reservation.Reservation{}
+	for i, currentReservation := range past {
+		start, _ := ptypes.TimestampProto(currentReservation.Start)
+		end, _ := ptypes.TimestampProto(currentReservation.End)
+		reservation := reservation.Reservation{
+			Id:              currentReservation.Id.Hex(),
+			AccommodationId: currentReservation.AccommodationId,
+			Start:           start,
+			End:             end,
+			UserId:          currentReservation.UserId,
+			NumberOfGuests:  currentReservation.NumberOfGuests,
+			Status:          currentReservation.Status,
+			Price:           currentReservation.Price,
+			GuestName:       pastUsers[i].Name,
+			GuestSurname:    pastUsers[i].Surname,
+			GuestEmail:      pastUsers[i].Email,
+		}
+		pastResponse = append(pastResponse, &reservation)
+
+	}
+
+	futureResponse := []*reservation.Reservation{}
+	for i, currentReservation := range future {
+		start, _ := ptypes.TimestampProto(currentReservation.Start)
+		end, _ := ptypes.TimestampProto(currentReservation.End)
+		reservation := reservation.Reservation{
+			Id:                            currentReservation.Id.Hex(),
+			AccommodationId:               currentReservation.AccommodationId,
+			Start:                         start,
+			End:                           end,
+			UserId:                        currentReservation.UserId,
+			NumberOfGuests:                currentReservation.NumberOfGuests,
+			Status:                        currentReservation.Status,
+			Price:                         currentReservation.Price,
+			GuestName:                     futureUsers[i].Name,
+			GuestSurname:                  futureUsers[i].Surname,
+			GuestEmail:                    futureUsers[i].Email,
+			NumberOfPreviousCancellations: cancellations[i],
+		}
+		futureResponse = append(futureResponse, &reservation)
+	}
+	result := reservation.GetAllByAccommodationIdResponse{
+		PastReservations:   pastResponse,
+		FutureReservations: futureResponse,
+	}
+	return &result
+}
+
+func MapToGetAllByUserIdResponse(past, future []*model.Reservation) *reservation.GetAllByAccommodationIdResponse {
 	pastResponse := []*reservation.Reservation{}
 	for _, currentReservation := range past {
 		start, _ := ptypes.TimestampProto(currentReservation.Start)
@@ -141,7 +191,6 @@ func MapToGetAllByAccommodationIdResponse(past, future []*model.Reservation) *re
 			Price:           currentReservation.Price,
 		}
 		futureResponse = append(futureResponse, &reservation)
-
 	}
 	result := reservation.GetAllByAccommodationIdResponse{
 		PastReservations:   pastResponse,

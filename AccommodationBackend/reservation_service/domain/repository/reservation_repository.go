@@ -136,6 +136,11 @@ func (store *ReservationMongoDBStore) GetAllFutureByAccommodationId(id string) (
 	sort := bson.D{{"start", 1}} // The 1 indicates ascending order
 	return store.filterWithSort(filter, sort)
 }
+func (store *ReservationMongoDBStore) GetAllCanceledByUserId(id string) ([]*model.Reservation, error) {
+	today := time.Now()
+	filter := bson.M{"user": id, "start": bson.M{"$lte": today}, "status": "Canceled"}
+	return store.filter(filter)
+}
 
 func (store *ReservationMongoDBStore) filter(filter interface{}) ([]*model.Reservation, error) {
 	cursor, err := store.reservations.Find(context.TODO(), filter)

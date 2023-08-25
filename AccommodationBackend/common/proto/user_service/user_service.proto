@@ -9,6 +9,7 @@ service UserService{
         rpc Create(CreateRequest) returns(GetResponse) {}
         rpc Update(UpdateRequest) returns(GetResponse) {}
         rpc Delete(DeleteRequest) returns(DeleteResponse) {}
+        rpc GetForReservation(GetRequest) returns(GetForReservationResponse) {}
 }
 
 message GetRequest {
@@ -53,4 +54,10 @@ message DeleteRequest{
 
 message DeleteResponse {
         string message = 1;
+}
+
+message GetForReservationResponse{
+        string name = 2;
+        string surname = 3;
+        string email = 4;
 }

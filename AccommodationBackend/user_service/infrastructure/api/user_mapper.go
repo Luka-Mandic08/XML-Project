@@ -54,3 +54,12 @@ func MapUpdateRequestToUser(request *user.UpdateRequest) *model.User {
 	}
 	return &user
 }
+
+func MapUserToGetForReservationResponse(u *model.User) *user.GetForReservationResponse {
+	response := user.GetForReservationResponse{
+		Name:    u.Name,
+		Surname: u.Surname,
+		Email:   u.Email,
+	}
+	return &response
+}

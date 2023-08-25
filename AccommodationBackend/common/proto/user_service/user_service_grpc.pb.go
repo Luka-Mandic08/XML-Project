@@ -19,10 +19,11 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	UserService_Get_FullMethodName    = "/user.UserService/Get"
-	UserService_Create_FullMethodName = "/user.UserService/Create"
-	UserService_Update_FullMethodName = "/user.UserService/Update"
-	UserService_Delete_FullMethodName = "/user.UserService/Delete"
+	UserService_Get_FullMethodName               = "/user.UserService/Get"
+	UserService_Create_FullMethodName            = "/user.UserService/Create"
+	UserService_Update_FullMethodName            = "/user.UserService/Update"
+	UserService_Delete_FullMethodName            = "/user.UserService/Delete"
+	UserService_GetForReservation_FullMethodName = "/user.UserService/GetForReservation"
 )
 
 // UserServiceClient is the client API for UserService service.
@@ -33,6 +34,7 @@ type UserServiceClient interface {
 	Create(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*GetResponse, error)
 	Update(ctx context.Context, in *UpdateRequest, opts ...grpc.CallOption) (*GetResponse, error)
 	Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*DeleteResponse, error)
+	GetForReservation(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetForReservationResponse, error)
 }
 
 type userServiceClient struct {
@@ -79,6 +81,15 @@ func (c *userServiceClient) Delete(ctx context.Context, in *DeleteRequest, opts 
 	return out, nil
 }
 
+func (c *userServiceClient) GetForReservation(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetForReservationResponse, error) {
+	out := new(GetForReservationResponse)
+	err := c.cc.Invoke(ctx, UserService_GetForReservation_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility
@@ -87,6 +98,7 @@ type UserServiceServer interface {
 	Create(context.Context, *CreateRequest) (*GetResponse, error)
 	Update(context.Context, *UpdateRequest) (*GetResponse, error)
 	Delete(context.Context, *DeleteRequest) (*DeleteResponse, error)
+	GetForReservation(context.Context, *GetRequest) (*GetForReservationResponse, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -105,6 +117,9 @@ func (UnimplementedUserServiceServer) Update(context.Context, *UpdateRequest) (*
 }
 func (UnimplementedUserServiceServer) Delete(context.Context, *DeleteRequest) (*DeleteResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
+}
+func (UnimplementedUserServiceServer) GetForReservation(context.Context, *GetRequest) (*GetForReservationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetForReservation not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 
@@ -191,6 +206,24 @@ func _UserService_Delete_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_GetForReservation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).GetForReservation(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_GetForReservation_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).GetForReservation(ctx, req.(*GetRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -213,6 +246,10 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Delete",
 			Handler:    _UserService_Delete_Handler,
+		},
+		{
+			MethodName: "GetForReservation",
+			Handler:    _UserService_GetForReservation_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

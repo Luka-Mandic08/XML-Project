@@ -308,3 +308,8 @@ func (service *ReservationService) GetAllByAccommodationId(id string) ([]*model.
 	}
 	return past, future, nil
 }
+
+func (service *ReservationService) GetNumberOfCancelledReservationsForUser(id string) int32 {
+	cancelledReservations, _ := service.store.GetAllCanceledByUserId(id)
+	return int32(len(cancelledReservations))
+}

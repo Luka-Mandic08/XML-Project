@@ -36,6 +36,10 @@ message Reservation {
         int32 numberOfGuests = 6;
         string status = 7;
         float price = 8;
+        string guestName = 9;
+        string guestSurname = 10;
+        string guestEmail = 11;
+        int32 numberOfPreviousCancellations = 12;
 }
 
 message GetRequest {

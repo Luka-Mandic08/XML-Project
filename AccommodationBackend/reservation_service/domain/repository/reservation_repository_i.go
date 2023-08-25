@@ -23,4 +23,5 @@ type ReservationStore interface {
 	GetAllOverlapping(id string, statuses []string, from, to time.Time) ([]*model.Reservation, error)
 	GetAllPastByAccommodationId(id string) ([]*model.Reservation, error)
 	GetAllFutureByAccommodationId(id string) ([]*model.Reservation, error)
+	GetAllCanceledByUserId(id string) ([]*model.Reservation, error)
 }
