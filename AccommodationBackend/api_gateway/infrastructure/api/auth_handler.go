@@ -187,12 +187,13 @@ func (handler *AuthHandler) GetByUserId(ctx *gin.Context) {
 }
 
 func (handler *AuthHandler) GenerateAPIKey(ctx *gin.Context) {
-	userId := ctx.Param("userId")
-	if services.AuthorizeId(userId, ctx) {
-		ctx.JSON(http.StatusUnauthorized, "Not allowed to generate APIKey")
+	var request auth.GenerateAPIKeyRequest
+	err := ctx.ShouldBindJSON(&request)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
-	request := auth.GenerateAPIKeyRequest{UserId: userId}
+
 	response, err := handler.authClient.GenerateAPIKey(ctx, &request)
 	if err != nil {
 		grpcError, ok := status.FromError(err)

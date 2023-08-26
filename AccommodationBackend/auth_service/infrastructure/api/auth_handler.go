@@ -81,7 +81,7 @@ func (handler *AuthHandler) GetByUserId(ctx context.Context, request *pb.GetByUs
 }
 
 func (handler *AuthHandler) GenerateAPIKey(ctx context.Context, request *pb.GenerateAPIKeyRequest) (*pb.GenerateAPIKeyResponse, error) {
-	_, err := handler.service.GenerateAPIKey(request.UserId)
+	_, err := handler.service.GenerateAPIKey(request.UserId, request.IsPermanent)
 	if err != nil {
 		return nil, status.Error(codes.Unknown, err.Error())
 	}
@@ -93,5 +93,5 @@ func (handler *AuthHandler) LinkAPIKey(ctx context.Context, request *pb.LinkAPIK
 	if err != nil {
 		return nil, status.Error(codes.Unknown, err.Error())
 	}
-	return &pb.LinkAPIKeyResponse{ApiKey: result}, nil
+	return MapAPIKeyToResponse(result)
 }

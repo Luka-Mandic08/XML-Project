@@ -10,11 +10,14 @@ import {
   UpdateAccountInformation,
   UpdateProfileInformation,
 } from '@frontend/features/booking/profile/data-access';
+import LinkApiKeyDialog from '../link-api-key-dialog/link-api-key-dialog';
 
 /* eslint-disable-next-line */
 export interface ProfileInfoProps {}
 
 export function ProfileInfo(props: ProfileInfoProps) {
+  const [open, setOpen] = useState<boolean>(false);
+
   const [userInfo, setUserInfo] = useState<UpdatePersonalData>({
     name: '',
     surname: '',
@@ -113,6 +116,14 @@ export function ProfileInfo(props: ProfileInfoProps) {
     window.location.href = '/';
   };
 
+  const openLinkAPIKeyDialog = () => {
+    setOpen(true);
+  };
+
+  const closeLinkAPIKeyDialog = () => {
+    setOpen(false);
+  };
+
   return (
     <>
       <div className={styles.headerContainer}>
@@ -129,13 +140,25 @@ export function ProfileInfo(props: ProfileInfoProps) {
           >
             {isDisabled ? 'Enable editing' : 'Disable editing'}
           </Button>
+          {localStorage.getItem('role') === 'Guest' && (
+            <Button
+              variant="contained"
+              size="large"
+              onClick={() => {
+                openLinkAPIKeyDialog();
+              }}
+              sx={{ color: 'white', background: '#212121', ':hover': { background: 'white', color: '#212121' } }}
+            >
+              Link to Flights
+            </Button>
+          )}
           <Button
             variant="contained"
             size="large"
             onClick={() => {
               deleteAccount();
             }}
-            sx={{ color: 'white', background: 'red', ':hover': { background: 'white', color: '#212121' } }}
+            sx={{ color: 'white', background: 'red', ':hover': { background: 'white', color: 'red' } }}
           >
             Delete account
           </Button>
@@ -318,6 +341,7 @@ export function ProfileInfo(props: ProfileInfoProps) {
           </form>
         </Paper>
       </div>
+      <LinkApiKeyDialog open={open} onClose={closeLinkAPIKeyDialog} />
     </>
   );
 }

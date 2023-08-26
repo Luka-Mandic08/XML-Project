@@ -22,17 +22,17 @@ func NewUserHandler(l *log.Logger, r *repositories.UserRepository) *UserHandler 
 }
 
 // CREATE
-func (userHandler *UserHandler) InsertUser(rw http.ResponseWriter, h *http.Request) {
-	user := h.Context().Value(KeyProduct{}).(*model.User)
-	userHandler.repo.Insert(user)
+func (handler *UserHandler) InsertUser(rw http.ResponseWriter, request *http.Request) {
+	user := request.Context().Value(KeyProduct{}).(*model.User)
+	handler.repo.Insert(user)
 	rw.WriteHeader(http.StatusCreated)
 }
 
 // READ
-func (p *UserHandler) GetAllUsers(rw http.ResponseWriter, h *http.Request) {
-	users, err := p.repo.GetAll()
+func (handler *UserHandler) GetAllUsers(rw http.ResponseWriter, request *http.Request) {
+	users, err := handler.repo.GetAll()
 	if err != nil {
-		p.logger.Print("Database exception: ", err)
+		handler.logger.Print("Database exception: ", err)
 	}
 
 	if users == nil {
@@ -42,41 +42,41 @@ func (p *UserHandler) GetAllUsers(rw http.ResponseWriter, h *http.Request) {
 	err = users.ToJSON(rw)
 	if err != nil {
 		http.Error(rw, "Unable to convert to json", http.StatusInternalServerError)
-		p.logger.Fatal("Unable to convert to json :", err)
+		handler.logger.Fatal("Unable to convert to json :", err)
 		return
 	}
 }
 
-func (p *UserHandler) GetUserById(rw http.ResponseWriter, h *http.Request) {
-	//vars := mux.Vars(h)
+func (handler *UserHandler) GetUserById(rw http.ResponseWriter, request *http.Request) {
+	//vars := mux.Vars(request)
 	//id := vars["id"]
-	id := h.URL.Query().Get("id")
+	id := request.URL.Query().Get("id")
 
-	patient, err := p.repo.GetById(id)
+	patient, err := handler.repo.GetById(id)
 	if err != nil {
-		p.logger.Print("Database exception: ", err)
+		handler.logger.Print("Database exception: ", err)
 	}
 
 	if patient == nil {
 		http.Error(rw, "User with given id not found", http.StatusNotFound)
-		p.logger.Printf("User with id: '%s' not found", id)
+		handler.logger.Printf("User with id: '%s' not found", id)
 		return
 	}
 
 	err = patient.ToJSON(rw)
 	if err != nil {
 		http.Error(rw, "Unable to convert to json", http.StatusInternalServerError)
-		p.logger.Fatal("Unable to convert to json :", err)
+		handler.logger.Fatal("Unable to convert to json :", err)
 		return
 	}
 }
 
-func (p *UserHandler) GetUsersByName(rw http.ResponseWriter, h *http.Request) {
-	name := h.URL.Query().Get("name")
+func (handler *UserHandler) GetUsersByName(rw http.ResponseWriter, request *http.Request) {
+	name := request.URL.Query().Get("name")
 
-	users, err := p.repo.GetByName(name)
+	users, err := handler.repo.GetByName(name)
 	if err != nil {
-		p.logger.Print("Database exception: ", err)
+		handler.logger.Print("Database exception: ", err)
 	}
 
 	if users == nil {
@@ -86,71 +86,71 @@ func (p *UserHandler) GetUsersByName(rw http.ResponseWriter, h *http.Request) {
 	err = users.ToJSON(rw)
 	if err != nil {
 		http.Error(rw, "Unable to convert to json", http.StatusInternalServerError)
-		p.logger.Fatal("Unable to convert to json :", err)
+		handler.logger.Fatal("Unable to convert to json :", err)
 		return
 	}
 }
 
 // UPDATE
-func (p *UserHandler) UpdateUser(rw http.ResponseWriter, h *http.Request) {
-	id := h.URL.Query().Get("id")
-	user := h.Context().Value(KeyProduct{}).(*model.User)
+func (handler *UserHandler) UpdateUser(rw http.ResponseWriter, request *http.Request) {
+	id := request.URL.Query().Get("id")
+	user := request.Context().Value(KeyProduct{}).(*model.User)
 
-	p.repo.Update(id, user)
+	handler.repo.Update(id, user)
 	rw.WriteHeader(http.StatusOK)
 }
 
-func (p *UserHandler) UpdateAddress(rw http.ResponseWriter, h *http.Request) {
-	id := h.URL.Query().Get("id")
-	address := h.Context().Value(KeyProduct{}).(*model.UserAddress)
+func (handler *UserHandler) UpdateAddress(rw http.ResponseWriter, request *http.Request) {
+	id := request.URL.Query().Get("id")
+	address := request.Context().Value(KeyProduct{}).(*model.UserAddress)
 
-	p.repo.UpdateAddress(id, address)
+	handler.repo.UpdateAddress(id, address)
 	rw.WriteHeader(http.StatusOK)
 }
 
-func (p *UserHandler) UpdateCredentials(rw http.ResponseWriter, h *http.Request) {
-	id := h.URL.Query().Get("id")
-	credentials := h.Context().Value(KeyProduct{}).(*model.UserCredentials)
+func (handler *UserHandler) UpdateCredentials(rw http.ResponseWriter, request *http.Request) {
+	id := request.URL.Query().Get("id")
+	credentials := request.Context().Value(KeyProduct{}).(*model.UserCredentials)
 
-	p.repo.UpdateCredentials(id, credentials)
+	handler.repo.UpdateCredentials(id, credentials)
 	rw.WriteHeader(http.StatusOK)
 }
 
 /*
-func (p *UserHandler) UpdatePhone(rw http.ResponseWriter, h *http.Request) {
-	vars := mux.Vars(h)
+func (handler *UserHandler) UpdatePhone(rw http.ResponseWriter, request *http.Request) {
+	vars := mux.Vars(request)
 	id := vars["id"]
 	index, err := strconv.Atoi(vars["index"])
 	if err != nil {
 		http.Error(rw, "Unable to decode index", http.StatusBadRequest)
-		p.logger.Fatal(err)
+		handler.logger.Fatal(err)
 		return
 	}
 
 	var phoneNumber string
-	d := json.NewDecoder(h.Body)
+	d := json.NewDecoder(request.Body)
 	d.Decode(&phoneNumber)
 
-	p.repo.ChangePhone(id, index, phoneNumber)
+	handler.repo.ChangePhone(id, index, phoneNumber)
 	rw.WriteHeader(http.StatusOK)
 }
 */
 
 // DELETE
-func (p *UserHandler) DeleteUser(rw http.ResponseWriter, h *http.Request) {
-	id := h.URL.Query().Get("id")
+func (handler *UserHandler) DeleteUser(rw http.ResponseWriter, request *http.Request) {
+	id := request.URL.Query().Get("id")
 
-	p.repo.Delete(id)
+	handler.repo.Delete(id)
 	rw.WriteHeader(http.StatusNoContent)
 }
 
 // LOGIN/LOGOUT
-func (p *UserHandler) LoginUser(rw http.ResponseWriter, h *http.Request) {
-	credentials := h.Context().Value(KeyProduct{}).(*model.UserCredentials)
+func (handler *UserHandler) LoginUser(rw http.ResponseWriter, request *http.Request) {
+	credentials := request.Context().Value(KeyProduct{}).(*model.UserCredentials)
 
-	user, err := p.repo.Login(credentials)
+	user, err := handler.repo.Login(credentials)
 	if err != nil {
-		p.logger.Println(err)
+		handler.logger.Println(err)
 		rw.WriteHeader(http.StatusBadRequest)
 
 		return
@@ -162,7 +162,7 @@ func (p *UserHandler) LoginUser(rw http.ResponseWriter, h *http.Request) {
 		err = session.ToJSON(rw)
 		if err != nil {
 			http.Error(rw, "Unable to convert to json", http.StatusInternalServerError)
-			p.logger.Fatal("Unable to convert to json :", err)
+			handler.logger.Fatal("Unable to convert to json :", err)
 
 			return
 		}
@@ -174,14 +174,37 @@ func (p *UserHandler) LoginUser(rw http.ResponseWriter, h *http.Request) {
 	return
 }
 
-func (p *UserHandler) LogoutUser(rw http.ResponseWriter, h *http.Request) {
+func (handler *UserHandler) LogoutUser(rw http.ResponseWriter, request *http.Request) {
 	e := json.NewEncoder(rw)
 	err := e.Encode("")
 	if err != nil {
 		http.Error(rw, "Unable to convert to json", http.StatusInternalServerError)
-		p.logger.Fatal("Unable to convert to json :", err)
+		handler.logger.Fatal("Unable to convert to json :", err)
 		return
 	}
+	rw.WriteHeader(http.StatusOK)
+}
+
+func (handler *UserHandler) LinkUserToBookingApp(rw http.ResponseWriter, request *http.Request) {
+	dto := request.Context().Value(KeyProduct{}).(*model.LinkUserDTO)
+
+	user, err := handler.repo.Login(&model.UserCredentials{Username: dto.Username, Password: dto.Password})
+	if err != nil {
+		handler.logger.Println(err)
+		rw.WriteHeader(http.StatusBadRequest)
+
+		return
+	}
+
+	msg, err := handler.repo.LinkUserToBookingApp(user.ID, &dto.ApiKey)
+	if err != nil {
+		handler.logger.Println(err)
+		rw.WriteHeader(http.StatusBadRequest)
+
+		return
+	}
+
+	handler.logger.Println(msg)
 	rw.WriteHeader(http.StatusOK)
 }
 
@@ -189,63 +212,80 @@ func (p *UserHandler) LogoutUser(rw http.ResponseWriter, h *http.Request) {
 
 // MIDDLEWARE
 
-func (p *UserHandler) MiddlewareUserDeserialization(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(rw http.ResponseWriter, h *http.Request) {
+func (handler *UserHandler) MiddlewareUserDeserialization(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(rw http.ResponseWriter, request *http.Request) {
 		user := &model.User{}
-		err := user.FromJSON(h.Body)
+		err := user.FromJSON(request.Body)
 		if err != nil {
 			http.Error(rw, "Unable to decode json", http.StatusBadRequest)
-			p.logger.Fatal(err)
+			handler.logger.Fatal(err)
 			return
 		}
 
-		ctx := context.WithValue(h.Context(), KeyProduct{}, user)
-		h = h.WithContext(ctx)
+		ctx := context.WithValue(request.Context(), KeyProduct{}, user)
+		request = request.WithContext(ctx)
 
-		next.ServeHTTP(rw, h)
+		next.ServeHTTP(rw, request)
 	})
 }
 
-func (p *UserHandler) MiddlewareAddressDeserialization(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(rw http.ResponseWriter, h *http.Request) {
+func (handler *UserHandler) MiddlewareAddressDeserialization(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(rw http.ResponseWriter, request *http.Request) {
 		address := &model.UserAddress{}
-		err := address.FromJSON(h.Body)
+		err := address.FromJSON(request.Body)
 		if err != nil {
 			http.Error(rw, "Unable to decode json", http.StatusBadRequest)
-			p.logger.Fatal(err)
+			handler.logger.Fatal(err)
 			return
 		}
 
-		ctx := context.WithValue(h.Context(), KeyProduct{}, address)
-		h = h.WithContext(ctx)
+		ctx := context.WithValue(request.Context(), KeyProduct{}, address)
+		request = request.WithContext(ctx)
 
-		next.ServeHTTP(rw, h)
+		next.ServeHTTP(rw, request)
 	})
 }
 
-func (p *UserHandler) MiddlewareCredentialsDeserialization(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(rw http.ResponseWriter, h *http.Request) {
+func (handler *UserHandler) MiddlewareCredentialsDeserialization(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(rw http.ResponseWriter, request *http.Request) {
 		credentials := &model.UserCredentials{}
-		err := credentials.FromJSON(h.Body)
+		err := credentials.FromJSON(request.Body)
 		if err != nil {
 			http.Error(rw, "Unable to decode json", http.StatusBadRequest)
-			p.logger.Fatal(err)
+			handler.logger.Fatal(err)
 			return
 		}
 
-		ctx := context.WithValue(h.Context(), KeyProduct{}, credentials)
-		h = h.WithContext(ctx)
+		ctx := context.WithValue(request.Context(), KeyProduct{}, credentials)
+		request = request.WithContext(ctx)
 
-		next.ServeHTTP(rw, h)
+		next.ServeHTTP(rw, request)
 	})
 }
 
-func (p *UserHandler) MiddlewareContentTypeSet(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(rw http.ResponseWriter, h *http.Request) {
-		p.logger.Println("Method [", h.Method, "] - Hit path :", h.URL.Path)
+func (handler *UserHandler) MiddlewareContentTypeSet(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(rw http.ResponseWriter, request *http.Request) {
+		handler.logger.Println("Method [", request.Method, "] - Hit path :", request.URL.Path)
 
 		rw.Header().Add("Content-Type", "application/json")
 
-		next.ServeHTTP(rw, h)
+		next.ServeHTTP(rw, request)
+	})
+}
+
+func (handler *UserHandler) MiddlewareLinkUserDeserialization(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(rw http.ResponseWriter, request *http.Request) {
+		dto := &model.LinkUserDTO{}
+		err := dto.FromJSON(request.Body)
+		if err != nil {
+			http.Error(rw, "Unable to decode json", http.StatusBadRequest)
+			handler.logger.Fatal(err)
+			return
+		}
+
+		ctx := context.WithValue(request.Context(), KeyProduct{}, dto)
+		request = request.WithContext(ctx)
+
+		next.ServeHTTP(rw, request)
 	})
 }

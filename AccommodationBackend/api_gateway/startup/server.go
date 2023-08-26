@@ -68,6 +68,8 @@ func CreateRoutersAndSetRoutes(config *Config) *gin.Engine {
 	authGroup.PUT("/update", authHandler.Update)
 	authGroup.DELETE("/delete/:role/:userId", authHandler.Delete)
 	authGroup.GET("/get/:userId", authHandler.GetByUserId)
+	authGroup.PUT("/apikey/create", authHandler.GenerateAPIKey)
+	authGroup.GET("/apikey/:userId", authHandler.LinkAPIKey)
 
 	userGroup := router.Group("/users")
 	userGroup.Use(services.ValidateToken())

@@ -3,6 +3,7 @@ package api
 import (
 	"auth_service/domain/model"
 	auth "common/proto/auth_service"
+	"github.com/golang/protobuf/ptypes"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -49,4 +50,17 @@ func GetMapper(acc *model.Account) *auth.GetByUserIdResponse {
 		Username: acc.Username,
 	}
 	return &res
+}
+
+func MapAPIKeyToResponse(apikey *model.APIKey) (*auth.LinkAPIKeyResponse, error) {
+	pbtime, err := ptypes.TimestampProto(apikey.ValidTo)
+	if err != nil {
+		return nil, err
+	}
+	res := auth.LinkAPIKeyResponse{
+		ApiKeyValue: apikey.Value,
+		ValidTo:     pbtime,
+		IsPermanent: apikey.IsPermanent,
+	}
+	return &res, nil
 }

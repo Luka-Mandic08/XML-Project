@@ -1,4 +1,4 @@
-import { BookingBaseURL, UpdateCredentials, UpdatePersonalData } from '@frontend/models';
+import { ApiKey, BookingBaseURL, UpdateCredentials, UpdatePersonalData } from '@frontend/models';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 
@@ -188,6 +188,73 @@ export async function DeleteAccount(): Promise<void> {
         background: '#212121',
         color: 'white',
       });
+    })
+    .catch((err) => {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Something went wrong, please try again\n' + err.message,
+        showConfirmButton: false,
+        position: 'bottom-right',
+        timer: 3000,
+        timerProgressBar: true,
+        backdrop: 'none',
+        width: 300,
+        background: '#212121',
+        color: 'white',
+      });
+    });
+}
+
+export async function GetApiKey(): Promise<any> {
+  return await axios({
+    method: 'get',
+    url: BookingBaseURL.URL + '/auth/apikey/' + localStorage.getItem('userId'),
+  })
+    .then((response) => {
+      return response.data;
+    })
+    .catch((err) => {
+      // Swal.fire({
+      //   icon: 'error',
+      //   title: 'Error',
+      //   text: 'Something went wrong, please try again\n' + err.message,
+      //   showConfirmButton: false,
+      //   position: 'bottom-right',
+      //   timer: 3000,
+      //   timerProgressBar: true,
+      //   backdrop: 'none',
+      //   width: 300,
+      //   background: '#212121',
+      //   color: 'white',
+      // });
+    });
+}
+
+export async function CreateApiKey(isPermanent: boolean): Promise<string> {
+  return await axios({
+    method: 'put',
+    url: BookingBaseURL.URL + '/auth/apikey/create',
+    data: {
+      userId: localStorage.getItem('userId'),
+      isPermanent: isPermanent,
+    },
+  })
+    .then((response) => {
+      Swal.fire({
+        icon: 'success',
+        title: 'Success',
+        text: 'Your API key has been created',
+        showConfirmButton: false,
+        position: 'bottom-right',
+        timer: 3000,
+        timerProgressBar: true,
+        backdrop: 'none',
+        width: 300,
+        background: '#212121',
+        color: 'white',
+      });
+      return response.data;
     })
     .catch((err) => {
       Swal.fire({

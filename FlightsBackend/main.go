@@ -89,6 +89,10 @@ func main() {
 	updateUserCredentialsRouter.HandleFunc("/user/updateCredentials", userHandler.UpdateCredentials)
 	updateUserCredentialsRouter.Use(userHandler.MiddlewareCredentialsDeserialization)
 
+	linkUserToBookingAppRouter := router.Methods(http.MethodPut).Subrouter()
+	linkUserToBookingAppRouter.HandleFunc("/user/link", userHandler.LinkUserToBookingApp)
+	updateUserCredentialsRouter.Use(userHandler.MiddlewareLinkUserDeserialization)
+
 	// Users DELETE
 	deleteUserRouter := router.Methods(http.MethodDelete).Subrouter()
 	deleteUserRouter.HandleFunc("/user/delete", userHandler.DeleteUser)

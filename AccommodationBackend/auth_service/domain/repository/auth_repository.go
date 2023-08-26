@@ -3,6 +3,7 @@ package repository
 import (
 	"auth_service/domain/model"
 	"context"
+	"errors"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -75,7 +76,7 @@ func (store *AuthMongoDBStore) Delete(id string) (*mongo.DeleteResult, error) {
 	return result, nil
 }
 
-func (store *AuthMongoDBStore) GenerateAPIKey(userId string, apiKey string) (*mongo.UpdateResult, error) {
+func (store *AuthMongoDBStore) GenerateAPIKey(userId string, apiKey *model.APIKey) (*mongo.UpdateResult, error) {
 	filter := bson.M{"userid": userId}
 	update := bson.D{{"$set",
 		bson.D{
@@ -89,16 +90,16 @@ func (store *AuthMongoDBStore) GenerateAPIKey(userId string, apiKey string) (*mo
 	return result, nil
 }
 
-func (store *AuthMongoDBStore) LinkAPIKey(userId string) (string, error) {
+func (store *AuthMongoDBStore) LinkAPIKey(userId string) (*model.APIKey, error) {
 	filter := bson.M{"userid": userId}
 	account, err := store.filterOne(filter)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-	if account.APIKey == "" {
-		return "No apiKey for this account", nil
+	if account.APIKey.Value == "" {
+		return nil, errors.New("No apiKey for this account")
 	}
-	return account.APIKey, nil
+	return &account.APIKey, nil
 }
 
 func (store *AuthMongoDBStore) filter(filter interface{}) ([]*model.Account, error) {

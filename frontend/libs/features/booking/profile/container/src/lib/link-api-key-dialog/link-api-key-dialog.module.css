@@ -1,7 +1,20 @@
-/*
- * Replace this with your own classes
- *
- * e.g.
- * .container {
- * }
-*/
+.lineContainer {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 2rem;
+  margin-top: 1rem;
+}
+
+.infoContainer {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 1rem;
+}
+
+.dialogContentContainer {
+  padding: 1rem 2rem 2rem 2rem !important;
+}
