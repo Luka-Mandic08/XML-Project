@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import { Grid, Typography, Button, Paper } from '@mui/material';
 import { GetAvailableDatesForAccommodation, UpdateAvailableDatesForAccommodation } from '@frontend/features/booking/accomodation/data';
 import { useSelectedAccommodationStore } from '@frontend/features/booking/store/container';
+import AccomodationComments from '../accomodation-comments/accomodation-comments';
 
 /* eslint-disable-next-line */
 export interface AvailabilityCalendarProps {
@@ -194,6 +195,7 @@ export function AvailabilityCalendar(props: AvailabilityCalendarProps) {
           </div>
         </>
       )}
+      <AccomodationComments></AccomodationComments>
       {selectedAccommodation.id === '' && (
         <Typography variant="h4" align="left">
           Please select accommodation to see availability.
