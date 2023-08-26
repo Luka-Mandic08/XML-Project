@@ -3,6 +3,7 @@ import styles from './accomodation-card.module.css';
 import { Paper, Grid, Typography, Divider, Button, Rating } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useSelectedAccommodationStore } from '@frontend/features/booking/store/container';
+import { set } from 'react-hook-form';
 
 /* eslint-disable-next-line */
 export interface AccommodationCardProps {
@@ -22,6 +23,11 @@ export function AccommodationCard(props: AccommodationCardProps) {
   const accommodationDetails = async () => {
     setSelectedAccommodation(props.accomodationInfo);
     navigate(BookingAppRoutes.AccommodationDetails);
+  };
+
+  const accommodationReservations = async () => {
+    setSelectedAccommodation(props.accomodationInfo);
+    navigate(BookingAppRoutes.AccommodationReservations);
   };
 
   const makeReservation = async () => {
@@ -123,10 +129,18 @@ export function AccommodationCard(props: AccommodationCardProps) {
                 <Button
                   variant="contained"
                   size="small"
+                  onClick={accommodationReservations}
+                  sx={{ color: 'white', background: '#212121', ':hover': { background: 'white', color: '#212121' } }}
+                >
+                  Reservations
+                </Button>
+                <Button
+                  variant="contained"
+                  size="small"
                   onClick={checkAvailability}
                   sx={{ color: 'white', background: '#212121', ':hover': { background: 'white', color: '#212121' } }}
                 >
-                  Check Availability
+                  Availability
                 </Button>
               </Grid>
             </Grid>

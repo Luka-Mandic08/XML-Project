@@ -60,7 +60,6 @@ func (handler *AccommodationHandler) UpdateAvailability(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
-	//TODO provera da li postoje zahtevi/rezervacije za ovaj period
 	response, err := handler.accommodationClient.UpdateAvailability(ctx, &acc)
 	if err != nil {
 		grpcError, ok := status.FromError(err)

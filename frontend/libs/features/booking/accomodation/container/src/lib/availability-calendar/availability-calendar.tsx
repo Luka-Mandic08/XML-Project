@@ -45,7 +45,7 @@ export function AvailabilityCalendar(props: AvailabilityCalendarProps) {
       res.availabilityDates?.forEach((availabilityDate: any) => {
         availabilityDatesFromBackend.push({
           date: new Date(availabilityDate.date.seconds * 1000),
-          isAvailable: availabilityDate.isAvailable,
+          isAvailable: availabilityDate.isAvailable ? true : false,
           price: availabilityDate.price,
         });
       });
@@ -71,13 +71,14 @@ export function AvailabilityCalendar(props: AvailabilityCalendarProps) {
   };
 
   const setColor = (isAvailable: boolean | undefined) => {
-    if (isAvailable === undefined) {
-      return 'lightgray';
-    }
-    if (isAvailable) {
-      return 'lightgreen';
-    }
-    return 'lightcoral';
+    // if (isAvailable === false) {
+    //   return 'lightcoral';
+    // }
+    // if (isAvailable === true) {
+    //   return 'lightgreen';
+    // }
+    // return 'lightgrey';
+    return isAvailable ? 'lightgreen' : isAvailable === false ? 'lightcoral' : 'lightgrey';
   };
 
   const getNumberOfDaysInMonth = (month: string, year: number) => {

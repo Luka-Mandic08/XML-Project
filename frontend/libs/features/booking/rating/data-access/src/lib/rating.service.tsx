@@ -18,7 +18,7 @@ export async function RateAccommodation(data: any): Promise<string> {
       Swal.fire({
         icon: 'success',
         title: 'Success',
-        text: 'Availability updated successfully\n' + response.data,
+        text: 'Accommodation rated successfully',
         showConfirmButton: false,
         position: 'bottom-right',
         timer: 3000,
@@ -63,7 +63,7 @@ export async function RateHost(data: any): Promise<string> {
       Swal.fire({
         icon: 'success',
         title: 'Success',
-        text: 'Availability updated successfully\n' + response.data,
+        text: 'Host rated successfully',
         showConfirmButton: false,
         position: 'bottom-right',
         timer: 3000,

@@ -1,8 +1,11 @@
-import { AccommodationInfo, ReservationInfo } from '@frontend/models';
+import { AccommodationInfo, ReservationInfo, UpdatePersonalData } from '@frontend/models';
 import styles from './reservation-card.module.css';
 import { Button, Divider, Paper, Typography } from '@mui/material';
 import { useState, useEffect } from 'react';
 import { GetAccommodationById } from '@frontend/features/booking/accomodation/data';
+import { CancelReservation, ApproveReservation, DenyReservation } from '@frontend/features/booking/reservation/data-access';
+import { GetProfileInformation } from '@frontend/features/booking/profile/data-access';
+import { useNavigate } from 'react-router-dom';
 
 /* eslint-disable-next-line */
 export interface ReservationItemProps {
@@ -14,12 +17,21 @@ export interface ReservationItemProps {
 
 export function ReservationCard(props: ReservationItemProps) {
   const [accommodationInfo, setAccommodationInfo] = useState<AccommodationInfo>();
+  const [userInfo, setUserInfo] = useState<UpdatePersonalData | undefined>(undefined);
+  const [canCancel, setCanCancel] = useState<boolean>(true);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (props.isForGuest) {
       getAccommodationInfo();
+      const today = new Date();
+      if (today > props.reservation.start || props.reservation.status === 'Canceled' || props.reservation.status === 'Denied') {
+        setCanCancel(false);
+      }
     }
     if (props.isForHost) {
+      getUserInfo(props.reservation.userId);
       setAccommodationInfo(props.accommodationInfo);
     }
   }, []);
@@ -28,10 +40,10 @@ export function ReservationCard(props: ReservationItemProps) {
     if (props.reservation.status === 'Pending') {
       return 'yellow';
     }
-    if (props.reservation.status === 'Accepted') {
+    if (props.reservation.status === 'Approved') {
       return 'green';
     }
-    if (props.reservation.status === 'Rejected') {
+    if (props.reservation.status === 'Denied') {
       return 'red';
     }
     if (props.reservation.status === 'Canceled') {
@@ -43,17 +55,43 @@ export function ReservationCard(props: ReservationItemProps) {
     setAccommodationInfo(await GetAccommodationById(props.reservation.accommodationId));
   };
 
+  const getUserInfo = async (userId: string) => {
+    setUserInfo(await GetProfileInformation(userId));
+  };
+
   const cancelReservation = async () => {
-    //await CancelReservation(props.reservation.id);
+    await CancelReservation(props.reservation.id);
+  };
+
+  const acceptReservation = async () => {
+    await ApproveReservation(props.reservation.id);
+  };
+
+  const denyReservation = async () => {
+    await DenyReservation(props.reservation.id);
+  };
+
+  const showRecommendedFlights = () => {
+    //TODO: show recommended flights
+    navigate('/recomendedflights');
   };
 
   return (
     <Paper elevation={6} className={styles.reservationCard} style={{ border: `3px solid ${getBgColor()}`, borderRadius: '8px' }}>
       <div className={styles.reservationCardContent}>
         {props.isForGuest && <Typography variant="h4">Reservation at: {accommodationInfo?.name}</Typography>}
+        {props.isForHost && (
+          <>
+            <Typography variant="h5">Guest information</Typography>
+            <Typography variant="h6">Name: {userInfo?.name + ' ' + userInfo?.surname}</Typography>
+            <Typography variant="h6">Email: {userInfo?.email}</Typography>
+            <Divider sx={{ backgroundColor: 'grey', width: '100%' }} />
+          </>
+        )}
+
         <div>
-          <Typography variant="h6">Check in: {props.reservation.start}</Typography>
-          <Typography variant="h6">Check out: {props.reservation.end}</Typography>
+          <Typography variant="h6">Check in: {props.reservation.start.toDateString()}</Typography>
+          <Typography variant="h6">Check out: {props.reservation.end.toDateString()}</Typography>
         </div>
         <Divider sx={{ backgroundColor: 'grey', width: '100%' }} />
         {props.isForGuest && (
@@ -68,11 +106,7 @@ export function ReservationCard(props: ReservationItemProps) {
           </>
         )}
         <div>
-          <Typography variant="h5">Guest numbers</Typography>
-          <Typography variant="h6">
-            Minimun: {accommodationInfo?.minGuests} | Maximum: {accommodationInfo?.maxGuests}
-          </Typography>
-          <Typography variant="h6">Number of guests: {props.reservation.numberOfGuests}</Typography>
+          <Typography variant="h5">Number of guests: {props.reservation.numberOfGuests}</Typography>
         </div>
         <Divider sx={{ backgroundColor: 'grey', width: '100%' }} />
 
@@ -82,17 +116,51 @@ export function ReservationCard(props: ReservationItemProps) {
           <Typography variant="h6">Status: {props.reservation.status}</Typography>
         </div>
       </div>
-      {props.isForGuest && (
+      {props.isForGuest && canCancel && (
         <div className={styles.reservationCardFooter}>
           <Divider sx={{ backgroundColor: 'grey', width: '100%', marginY: '1rem' }} />
-          <Button
-            variant="contained"
-            size="large"
-            onClick={cancelReservation}
-            sx={{ color: 'white', background: 'red', width: 'fit-content', marginLeft: 'auto', ':hover': { background: 'white', color: 'red' } }}
-          >
-            Cancel reservation
-          </Button>
+          <div className={styles.lineContainer}>
+            <Button
+              variant="contained"
+              size="large"
+              onClick={showRecommendedFlights}
+              sx={{ color: 'white', background: '#212121', width: 'fit-content', alignSelf: 'center', ':hover': { background: 'white', color: '#212121' } }}
+            >
+              Recommended flights
+            </Button>
+            <Button
+              variant="contained"
+              size="large"
+              onClick={cancelReservation}
+              sx={{ color: 'white', background: '#212121', width: 'fit-content', alignSelf: 'center', ':hover': { background: 'white', color: '#212121' } }}
+            >
+              Cancel reservation
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {props.isForHost && props.reservation.status === 'Pending' && (
+        <div className={styles.reservationCardFooter}>
+          <Divider sx={{ backgroundColor: 'grey', width: '100%', marginY: '1rem' }} />
+          <div className={styles.lineContainer}>
+            <Button
+              variant="contained"
+              size="large"
+              onClick={acceptReservation}
+              sx={{ color: 'white', background: '#212121', width: 'fit-content', alignSelf: 'center', ':hover': { background: 'white', color: '#212121' } }}
+            >
+              Accept reservation
+            </Button>
+            <Button
+              variant="contained"
+              size="large"
+              onClick={denyReservation}
+              sx={{ color: 'white', background: '#212121', width: 'fit-content', alignSelf: 'center', ':hover': { background: 'white', color: '#212121' } }}
+            >
+              Deny reservation
+            </Button>
+          </div>
         </div>
       )}
     </Paper>

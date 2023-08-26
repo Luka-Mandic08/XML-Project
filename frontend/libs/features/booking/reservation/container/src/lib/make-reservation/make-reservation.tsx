@@ -6,6 +6,7 @@ import { Paper, Typography, Button, Grid } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { RateAccommodationOrHostForm } from '@frontend/features/booking/rating/container';
 import { HostDetails } from '@frontend/features/booking/profile/container';
+import { MakeReservationFunction } from '@frontend/features/booking/reservation/data-access';
 
 /* eslint-disable-next-line */
 export interface MakeReservationProps {}
@@ -20,16 +21,20 @@ export function MakeReservation(props: MakeReservationProps) {
   } = useForm({
     defaultValues: {
       accommodationId: selectedAccommodation.id,
-      dateFrom: '',
-      dateTo: '',
+      startDate: '',
+      endDate: '',
       numberOfGuests: 0,
     },
   });
 
   const onSubmitAvailabilityDates = async (data: any) => {
-    data.dateFrom = new Date(data.dateFrom);
-    data.dateTo = new Date(data.dateTo);
-    //const res = await UpdateAvailableDatesForAccommodation(data);
+    console.log(data);
+    data.startDate = new Date(data.startDate);
+    data.endDate = new Date(data.endDate);
+    data.userId = localStorage.getItem('userId');
+    console.log(data);
+    const res = await MakeReservationFunction(data);
+    console.log(res);
   };
 
   return (
@@ -54,33 +59,33 @@ export function MakeReservation(props: MakeReservationProps) {
                 <div className={styles.inputContainer}>
                   <input
                     type="date"
-                    id="dateFrom"
-                    value={watch('dateFrom')}
-                    {...register('dateFrom', {
+                    id="startDate"
+                    value={watch('startDate')}
+                    {...register('startDate', {
                       required: 'This field is required.',
                       min: { value: new Date().toISOString(), message: 'Date must be in the future.' },
                     })}
                   />
-                  <label className={styles.label} htmlFor="dateFrom" id="label-dateFrom">
+                  <label className={styles.label} htmlFor="startDate" id="label-startDate">
                     <div className={styles.text}>From</div>
                   </label>
-                  <label className={styles.errorLabel}>{errors.dateFrom?.message}</label>
+                  <label className={styles.errorLabel}>{errors.startDate?.message}</label>
                 </div>
 
                 <div className={styles.inputContainer}>
                   <input
                     type="date"
-                    id="dateTo"
-                    value={watch('dateTo')}
-                    {...register('dateTo', {
+                    id="endDate"
+                    value={watch('endDate')}
+                    {...register('endDate', {
                       required: 'This field is required.',
-                      min: { value: watch('dateFrom'), message: 'Selected date is before starting date.' },
+                      min: { value: watch('startDate'), message: 'Selected date is before starting date.' },
                     })}
                   />
-                  <label className={styles.label} htmlFor="dateTo" id="label-dateTo">
+                  <label className={styles.label} htmlFor="endDate" id="label-endDate">
                     <div className={styles.text}>To</div>
                   </label>
-                  <label className={styles.errorLabel}>{errors.dateTo?.message}</label>
+                  <label className={styles.errorLabel}>{errors.endDate?.message}</label>
                 </div>
 
                 <div className={styles.inputContainer}>

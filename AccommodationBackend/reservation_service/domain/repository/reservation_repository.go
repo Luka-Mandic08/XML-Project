@@ -5,6 +5,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"reservation_service/domain/model"
 	"time"
 )
@@ -25,9 +26,18 @@ func (store *ReservationMongoDBStore) Get(id primitive.ObjectID) (*model.Reserva
 	return store.filterOne(filter)
 }
 
-func (store *ReservationMongoDBStore) GetAllByUserId(id primitive.ObjectID) ([]*model.Reservation, error) {
-	filter := bson.M{"user": id.Hex()}
-	return store.filter(filter)
+func (store *ReservationMongoDBStore) GetAllPastByUserId(id string) ([]*model.Reservation, error) {
+	today := time.Now()
+	filter := bson.M{"user": id, "start": bson.M{"$lte": today}}
+	sort := bson.D{{"start", -1}} // The -1 indicates descending order
+	return store.filterWithSort(filter, sort)
+}
+
+func (store *ReservationMongoDBStore) GetAllFutureByUserId(id string) ([]*model.Reservation, error) {
+	today := time.Now()
+	filter := bson.M{"user": id, "start": bson.M{"$gt": today}}
+	sort := bson.D{{"start", 1}} // The 1 indicates ascending order
+	return store.filterWithSort(filter, sort)
 }
 
 func (store *ReservationMongoDBStore) GetAll() ([]*model.Reservation, error) {
@@ -93,16 +103,53 @@ func (store *ReservationMongoDBStore) GetPastForAccommodations(guestId string, i
 	return store.filter(filter)
 }
 
-func (store *ReservationMongoDBStore) GetAllIntercepting(reservation *model.Reservation) ([]*model.Reservation, error) {
+func (store *ReservationMongoDBStore) GetAllOverlapping(id string, statuses []string, from, to time.Time) ([]*model.Reservation, error) {
 	filter := bson.M{
-		"accommodation": reservation.AccommodationId,
-		"status":        "Pending",
+		"accommodation": id,
+		"status":        bson.M{"$in": statuses},
+		"$or": []bson.M{
+			{
+				"start": bson.M{"$gte": from, "$lte": to},
+			},
+			{
+				"End": bson.M{"$gte": from, "$lte": to},
+			},
+			{
+				"Start": bson.M{"$lte": from},
+				"End":   bson.M{"$gte": to},
+			},
+		},
 	}
 	return store.filter(filter)
 }
 
+func (store *ReservationMongoDBStore) GetAllPastByAccommodationId(id string) ([]*model.Reservation, error) {
+	today := time.Now()
+	filter := bson.M{"accommodation": id, "start": bson.M{"$lte": today}}
+	sort := bson.D{{"start", -1}} // The -1 indicates descending order
+	return store.filterWithSort(filter, sort)
+}
+
+func (store *ReservationMongoDBStore) GetAllFutureByAccommodationId(id string) ([]*model.Reservation, error) {
+	today := time.Now()
+	filter := bson.M{"accommodation": id, "start": bson.M{"$gt": today}}
+	sort := bson.D{{"start", 1}} // The 1 indicates ascending order
+	return store.filterWithSort(filter, sort)
+}
+
 func (store *ReservationMongoDBStore) filter(filter interface{}) ([]*model.Reservation, error) {
 	cursor, err := store.reservations.Find(context.TODO(), filter)
+	defer cursor.Close(context.TODO())
+
+	if err != nil {
+		return nil, err
+	}
+	return decodeReservations(cursor)
+}
+
+func (store *ReservationMongoDBStore) filterWithSort(filter interface{}, sort interface{}) ([]*model.Reservation, error) {
+	findOptions := options.Find().SetSort(sort)
+	cursor, err := store.reservations.Find(context.TODO(), filter, findOptions)
 	defer cursor.Close(context.TODO())
 
 	if err != nil {

@@ -90,11 +90,12 @@ func (handler *RatingHandler) CreateHostRating(ctx context.Context, request *pb.
 }
 
 func (handler *RatingHandler) UpdateHostRating(ctx context.Context, request *pb.HostRating) (*pb.HostRating, error) {
-	objectId, err := primitive.ObjectIDFromHex(request.Id)
+	objectId, err := primitive.ObjectIDFromHex(request.GetId())
 	if err != nil {
 		return nil, err
 	}
 
+	oldRating, _ := handler.service.GetAverageScoreForHost(request.GetId())
 	hostRating := MapToHostRating(request, objectId)
 	result, err := handler.service.UpdateHostRating(hostRating)
 	if err != nil {
@@ -108,7 +109,11 @@ func (handler *RatingHandler) UpdateHostRating(ctx context.Context, request *pb.
 	if err != nil {
 		return nil, status.Error(codes.Unknown, "Unable to find host rating")
 	}
-
+	newRating, _ := handler.service.GetAverageScoreForHost(hostRating.HostId)
+	shouldSendRequest, newStatus := CompareAverageRatings(oldRating, newRating)
+	if shouldSendRequest {
+		handler.reservationClient.UpdateOutstandingHostStatus(ctx, &reservation.UpdateOutstandingHostStatusRequest{HostId: request.GetHostId(), ShouldUpdate: newStatus})
+	}
 	response := MapHostRatingToResponse(updatedHostRating)
 	return response, nil
 }
@@ -119,12 +124,23 @@ func (handler *RatingHandler) DeleteHostRating(ctx context.Context, request *pb.
 		return nil, err
 	}
 
+	rating, err := handler.service.GetHostRatingById(objectId)
+	if err != nil {
+		return nil, err
+	}
+
+	oldRating, _ := handler.service.GetAverageScoreForHost(rating.HostId)
 	result, err := handler.service.DeleteHostRating(objectId)
 	if err != nil {
 		return nil, status.Error(codes.Unknown, "Unable to delete host rating.")
 	}
 	if result.DeletedCount == 0 {
 		return nil, status.Error(codes.NotFound, "Unable to find host rating")
+	}
+	newRating, _ := handler.service.GetAverageScoreForHost(rating.HostId)
+	shouldSendRequest, newStatus := CompareAverageRatings(oldRating, newRating)
+	if shouldSendRequest {
+		handler.reservationClient.UpdateOutstandingHostStatus(ctx, &reservation.UpdateOutstandingHostStatusRequest{HostId: rating.HostId, ShouldUpdate: newStatus})
 	}
 	return &pb.DeletedResponse{Message: "Host rating successfully deleted"}, nil
 }
@@ -176,6 +192,7 @@ func (handler *RatingHandler) CreateAccommodationRating(ctx context.Context, req
 	if err != nil {
 		return nil, err
 	}
+
 	accommodationRating := MapCreateRequestToAccommodationRating(request)
 	accommodationRating, err = handler.service.InsertAccommodationRating(accommodationRating)
 	if err != nil {

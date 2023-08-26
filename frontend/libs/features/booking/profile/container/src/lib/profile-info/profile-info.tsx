@@ -25,6 +25,7 @@ export function ProfileInfo(props: ProfileInfoProps) {
       country: '',
     },
     rating: 0,
+    isOutstanding: false,
   });
   const [accountInfo, setAccountInfo] = useState<UpdateCredentials>({
     username: '',
@@ -38,7 +39,7 @@ export function ProfileInfo(props: ProfileInfoProps) {
       setAccountInfo(data);
     });
 
-    GetProfileInformation().then((data) => {
+    GetProfileInformation(localStorage.getItem('userId')!).then((data) => {
       setUserInfo(data);
     });
   }, []);
@@ -74,6 +75,7 @@ export function ProfileInfo(props: ProfileInfoProps) {
         country: '',
       },
       rating: userInfo.rating,
+      isOutstanding: userInfo.isOutstanding,
     },
   });
 
@@ -140,10 +142,13 @@ export function ProfileInfo(props: ProfileInfoProps) {
         </div>
       </div>
 
-      <div className={styles.ratingContainer}>
-        <Typography variant="h4">Rating: {userInfo.rating}</Typography>
-        <Rating name="half-rating-read" value={userInfo.rating} precision={0.1} readOnly size="large" />
-      </div>
+      {localStorage.getItem('role') === 'Host' && (
+        <div className={styles.ratingContainer}>
+          <Typography variant="h4">Rating: {userInfo.rating}</Typography>
+          <Rating name="half-rating-read" value={userInfo.rating} precision={0.1} readOnly size="large" />
+          <Typography variant="h5">{userInfo.isOutstanding ? 'Outstanding host' : ''}</Typography>
+        </div>
+      )}
 
       <div className={styles.bodyContainer}>
         <Paper elevation={6}>

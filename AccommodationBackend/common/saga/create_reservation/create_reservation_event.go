@@ -1,10 +1,12 @@
 package create_reservation
 
+import "time"
+
 type Reservation struct {
 	Id              string
 	AccommodationId string
-	Start           string
-	End             string
+	Start           time.Time
+	End             time.Time
 	UserId          string
 	NumberOfGuests  int32
 	Status          string

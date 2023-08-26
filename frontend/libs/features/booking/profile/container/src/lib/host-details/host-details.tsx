@@ -21,6 +21,7 @@ export function HostDetails(props: HostDetailsProps) {
       country: '',
     },
     rating: 0,
+    isOutstanding: false,
   });
 
   useEffect(() => {
@@ -37,6 +38,9 @@ export function HostDetails(props: HostDetailsProps) {
             Host information
           </Typography>
           <Rating name="half-rating-read" value={hostInfo.rating} precision={0.1} readOnly size="large" sx={{ marginX: 'auto' }} />
+          <Typography variant="subtitle1" align="center">
+            {hostInfo.isOutstanding ? 'Outstanding host' : 'Regular host'}
+          </Typography>
         </Grid>
 
         <Grid item direction={'row'} xs={12} marginTop={'1.25rem'}>

@@ -5,13 +5,13 @@ import (
 	"time"
 )
 
-//Status types: Approved, Pending, Rejected(when host rejects), Canceled(when guest cancels)
+//Status types: Approved, Pending, Denied(when host rejects), Canceled(when guest cancels)
 
 type Reservation struct {
 	Id              primitive.ObjectID `bson:"_id,omitempty"`
 	AccommodationId string             `bson:"accommodation,omitempty"`
-	Start           string             `bson:"start,omitempty"`
-	End             string             `bson:"end,omitempty"`
+	Start           time.Time          `bson:"start,omitempty"`
+	End             time.Time          `bson:"end,omitempty"`
 	UserId          string             `bson:"user,omitempty"`
 	NumberOfGuests  int32              `bson:"numberOfGuests,omitempty"`
 	Status          string             `bson:"status,omitempty"`
@@ -19,11 +19,7 @@ type Reservation struct {
 }
 
 func (r *Reservation) CalculateDuration() int32 {
-	layout := "2006-01-02T15:04:05"
-	StartDate, _ := time.Parse(layout, r.Start)
-	EndDate, _ := time.Parse(layout, r.End)
-
-	duration := EndDate.Sub(StartDate)
+	duration := r.End.Sub(r.Start)
 	durationHours := int32(duration.Hours()) / 24
 	return durationHours
 }

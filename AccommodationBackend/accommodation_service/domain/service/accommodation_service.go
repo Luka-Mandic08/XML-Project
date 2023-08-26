@@ -5,7 +5,6 @@ import (
 	"accommodation_service/domain/repository"
 	accommodation "common/proto/accommodation_service"
 	"errors"
-	"fmt"
 	"go.mongodb.org/mongo-driver/mongo"
 	"strconv"
 	"strings"
@@ -201,20 +200,8 @@ func (service *AccommodationService) DeleteAllForHost(hostId string) (*mongo.Del
 }
 
 func (service *AccommodationService) CheckCanApprove(request *accommodation.CheckCanApproveRequest) (*accommodation.CheckCanApproveResponse, error) {
-	layout := "2006-01-02T15:04:05"
-
-	dateFrom, err := time.Parse(layout, request.Start)
-	if err != nil {
-		fmt.Println("Error parsing time:", err)
-		return nil, err
-	}
-	dateTo, err := time.Parse(layout, request.End)
-	if err != nil {
-		fmt.Println("Error parsing time:", err)
-		return nil, err
-	}
 	var availabilitiesToUpdate []*model.Availability
-	for date := dateFrom; !date.After(dateTo); date = date.Add(time.Hour * 24) {
+	for date := request.Start.AsTime(); !date.After(request.End.AsTime()); date = date.Add(time.Hour * 24) {
 		av, err := service.availabilityStore.GetByDateAndAccommodation(request.AccommodationId, date)
 		if av == nil {
 			response := accommodation.CheckCanApproveResponse{
@@ -227,12 +214,10 @@ func (service *AccommodationService) CheckCanApprove(request *accommodation.Chec
 		}
 		availabilitiesToUpdate = append(availabilitiesToUpdate, av)
 	}
-
-	err = service.ChangeAvailability(availabilitiesToUpdate, false)
+	err := service.ChangeAvailability(availabilitiesToUpdate, false)
 	if err != nil {
 		return nil, err
 	}
-
 	response := accommodation.CheckCanApproveResponse{
 		CanApprove: "true",
 	}
@@ -240,23 +225,9 @@ func (service *AccommodationService) CheckCanApprove(request *accommodation.Chec
 }
 
 func (service *AccommodationService) GetAndCancelAllAvailabilitiesToCancel(request *accommodation.GetAndCancelAllAvailabilitiesToCancelRequest) (*accommodation.GetAndCancelAllAvailabilitiesToCancelResponse, error) {
-
-	layout := "2006-01-02T15:04:05"
-
-	dateFrom, err := time.Parse(layout, request.Start)
-	if err != nil {
-		fmt.Println("Error parsing time:", err)
-		return nil, err
-	}
-	dateTo, err := time.Parse(layout, request.End)
-	if err != nil {
-		fmt.Println("Error parsing time:", err)
-		return nil, err
-	}
-
 	toChange := []*model.Availability{}
 	response := []string{}
-	for date := dateFrom; !date.After(dateTo); date = date.Add(time.Hour * 24) {
+	for date := request.Start.AsTime(); !date.After(request.End.AsTime()); date = date.Add(time.Hour * 24) {
 		av, err := service.availabilityStore.GetByDateAndAccommodationAllToCancel(request.AccommodationId, date)
 		if err != nil {
 			return nil, err
@@ -265,10 +236,21 @@ func (service *AccommodationService) GetAndCancelAllAvailabilitiesToCancel(reque
 		response = append(response, av.Id.Hex())
 	}
 
-	err = service.ChangeAvailability(toChange, true)
+	err := service.ChangeAvailability(toChange, true)
 	if err != nil {
 		return nil, err
 	}
-
 	return &accommodation.GetAndCancelAllAvailabilitiesToCancelResponse{ToCancel: response}, nil
+}
+
+func (service *AccommodationService) GetAllForHostByAccommodationId(request *accommodation.GetByIdRequest) (*accommodation.GetAllForHostByAccommodationIdResponse, error) {
+	objectId, err := primitive.ObjectIDFromHex(request.GetId())
+	if err != nil {
+		return nil, err
+	}
+	ids, hostId, err := service.accommodationStore.GetAllForHostByAccommodationId(objectId)
+	if err != nil {
+		return nil, err
+	}
+	return &accommodation.GetAllForHostByAccommodationIdResponse{AccommodationIds: ids, HostId: hostId}, nil
 }

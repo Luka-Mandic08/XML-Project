@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/encoding/protojson"
 	"net/http"
 )
 
@@ -130,7 +131,8 @@ func (handler *ReservationHandler) GetAllByUserId(ctx *gin.Context) {
 
 func (handler *ReservationHandler) Request(ctx *gin.Context) {
 	var reservation reservation.RequestRequest
-	err := ctx.ShouldBindJSON(&reservation)
+	num, _ := ctx.GetRawData()
+	err := protojson.Unmarshal(num, &reservation)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, err.Error())
 		return
@@ -208,6 +210,29 @@ func (handler *ReservationHandler) Cancel(ctx *gin.Context) {
 			switch grpcError.Code() {
 			case codes.AlreadyExists:
 				ctx.JSON(http.StatusConflict, grpcError.Message())
+				return
+			}
+		}
+		ctx.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+	ctx.JSON(http.StatusOK, response)
+}
+
+func (handler *ReservationHandler) GetAllByAccommodationId(ctx *gin.Context) {
+	accommodationId := ctx.Param("id")
+	request := reservation.GetRequest{Id: accommodationId}
+
+	response, err := handler.client.GetAllByAccommodationId(ctx, &request)
+	if err != nil {
+		grpcError, ok := status.FromError(err)
+		if ok {
+			switch grpcError.Code() {
+			case codes.AlreadyExists:
+				ctx.JSON(http.StatusConflict, grpcError.Message())
+				return
+			default:
+				ctx.JSON(http.StatusBadRequest, grpcError.Message())
 				return
 			}
 		}

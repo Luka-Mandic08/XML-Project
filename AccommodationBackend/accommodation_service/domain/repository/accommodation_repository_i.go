@@ -15,5 +15,5 @@ type AccommodationStore interface {
 	GetAllByHostId(hostId string) ([]*model.Accommodation, error)
 	GetAll(page int) ([]*model.Accommodation, error)
 	DeleteAllForHost(id string) (*mongo.DeleteResult, error)
-	GetAllForHostByAccommodationId(id primitive.ObjectID) ([]string, error)
+	GetAllForHostByAccommodationId(id primitive.ObjectID) ([]string, string, error)
 }
