@@ -2,6 +2,7 @@ package repository
 
 import (
 	"accommodation_service/domain/model"
+	accommodation "common/proto/accommodation_service"
 	"context"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -155,4 +156,39 @@ func (store *AccommodationMongoDBStore) GetAllForHostByAccommodationId(id primit
 	}
 
 	return results, accommodation.HostId, nil
+}
+
+func (store *AccommodationMongoDBStore) GetForSearch(id primitive.ObjectID, req *accommodation.SearchRequest, hostIds []string) (*model.Accommodation, error) {
+	amenityRegexes := make([]bson.M, len(req.Amenities))
+	for _, amenity := range req.Amenities {
+		regexPattern := bson.M{"$regex": amenity, "$options": "i"}
+		amenityRegexes = append(amenityRegexes, regexPattern)
+	}
+	var filter bson.M
+	if len(hostIds) == 0 {
+		filter = bson.M{
+			"_id": id,
+			"amenities": bson.M{
+				"$all": amenityRegexes,
+			},
+			"address.city":    bson.M{"$regex": req.City, "$options": "i"},
+			"address.country": bson.M{"$regex": req.Country, "$options": "i"},
+			"minGuests":       bson.M{"$lte": req.GetNumberOfGuests()},
+			"maxGuests":       bson.M{"$gte": req.GetNumberOfGuests()},
+		}
+	}
+	if len(hostIds) > 0 {
+		filter = bson.M{
+			"_id": id,
+			"amenities": bson.M{
+				"$all": amenityRegexes,
+			},
+			"address.city":    bson.M{"$regex": req.City, "$options": "i"},
+			"address.country": bson.M{"$regex": req.Country, "$options": "i"},
+			"minGuests":       bson.M{"$lte": req.GetNumberOfGuests()},
+			"maxGuests":       bson.M{"$gte": req.GetNumberOfGuests()},
+			"hostid":          bson.M{"$in": hostIds},
+		}
+	}
+	return store.filterOne(filter)
 }

@@ -81,7 +81,15 @@ func (handler *AccommodationHandler) CheckAvailability(ctx context.Context, requ
 }
 
 func (handler *AccommodationHandler) Search(ctx context.Context, request *accommodation.SearchRequest) (*accommodation.SearchResponse, error) {
-	accommodations, prices, numberOfDays, err := handler.service.Search(request)
+	var hostIds *reservation.GetAllOutstandingHostsResponse
+	var err error
+	if request.OwnedByProminentHost {
+		hostIds, err = handler.reservationClient.GetAllOutstandingHosts(ctx, &reservation.GetAllOutstandingHostsRequest{})
+		if err != nil {
+			return nil, status.Error(codes.Aborted, err.Error())
+		}
+	}
+	accommodations, prices, numberOfDays, err := handler.service.Search(request, hostIds)
 	if err != nil {
 		return nil, status.Error(codes.Aborted, err.Error())
 	}
