@@ -1,5 +1,5 @@
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
-import { AccommodationDetails, AvailabilityCalendar } from '@frontend/features/booking/accomodation/container';
+import { AccommodationDetails, AccomodationComments, AvailabilityCalendar } from '@frontend/features/booking/accomodation/container';
 import styles from './make-reservation.module.css';
 import { useSelectedAccommodationStore } from '@frontend/features/booking/store/container';
 import { Paper, Typography, Button, Grid } from '@mui/material';
@@ -119,6 +119,14 @@ export function MakeReservation(props: MakeReservationProps) {
           </div>
         </>
       )}
+      <div style={{ display: 'flex' }}>
+        <div style={{ flex: 1 }}>
+          <AccomodationComments showAccommodationComments={true} showHostComments={false} />
+        </div>
+        <div style={{ flex: 1 }}>
+          <AccomodationComments showAccommodationComments={false} showHostComments={true} />
+        </div>
+      </div>
       {selectedAccommodation.id === '' && (
         <Typography variant="h4" align="left">
           Please select accommodation to see availability.

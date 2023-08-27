@@ -196,7 +196,6 @@ export function AvailabilityCalendar(props: AvailabilityCalendarProps) {
           </div>
         </>
       )}
-      <AccomodationComments></AccomodationComments>
       {selectedAccommodation.id === '' && (
         <Typography variant="h4" align="left">
           Please select accommodation to see availability.

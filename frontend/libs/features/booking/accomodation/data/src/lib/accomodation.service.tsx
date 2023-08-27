@@ -5,13 +5,16 @@ import Swal from 'sweetalert2';
 export async function GetAccomodationRatings(accomodationId: any): Promise<any> {
   return await axios({
     method: 'get',
-    url: BookingBaseURL.URL + '/rating/accomodation/all/' + accomodationId,
+    url: BookingBaseURL.URL + '/rating/accommodation/all/' + accomodationId,
   })
     .then((response) => {
+      return response.data.accommodationRatings;
+    })
+    .catch((err) => {
       Swal.fire({
-        icon: 'success',
-        title: 'Success',
-        //text: 'Availability updated successfully\n' + response.data,
+        icon: 'error',
+        title: 'Error',
+        text: 'Something went wrong, please try again\n' + err.message,
         showConfirmButton: false,
         position: 'bottom-right',
         timer: 3000,
@@ -21,6 +24,134 @@ export async function GetAccomodationRatings(accomodationId: any): Promise<any> 
         background: '#212121',
         color: 'white',
       });
+    });
+}
+
+export async function GetHostRatings(hostId: any): Promise<any> {
+  return await axios({
+    method: 'get',
+    url: BookingBaseURL.URL + '/rating/host/all/' + hostId,
+  })
+    .then((response) => {
+      console.log(response.data.hostRatings);
+      return response.data.hostRatings;
+    })
+    .catch((err) => {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Something went wrong, please try again\n' + err.message,
+        showConfirmButton: false,
+        position: 'bottom-right',
+        timer: 3000,
+        timerProgressBar: true,
+        backdrop: 'none',
+        width: 300,
+        background: '#212121',
+        color: 'white',
+      });
+    });
+}
+
+export async function DeleteAccommodationRating(ratingId: string, guestId: string): Promise<any> {
+  return await axios({
+    method: 'delete',
+    url: BookingBaseURL.URL + '/rating/accommodation/delete',
+    data: { GuestId: guestId, RatingId: ratingId },
+  })
+    .then((response) => {
+      return response.data.hostRatings;
+    })
+    .catch((err) => {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Something went wrong, please try again\n' + err.message,
+        showConfirmButton: false,
+        position: 'bottom-right',
+        timer: 3000,
+        timerProgressBar: true,
+        backdrop: 'none',
+        width: 300,
+        background: '#212121',
+        color: 'white',
+      });
+    });
+}
+
+export async function DeleteHostRating(ratingId: string, guestId: string): Promise<any> {
+  return await axios({
+    method: 'delete',
+    url: BookingBaseURL.URL + '/rating/host/delete',
+    data: { GuestId: guestId, RatingId: ratingId },
+  })
+    .then((response) => {
+      return response.data.hostRatings;
+    })
+    .catch((err) => {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Something went wrong, please try again\n' + err.message,
+        showConfirmButton: false,
+        position: 'bottom-right',
+        timer: 3000,
+        timerProgressBar: true,
+        backdrop: 'none',
+        width: 300,
+        background: '#212121',
+        color: 'white',
+      });
+    });
+}
+
+export async function EditHostRating(comment: any): Promise<any> {
+  return await axios({
+    method: 'put',
+    url: BookingBaseURL.URL + '/rating/host/update',
+    data: {
+      id: comment.id,
+      hostId: comment.hostId,
+      guestId: comment.guestId,
+      date: new Date(),
+      score: comment.score,
+      comment: comment.comment,
+    },
+  })
+    .then((response) => {
+      return response.data;
+    })
+    .catch((err) => {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Something went wrong, please try again\n' + err.message,
+        showConfirmButton: false,
+        position: 'bottom-right',
+        timer: 3000,
+        timerProgressBar: true,
+        backdrop: 'none',
+        width: 300,
+        background: '#212121',
+        color: 'white',
+      });
+    });
+}
+
+export async function EditAccommodationRating(comment: any): Promise<any> {
+  return await axios({
+    method: 'put',
+    url: BookingBaseURL.URL + '/rating/accommodation/update',
+    data: {
+      id: comment.id,
+      accommodationId: comment.accommodationId,
+      guestId: comment.guestId,
+      date: new Date(),
+      score: comment.score,
+      comment: comment.comment,
+    },
+  })
+    .then((response) => {
       return response.data;
     })
     .catch((err) => {

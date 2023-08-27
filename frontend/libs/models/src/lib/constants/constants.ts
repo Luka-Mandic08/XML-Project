@@ -19,6 +19,7 @@ export const BookingAppRoutes = {
   CreateReservation: '/reservations/create',
   MakeReservation: '/accommodation/make-reservation',
   AccommodationDetails: '/accommodation/details',
+  HostComments: '/host-comments',
 };
 
 export const SharedRoutes = {
