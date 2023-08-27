@@ -114,7 +114,7 @@ func (flightHandler *FlightHandler) GetSearchedFlights(rw http.ResponseWriter, r
 func (flightHandler *FlightHandler) UpdateFlightRemainingTickets(rw http.ResponseWriter, req *http.Request) {
 	buyTicketDto := req.Context().Value(KeyProduct{}).(*model.BuyTicketDto)
 	flightHandler.logger.Println("FlightId: " + buyTicketDto.FlightId)
-	flightHandler.logger.Printf("Amopunt: %d\n", buyTicketDto.Amount)
+	flightHandler.logger.Printf("Amount: %d\n", buyTicketDto.Amount)
 	flightHandler.logger.Println("UserId:" + buyTicketDto.UserId)
 
 	if buyTicketDto.Amount < 1 {

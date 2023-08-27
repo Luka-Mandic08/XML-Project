@@ -53,9 +53,9 @@ func CreateRoutersAndSetRoutes(config *Config) *gin.Engine {
 	ratingHandler := handler.NewRatingHandler(ratingClient)
 
 	corsMiddleware := cors.New(cors.Config{
-		AllowOrigins: []string{"*"},
-		AllowMethods: []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
-		AllowHeaders: []string{"Authorization", "Content-Type"},
+		AllowAllOrigins: true,
+		AllowMethods:    []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+		AllowHeaders:    []string{"Authorization", "Content-Type"},
 	})
 
 	router := gin.Default()

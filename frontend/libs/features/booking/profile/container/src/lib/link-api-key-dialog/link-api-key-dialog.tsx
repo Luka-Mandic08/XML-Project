@@ -67,7 +67,7 @@ export function LinkApiKeyDialog(props: LinkApiKeyDialogProps) {
                   onClick={createTemporaryApiKey}
                   sx={{ color: 'white', background: '#212121', height: '48px', minWidth: '200px', ':hover': { background: 'white', color: '#212121' } }}
                 >
-                  1 month
+                  Connect to flights app
                 </Button>
               </div>
             </>

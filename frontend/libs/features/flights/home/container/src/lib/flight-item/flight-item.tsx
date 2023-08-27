@@ -45,7 +45,7 @@ export function FlightItem(props: FlightItemProps) {
   };
 
   let customButton;
-  if (localStorage.getItem('role') === 'USER') {
+  if (localStorage.getItem('role') === 'USER' || localStorage.getItem('role') === 'Guest') {
     customButton = (
       <Button
         variant="contained"

@@ -91,7 +91,7 @@ func main() {
 
 	linkUserToBookingAppRouter := router.Methods(http.MethodPut).Subrouter()
 	linkUserToBookingAppRouter.HandleFunc("/user/link", userHandler.LinkUserToBookingApp)
-	updateUserCredentialsRouter.Use(userHandler.MiddlewareLinkUserDeserialization)
+	linkUserToBookingAppRouter.Use(userHandler.MiddlewareLinkUserDeserialization)
 
 	// Users DELETE
 	deleteUserRouter := router.Methods(http.MethodDelete).Subrouter()
@@ -130,8 +130,8 @@ func main() {
 	deleteFlightRouter := router.Methods(http.MethodDelete).Subrouter()
 	deleteFlightRouter.HandleFunc("/flight/{id}", flightHandler.DeleteFlight)
 
-	headersOk := gorillaHandlers.AllowedHeaders([]string{"*", "Content-Type"})
-	originsOk := gorillaHandlers.AllowedOrigins([]string{"*", "http://localhost:4200/"})
+	originsOk := gorillaHandlers.AllowedOrigins([]string{"*"})
+	headersOk := gorillaHandlers.AllowedHeaders([]string{"Authorization", "Content-Type", "Access-Control-Allow-Origin"})
 	methodsOk := gorillaHandlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS", "DELETE"})
 
 	cors := gorillaHandlers.CORS(originsOk, headersOk, methodsOk)

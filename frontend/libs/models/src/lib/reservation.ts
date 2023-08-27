@@ -1,3 +1,5 @@
+import { Address } from './bookingUser';
+
 export interface ReservationInfo {
   id: string;
   accommodationId: string;
@@ -15,4 +17,11 @@ export interface CreateReservation {
   start: Date;
   end: Date;
   numberOfGuests: number;
+}
+
+export interface RecommendedFlightsProps {
+  startDate: Date;
+  endDate: Date;
+  numberOfGuests: number;
+  accommodationLocation: Address;
 }
