@@ -77,7 +77,7 @@ export function GuestReservations(props: GuestReservationsProps) {
         <>
           <div className={styles.cardsContainer}>
             {upcomingReservations?.map((reservation, key) => (
-              <ReservationCard reservation={reservation} isForGuest={true} isForHost={false} accommodationInfo={undefined} />
+              <ReservationCard key={key} reservation={reservation} isForGuest={true} isForHost={false} accommodationInfo={undefined} />
             ))}
           </div>
           {upcomingReservations.length === 0 && (
@@ -92,7 +92,7 @@ export function GuestReservations(props: GuestReservationsProps) {
         <>
           <div className={styles.cardsContainer}>
             {pastReservations?.map((reservation, key) => (
-              <ReservationCard reservation={reservation} isForGuest={true} isForHost={false} accommodationInfo={undefined} />
+              <ReservationCard key={key} reservation={reservation} isForGuest={true} isForHost={false} accommodationInfo={undefined} />
             ))}
           </div>
           {pastReservations.length === 0 && (

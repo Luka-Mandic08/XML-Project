@@ -1,0 +1,71 @@
+.lineContainer {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 2rem;
+  margin-top: 1rem;
+}
+
+.infoContainer {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 1rem;
+}
+
+.dialogContentContainer {
+  padding: 1rem 2rem 2rem 2rem !important;
+}
+
+.inputContainer {
+  position: relative;
+  margin-bottom: 2rem;
+  display: flex;
+  flex-grow: 1;
+}
+
+.label {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 16px;
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+}
+
+input,
+.label .text {
+  font-family: 'Segoe UI';
+  font-size: 16px;
+}
+
+.label .text {
+  transition: all 0.15s ease-out;
+  color: grey;
+}
+
+input:focus + .label .text,
+:not(input[value='']) + .label .text {
+  font-size: 12px;
+  transform: translate(0, -150%);
+  background-color: white;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+input:focus + .label .text {
+  color: black;
+}
+
+.errorLabel {
+  position: absolute;
+  top: 50px;
+  left: 16px;
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+  color: red;
+}

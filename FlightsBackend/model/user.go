@@ -16,6 +16,7 @@ type User struct {
 	Credentials UserCredentials    `bson:"credentials,omitempty" json:"credentials"`
 	Role        UserRole           `bson:"role,omitempty" json:"role"`
 	Flights     UserFlights        `bson:"flights" json:"flights"`
+	APIKey      APIKey             `bson:"apikey" json:"apikey"`
 }
 
 type Users []*User

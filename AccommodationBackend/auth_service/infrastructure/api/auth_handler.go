@@ -79,3 +79,19 @@ func (handler *AuthHandler) GetByUserId(ctx context.Context, request *pb.GetByUs
 	}
 	return GetMapper(result), nil
 }
+
+func (handler *AuthHandler) GenerateAPIKey(ctx context.Context, request *pb.GenerateAPIKeyRequest) (*pb.GenerateAPIKeyResponse, error) {
+	_, err := handler.service.GenerateAPIKey(request.UserId, request.IsPermanent)
+	if err != nil {
+		return nil, status.Error(codes.Unknown, err.Error())
+	}
+	return &pb.GenerateAPIKeyResponse{Message: "APIKey generated successfully."}, nil
+}
+
+func (handler *AuthHandler) LinkAPIKey(ctx context.Context, request *pb.LinkAPIKeyRequest) (*pb.LinkAPIKeyResponse, error) {
+	result, err := handler.service.LinkAPIKey(request.UserId)
+	if err != nil {
+		return nil, status.Error(codes.Unknown, err.Error())
+	}
+	return MapAPIKeyToResponse(result)
+}

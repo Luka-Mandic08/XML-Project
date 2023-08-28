@@ -4,13 +4,13 @@ go 1.20
 
 require (
 	common v0.0.0-00010101000000-000000000000
+	github.com/golang/protobuf v1.5.3
 	go.mongodb.org/mongo-driver v1.12.0
 	golang.org/x/crypto v0.11.0
 	google.golang.org/grpc v1.57.0
 )
 
 require (
-	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/golang/snappy v0.0.1 // indirect
 	github.com/klauspost/compress v1.16.7 // indirect
 	github.com/montanaflynn/stats v0.0.0-20171201202039-1bf9dbcd8cbe // indirect

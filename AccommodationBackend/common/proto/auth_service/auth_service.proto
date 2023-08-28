@@ -4,12 +4,16 @@ option go_package = "common/user";
 
 package auth;
 
+import "google/protobuf/timestamp.proto";
+
 service AuthService{
         rpc Login(LoginRequest) returns(LoginResponse) {}
         rpc Register(RegisterRequest) returns(RegisterResponse) {}
         rpc Update(UpdateRequest) returns(UpdateResponse) {}
         rpc GetByUserId(GetByUserIdRequest) returns(GetByUserIdResponse) {}
         rpc Delete(DeleteRequest) returns(DeleteResponse) {}
+        rpc GenerateAPIKey(GenerateAPIKeyRequest) returns(GenerateAPIKeyResponse) {}
+        rpc LinkAPIKey(LinkAPIKeyRequest) returns(LinkAPIKeyResponse) {}
 }
 
 message LoginRequest {
@@ -59,4 +63,21 @@ message GetByUserIdRequest{
 
 message GetByUserIdResponse{
         string username = 1;
+}
+
+message GenerateAPIKeyRequest{
+        string userId = 1;
+        bool isPermanent = 2;
+}
+message GenerateAPIKeyResponse{
+        string message = 1;
+}
+
+message LinkAPIKeyRequest{
+        string userId = 1;
+}
+message LinkAPIKeyResponse{
+        string apiKeyValue = 1;
+        google.protobuf.Timestamp validTo = 2;
+        bool isPermanent = 3;
 }

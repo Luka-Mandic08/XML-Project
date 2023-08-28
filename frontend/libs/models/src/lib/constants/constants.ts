@@ -20,6 +20,7 @@ export const BookingAppRoutes = {
   MakeReservation: '/accommodation/make-reservation',
   AccommodationDetails: '/accommodation/details',
   HostComments: '/host-comments',
+  RecommendedFlights: '/flights/recommended',
 };
 
 export const SharedRoutes = {

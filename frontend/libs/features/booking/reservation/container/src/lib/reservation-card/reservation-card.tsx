@@ -1,4 +1,4 @@
-import { AccommodationInfo, ReservationInfo, UpdatePersonalData } from '@frontend/models';
+import { AccommodationInfo, BookingAppRoutes, ReservationInfo, UpdatePersonalData } from '@frontend/models';
 import styles from './reservation-card.module.css';
 import { Button, Divider, Paper, Typography } from '@mui/material';
 import { useState, useEffect } from 'react';
@@ -6,6 +6,7 @@ import { GetAccommodationById } from '@frontend/features/booking/accomodation/da
 import { CancelReservation, ApproveReservation, DenyReservation } from '@frontend/features/booking/reservation/data-access';
 import { GetProfileInformation } from '@frontend/features/booking/profile/data-access';
 import { useNavigate } from 'react-router-dom';
+import { useRecomendedFlightdPropsStore } from '@frontend/features/booking/store/container';
 
 /* eslint-disable-next-line */
 export interface ReservationItemProps {
@@ -19,6 +20,7 @@ export function ReservationCard(props: ReservationItemProps) {
   const [accommodationInfo, setAccommodationInfo] = useState<AccommodationInfo>();
   const [userInfo, setUserInfo] = useState<UpdatePersonalData | undefined>(undefined);
   const [canCancel, setCanCancel] = useState<boolean>(true);
+  const setRecommendedFlightsProps = useRecomendedFlightdPropsStore((state) => state.setRecomendedFlightdProps);
 
   const navigate = useNavigate();
 
@@ -73,7 +75,17 @@ export function ReservationCard(props: ReservationItemProps) {
 
   const showRecommendedFlights = () => {
     //TODO: show recommended flights
-    navigate('/recomendedflights');
+    setRecommendedFlightsProps({
+      startDate: props.reservation.start,
+      endDate: props.reservation.end,
+      numberOfGuests: props.reservation.numberOfGuests,
+      accommodationLocation: {
+        city: accommodationInfo!.address.city,
+        country: accommodationInfo!.address.country,
+        street: accommodationInfo!.address.street,
+      },
+    });
+    navigate(BookingAppRoutes.RecommendedFlights);
   };
 
   return (
