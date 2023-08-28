@@ -146,7 +146,7 @@ func (service *AccommodationService) Search(req *accommodation.SearchRequest, ho
 	for i, id := range ids {
 		objectId, _ := primitive.ObjectIDFromHex(id)
 		acc, _ := service.accommodationStore.GetForSearch(objectId, req, hostIds.GetIds())
-		if acc != nil && float32(prices[i]) <= req.MaxPrice {
+		if acc != nil && (float32(prices[i]) <= req.MaxPrice || req.MaxPrice == 0) {
 			accommodations = append(accommodations, acc)
 			realPrices = append(realPrices, prices[i])
 		}

@@ -17,7 +17,6 @@ export interface ReservationItemProps {
 
 export function ReservationCard(props: ReservationItemProps) {
   const [accommodationInfo, setAccommodationInfo] = useState<AccommodationInfo>();
-  const [userInfo, setUserInfo] = useState<UpdatePersonalData | undefined>(undefined);
   const [canCancel, setCanCancel] = useState<boolean>(true);
 
   const navigate = useNavigate();
@@ -31,7 +30,6 @@ export function ReservationCard(props: ReservationItemProps) {
       }
     }
     if (props.isForHost) {
-      getUserInfo(props.reservation.userId);
       setAccommodationInfo(props.accommodationInfo);
     }
   }, []);
@@ -53,10 +51,6 @@ export function ReservationCard(props: ReservationItemProps) {
 
   const getAccommodationInfo = async () => {
     setAccommodationInfo(await GetAccommodationById(props.reservation.accommodationId));
-  };
-
-  const getUserInfo = async (userId: string) => {
-    setUserInfo(await GetProfileInformation(userId));
   };
 
   const cancelReservation = async () => {
@@ -83,8 +77,13 @@ export function ReservationCard(props: ReservationItemProps) {
         {props.isForHost && (
           <>
             <Typography variant="h5">Guest information</Typography>
-            <Typography variant="h6">Name: {userInfo?.name + ' ' + userInfo?.surname}</Typography>
-            <Typography variant="h6">Email: {userInfo?.email}</Typography>
+            <Typography variant="h6">Name: {props.reservation.guestName + ' ' + props.reservation.guestSurname}</Typography>
+            <Typography variant="h6">Email: {props.reservation.guestEmail}</Typography>
+            <Typography variant="h6">
+              {props.reservation.numberOfPreviousCancellations !== -1
+                ? `Number of previous cancellations: ${props.reservation.numberOfPreviousCancellations}`
+                : ''}
+            </Typography>
             <Divider sx={{ backgroundColor: 'grey', width: '100%' }} />
           </>
         )}

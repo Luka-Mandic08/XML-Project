@@ -7,6 +7,10 @@ export interface ReservationInfo {
   numberOfGuests: number;
   price: number;
   status: string;
+  guestName: string;
+  guestSurname: string;
+  guestEmail: string;
+  numberOfPreviousCancellations: number;
 }
 
 export interface CreateReservation {

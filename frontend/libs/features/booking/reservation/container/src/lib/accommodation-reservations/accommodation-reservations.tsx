@@ -34,6 +34,10 @@ export function AccommodationReservations(props: AccommodationReservationsProps)
         end: new Date(reservation.end.seconds * 1000),
         status: reservation.status,
         price: reservation.price,
+        guestEmail: reservation.guestEmail,
+        guestName: reservation.guestName,
+        guestSurname: reservation.guestSurname,
+        numberOfPreviousCancellations: reservation.numberOfPreviousCancellations,
       });
     });
     setUpcomingReservations(newUpcomingReservations);
@@ -48,6 +52,10 @@ export function AccommodationReservations(props: AccommodationReservationsProps)
         end: new Date(reservation.end.seconds * 1000),
         status: reservation.status,
         price: reservation.price,
+        guestEmail: reservation.guestEmail,
+        guestName: reservation.guestName,
+        guestSurname: reservation.guestSurname,
+        numberOfPreviousCancellations: -1,
       });
     });
 

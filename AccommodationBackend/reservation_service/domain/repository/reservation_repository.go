@@ -137,8 +137,7 @@ func (store *ReservationMongoDBStore) GetAllFutureByAccommodationId(id string) (
 	return store.filterWithSort(filter, sort)
 }
 func (store *ReservationMongoDBStore) GetAllCanceledByUserId(id string) ([]*model.Reservation, error) {
-	today := time.Now()
-	filter := bson.M{"user": id, "start": bson.M{"$lte": today}, "status": "Canceled"}
+	filter := bson.M{"user": id, "status": "Canceled"}
 	return store.filter(filter)
 }
 
