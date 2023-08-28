@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+option go_package = "common/notification";
+
+package notification;
+
+import "google/protobuf/timestamp.proto";
+
+service NotificationService{
+  rpc GetAllNotificationsForHost(IdRequest) returns(GetAllNotificationsForHostResponse) {}
+  rpc AcknowledgeNotification(Notification) returns(Notification) {}
+  rpc InsertNotification(CreateNotification) returns(Notification) {}
+}
+
+message Notification {
+  string id = 1;
+  string notificationText = 2;
+  bool isAcknowledged = 3;
+  string hostId = 4;
+  google.protobuf.Timestamp dateCreated = 5;
+}
+
+message CreateNotification {
+  string notificationText = 1;
+  string hostId = 2;
+}
+
+message IdRequest {
+  string hostId = 1;
+}
+
+message GetAllNotificationsForHostResponse {
+  repeated Notification notifications = 1;
+}
