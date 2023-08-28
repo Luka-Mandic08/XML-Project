@@ -4,6 +4,7 @@ import (
 	"Rest/model"
 	"Rest/repositories"
 	"context"
+	"errors"
 	"log"
 	"net/http"
 
@@ -146,6 +147,51 @@ func (flightHandler *FlightHandler) UpdateFlightRemainingTickets(rw http.Respons
 
 	http.Error(rw, "User not found", http.StatusBadRequest)
 	flightHandler.logger.Fatal("User not found! ID: ", buyTicketDto.UserId)
+}
+
+func (flightHandler *FlightHandler) UpdateFlightRemainingTicketsFromBooking(rw http.ResponseWriter, req *http.Request) {
+	buyTicketDto := req.Context().Value(KeyProduct{}).(*model.BuyTicketDto)
+	apiKeyValue := req.Header.Get("X-API-Key")
+	flightHandler.logger.Println("FlightId: " + buyTicketDto.FlightId)
+	flightHandler.logger.Printf("Amount: %d\n", buyTicketDto.Amount)
+	flightHandler.logger.Printf("APIKey value: " + apiKeyValue)
+
+	if buyTicketDto.Amount < 1 {
+		http.Error(rw, "Can not buy Negative or Zero amount of cards.", http.StatusBadRequest)
+		flightHandler.logger.Fatal("Negative or Zero amount of cards: ", buyTicketDto.Amount)
+		return
+	}
+
+	isValid, userId, err := flightHandler.userRepository.GetByApiKey(apiKeyValue)
+
+	if err != nil {
+		handleError(rw, flightHandler.logger, err)
+		return
+	}
+
+	if !isValid {
+		handleError(rw, flightHandler.logger, errors.New("Invalid APIKey"))
+		return
+	}
+
+	err = flightHandler.flightRepository.UpdateFlightRemainingTickets(buyTicketDto.FlightId, buyTicketDto.Amount)
+	if err != nil {
+		handleError(rw, flightHandler.logger, err)
+		return
+	}
+
+	err = flightHandler.userRepository.AddFlight(userId, buyTicketDto.FlightId, buyTicketDto.Amount)
+	if err != nil {
+		handleError(rw, flightHandler.logger, err)
+		return
+	}
+
+	rw.WriteHeader(http.StatusOK)
+}
+
+func handleError(rw http.ResponseWriter, logger *log.Logger, err error) {
+	http.Error(rw, "An error occurred: "+err.Error(), http.StatusInternalServerError)
+	logger.Println("Error:", err)
 }
 
 func (flightHandler *FlightHandler) DeleteFlight(rw http.ResponseWriter, req *http.Request) {

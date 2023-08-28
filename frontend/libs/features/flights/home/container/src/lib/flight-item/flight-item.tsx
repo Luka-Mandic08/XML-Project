@@ -2,17 +2,20 @@ import { AppRoutes, Flight } from '@frontend/models';
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, Grid, TextField, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import FlightIcon from '@mui/icons-material/Flight';
-import { BuyFlightTickets } from '@frontend/features/flights/home/data-access';
+import { BuyFlightTickets, BuyFlightTicketsFromBookingApp } from '@frontend/features/flights/home/data-access';
 import { useNavigate } from 'react-router-dom';
 import { DeleteFlight } from '@frontend/features/flights/add-flight/data-access';
+import { GetApiKey } from '@frontend/features/booking/profile/data-access';
 
 /* eslint-disable-next-line */
 export interface FlightItemProps {
   flight: Flight;
+  ticketAmount: number;
+  isBookingApp?: boolean;
 }
 
 export function FlightItem(props: FlightItemProps) {
-  const [amount, setAmount] = useState<number>(1);
+  const [amount, setAmount] = useState<number>(props.ticketAmount);
   const [amountError, setAmountError] = useState<boolean>();
   const [isBuyTicketDialogOpen, setIsBuyTicketDialogOpen] = useState(false);
 
@@ -26,17 +29,22 @@ export function FlightItem(props: FlightItemProps) {
 
   const handleBuyTicketClick = () => {
     setIsBuyTicketDialogOpen(true);
-    setAmount(1);
+    console.log(amount);
   };
 
   const handleBuyTicketClose = () => {
     setIsBuyTicketDialogOpen(false);
   };
 
-  const buyTickets = (amount: number) => {
-    setIsBuyTicketDialogOpen(false);
-    BuyFlightTickets(props.flight.id, amount);
-    window.location.reload();
+  const buyTickets = async (amount: number) => {
+    if (!props.isBookingApp) {
+      setIsBuyTicketDialogOpen(false);
+      BuyFlightTickets(props.flight.id, amount);
+      window.location.reload();
+    } else {
+      const apiKey = await GetApiKey();
+      await BuyFlightTicketsFromBookingApp(props.flight.id, amount, apiKey.apiKeyValue);
+    }
   };
 
   const deleteFlight = () => {
@@ -83,7 +91,7 @@ export function FlightItem(props: FlightItemProps) {
       direction="row"
       justifyContent="space-evenly"
       sx={{
-        marginY: '1rem',
+        marginTop: '1rem',
         marginBottom: '1.75rem',
         maxWidth: '90vw',
         padding: '1rem',
@@ -158,7 +166,7 @@ export function FlightItem(props: FlightItemProps) {
                 id="amount"
                 label="Amount of tickets"
                 type="number"
-                defaultValue="1"
+                defaultValue={amount}
                 fullWidth
                 variant="standard"
                 error={amountError}

@@ -127,11 +127,15 @@ func main() {
 	UpdateFlightRemainingTickets.HandleFunc("/flight/buyticket", flightHandler.UpdateFlightRemainingTickets)
 	UpdateFlightRemainingTickets.Use(flightHandler.MiddlewareBuyTicketsDeserialization)
 
+	UpdateFlightRemainingTicketsFromBooking := router.Methods(http.MethodPut).Subrouter()
+	UpdateFlightRemainingTicketsFromBooking.HandleFunc("/flight/buyticket/bookingapp", flightHandler.UpdateFlightRemainingTicketsFromBooking)
+	UpdateFlightRemainingTicketsFromBooking.Use(flightHandler.MiddlewareBuyTicketsDeserialization)
+
 	deleteFlightRouter := router.Methods(http.MethodDelete).Subrouter()
 	deleteFlightRouter.HandleFunc("/flight/{id}", flightHandler.DeleteFlight)
 
 	originsOk := gorillaHandlers.AllowedOrigins([]string{"*"})
-	headersOk := gorillaHandlers.AllowedHeaders([]string{"Authorization", "Content-Type", "Access-Control-Allow-Origin"})
+	headersOk := gorillaHandlers.AllowedHeaders([]string{"Authorization", "Content-Type", "Access-Control-Allow-Origin", "X-API-Key"})
 	methodsOk := gorillaHandlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS", "DELETE"})
 
 	cors := gorillaHandlers.CORS(originsOk, headersOk, methodsOk)

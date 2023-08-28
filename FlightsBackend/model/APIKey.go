@@ -3,7 +3,7 @@ package model
 import "time"
 
 type APIKey struct {
-	Value       string    `bson:"value" json:"value"`
+	Value       string    `bson:"value" json:"apiKeyValue"`
 	ValidTo     time.Time `bson:"validTo" json:"validTo"`
 	IsPermanent bool      `bson:"isPermanent" json:"isPermanent"`
 }

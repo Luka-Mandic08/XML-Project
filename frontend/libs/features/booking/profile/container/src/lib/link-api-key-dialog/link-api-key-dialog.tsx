@@ -2,7 +2,8 @@ import { Button, Dialog, DialogContent, DialogTitle, Divider, Typography } from 
 import styles from './link-api-key-dialog.module.css';
 import { ApiKey } from '@frontend/models';
 import { useEffect, useState } from 'react';
-import { CreateApiKey, GetApiKey } from '@frontend/features/booking/profile/data-access';
+import { CreateApiKey, GetApiKey, LinkToFlightsApp } from '@frontend/features/booking/profile/data-access';
+import { useForm } from 'react-hook-form';
 
 /* eslint-disable-next-line */
 export interface LinkApiKeyDialogProps {
@@ -20,12 +21,31 @@ export function LinkApiKeyDialog(props: LinkApiKeyDialogProps) {
 
   const getApiKey = async () => {
     const res = await GetApiKey();
+    console.log(res);
     const newApiKey = {
       apiKeyValue: res.apiKeyValue,
       validTo: new Date(res.validTo.seconds * 1000),
       isPermanent: res.isPermanent,
     };
     setApiKey(newApiKey);
+  };
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      username: '',
+      password: '',
+    },
+  });
+
+  const onSubmit = async (data: any) => {
+    console.log(data);
+    await LinkToFlightsApp(data.username, data.password, apiKey!);
+    onClose();
   };
 
   const createPermanentApiKey = async () => {
@@ -60,16 +80,61 @@ export function LinkApiKeyDialog(props: LinkApiKeyDialogProps) {
               <Typography variant="h5" align="left">
                 {apiKey.isPermanent ? 'Permanent' : 'Temporary'}
               </Typography>
-              <div className={styles.lineContainer}>
-                <Button
-                  variant="contained"
-                  size="small"
-                  onClick={createTemporaryApiKey}
-                  sx={{ color: 'white', background: '#212121', height: '48px', minWidth: '200px', ':hover': { background: 'white', color: '#212121' } }}
-                >
-                  Connect to flights app
-                </Button>
-              </div>
+              {apiKey.validTo < new Date() && (
+                <div className={styles.lineContainer}>
+                  <Button
+                    variant="contained"
+                    size="small"
+                    onClick={createTemporaryApiKey}
+                    sx={{ color: 'white', background: '#212121', height: '48px', minWidth: '200px', ':hover': { background: 'white', color: '#212121' } }}
+                  >
+                    1 month
+                  </Button>
+                  <Button
+                    variant="contained"
+                    size="small"
+                    onClick={createPermanentApiKey}
+                    sx={{ color: 'white', background: '#212121', height: '48px', minWidth: '200px', ':hover': { background: 'white', color: '#212121' } }}
+                  >
+                    Permanent
+                  </Button>
+                </div>
+              )}
+              {apiKey.validTo > new Date() && (
+                <form onSubmit={handleSubmit(onSubmit)}>
+                  <div className={styles.inputContainer}>
+                    <input
+                      type="text"
+                      id="username"
+                      value={watch('username')}
+                      {...register('username', {
+                        required: 'This field is required.',
+                      })}
+                    />
+                    <label className={styles.label} htmlFor="username" id="label-username">
+                      <div className={styles.text}>Flights App Username</div>
+                    </label>
+                    <label className={styles.errorLabel}>{errors.username?.message}</label>
+                  </div>
+
+                  <div className={styles.inputContainer}>
+                    <input type="password" id="password" value={watch('password')} {...register('password', {})} />
+                    <label className={styles.label} htmlFor="password" id="label-password">
+                      <div className={styles.text}>Flights App Password</div>
+                    </label>
+                    <label className={styles.errorLabel}>{errors.password?.message}</label>
+                  </div>
+
+                  <Button
+                    variant="contained"
+                    size="small"
+                    type="submit"
+                    sx={{ color: 'white', background: '#212121', height: '48px', minWidth: '200px', ':hover': { background: 'white', color: '#212121' } }}
+                  >
+                    Connect to flights app
+                  </Button>
+                </form>
+              )}
             </>
           )}
           {!apiKey && (

@@ -149,7 +149,7 @@ export function AllFlights(props: AllFlightsProps) {
       </Grid>
       <Grid item xs={10}>
         {flights?.map((flight, index) => (
-          <FlightItem key={index} flight={flight} />
+          <FlightItem key={index} flight={flight} ticketAmount={1} />
         ))}
       </Grid>
     </Grid>
