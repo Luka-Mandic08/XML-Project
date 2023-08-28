@@ -53,12 +53,12 @@ func (o *CreateReservationOrchestrator) nextCommandType(reply events.CreateReser
 	case events.AccommodationExists:
 		return events.CheckAvailableAccommodation
 	case events.AccommodationNotExist:
-		return events.CancelReservation
+		return events.DeleteReservation
 
 	case events.AccommodationAvailable:
 		return events.CheckUserExists
 	case events.AccommodationNotAvailable:
-		return events.CancelReservation
+		return events.DeleteReservation
 
 	case events.UserExists:
 		return events.CheckAutomaticApproveReservation
@@ -71,9 +71,9 @@ func (o *CreateReservationOrchestrator) nextCommandType(reply events.CreateReser
 		return events.PendingReservation
 
 	case events.AvailabilityReverted:
-		return events.CancelReservation
+		return events.DeleteReservation
 	case events.AvailabilityNotReverted:
-		return events.CancelReservation
+		return events.DeleteReservation
 
 	default:
 		return events.UnknownCommand

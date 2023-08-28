@@ -60,7 +60,14 @@ func (handler *CreateReservationCommandHandler) handle(command *events.CreateRes
 		}
 		reply.Type = events.ReservationPending
 		println("Reply: events.ReservationPending")
-
+	case events.DeleteReservation:
+		println("Command: events.DeleteReservation")
+		_, err = handler.reservationService.Delete(id.Hex())
+		if err != nil {
+			return
+		}
+		reply.Type = events.ReservationDeleted
+		println("Reply: events.ReservationDeleted")
 	default:
 		reply.Type = create_reservation.UnknownReply
 	}

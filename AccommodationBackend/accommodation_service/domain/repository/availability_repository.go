@@ -136,3 +136,8 @@ func (store *AvailabilityStore) GetByDateAndAccommodationAllToCancel(id string, 
 	filter := bson.M{"accommodationid": id, "date": date, "isAvailable": false}
 	return store.filterOne(filter)
 }
+
+func (store *AvailabilityStore) GetAllAvailabilitiesForRevert(id string, date time.Time) (*model.Availability, error) {
+	filter := bson.M{"accommodationid": id, "date": date}
+	return store.filterOne(filter)
+}

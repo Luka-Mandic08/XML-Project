@@ -25,6 +25,7 @@ const (
 	PendingReservation
 	ApproveReservation
 	CancelReservation
+	DeleteReservation
 	UnknownCommand
 )
 
@@ -54,6 +55,7 @@ const (
 	ReservationPending
 	ReservationApproved
 	ReservationCancelled
+	ReservationDeleted
 	UnknownReply
 )
 

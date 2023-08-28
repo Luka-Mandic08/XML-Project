@@ -140,14 +140,14 @@ func (handler *CreateReservationCommandHandler) handle(command *events.CreateRes
 			break
 		}
 
-		_, availability, err := handler.accommodationService.CheckDateAvailability(&accommodationAvailability, accommodation)
+		_, availability, err := handler.accommodationService.GetAllAvailabilitiesForRevering(&accommodationAvailability, accommodation)
 		if err != nil {
 			reply.Type = events.AvailabilityNotReverted
 			println("Reply: events.AvailabilityNotReverted")
 			break
 		}
 
-		err = handler.accommodationService.ChangeAvailability(availability, false)
+		err = handler.accommodationService.ChangeAvailability(availability, true)
 		if err != nil {
 			reply.Type = events.AvailabilityNotReverted
 			println("Reply: events.AvailabilityNotReverted")

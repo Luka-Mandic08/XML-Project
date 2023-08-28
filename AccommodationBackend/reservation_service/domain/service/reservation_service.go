@@ -65,7 +65,7 @@ func (service *ReservationService) AutoCancel(id primitive.ObjectID, price float
 		return nil, err
 	}
 
-	reservation.Status = "Cancelled"
+	reservation.Status = "Canceled"
 	reservation.Price = price
 	_, err = service.store.Update(reservation)
 	if err != nil {

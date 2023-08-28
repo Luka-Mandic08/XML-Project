@@ -5,12 +5,11 @@ import (
 	"accommodation_service/domain/repository"
 	accommodation "common/proto/accommodation_service"
 	"errors"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"strconv"
 	"strings"
 	"time"
-
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type AccommodationService struct {
@@ -253,4 +252,19 @@ func (service *AccommodationService) GetAllForHostByAccommodationId(request *acc
 		return nil, err
 	}
 	return &accommodation.GetAllForHostByAccommodationIdResponse{AccommodationIds: ids, HostId: hostId}, nil
+}
+
+func (service *AccommodationService) GetAllAvailabilitiesForRevering(request *accommodation.CheckAvailabilityRequest, acc *model.Accommodation) (float32, []*model.Availability, error) {
+	dateFrom := request.DateFrom.AsTime()
+	dateTo := request.DateTo.AsTime()
+	var availabilitiesToUpdate []*model.Availability
+	for date := dateFrom; !date.After(dateTo); date = date.Add(time.Hour * 24) {
+		av, err := service.availabilityStore.GetAllAvailabilitiesForRevert(request.Accommodationid, date)
+		if err != nil {
+			println(err.Error())
+			return 0, nil, err
+		}
+		availabilitiesToUpdate = append(availabilitiesToUpdate, av)
+	}
+	return 0, availabilitiesToUpdate, nil
 }

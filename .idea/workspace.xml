@@ -6,10 +6,14 @@
   <component name="ChangeListManager">
     <list default="true" id="4b0e1be7-6ec0-46d9-93c7-08dba697d1a5" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/accommodation_service/domain/repository/availability_repository.go" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/accommodation_service/domain/repository/availability_repository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/accommodation_service/domain/service/accommodation_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/accommodation_service/domain/service/accommodation_service.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/accommodation_service/infrastructure/api/create_reservation_handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/accommodation_service/infrastructure/api/create_reservation_handler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/api_gateway/startup/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/api_gateway/startup/server.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/common/saga/create_reservation/create_reservation_event.go" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/common/saga/create_reservation/create_reservation_event.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AccommodationBackend/reservation_service/domain/service/create_reservation_orchestrator.go" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/reservation_service/domain/service/create_reservation_orchestrator.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/AccommodationBackend/reservation_service/domain/service/reservation_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/reservation_service/domain/service/reservation_service.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/AccommodationBackend/reservation_service/infrastructure/api/create_reservation_handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/reservation_service/infrastructure/api/create_reservation_handler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AccommodationBackend/reservation_service/infrastructure/api/reservation_handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/reservation_service/infrastructure/api/reservation_handler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AccommodationBackend/reservation_service/startup/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/AccommodationBackend/reservation_service/startup/server.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -30,10 +34,10 @@
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "customColor": "",
-  "associatedIndex": 7
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 7
+}</component>
   <component name="ProjectId" id="2Mxb22W0ZjrKOuAXZWc1RtXmAq1" />
   <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="1" id="Add" />
@@ -52,7 +56,7 @@
     "RunOnceActivity.go.modules.automatic.dependencies.download": "true",
     "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
     "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "feature-outstanding__host",
+    "git-widget-placeholder": "bugfix-reservation__service",
     "go.import.settings.migrated": "true",
     "go.sdk.automatically.set": "true",
     "last_opened_file_path": "E:/Programski jezici/GO/XML-Project/AccommodationBackend/user_service/infrastructure/api",
