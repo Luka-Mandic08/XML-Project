@@ -88,6 +88,9 @@ func (handler *AccommodationHandler) Search(ctx context.Context, request *accomm
 		if err != nil {
 			return nil, status.Error(codes.Aborted, err.Error())
 		}
+		if len(hostIds.GetIds()) == 0 {
+			return nil, status.Error(codes.NotFound, "Could not find any accommodations because there are no outstanding hosts")
+		}
 	}
 	accommodations, prices, numberOfDays, err := handler.service.Search(request, hostIds)
 	if err != nil {

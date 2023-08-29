@@ -170,16 +170,6 @@ func (store *AccommodationMongoDBStore) GetForSearch(id primitive.ObjectID, req 
 			},
 		},
 	}
-	//TODO: Make this work with for loop probably
-	/*if len(req.GetAmenities()) > 0 {
-		amenityRegexes := []bson.M{}
-		for _, amenity := range req.GetAmenities() {
-			println(amenity)
-			pattern := fmt.Sprintf(".%s.", regexp.QuoteMeta(amenity))
-			amenityRegexes = append(amenityRegexes, bson.M{"$regex": pattern, "$options": "i"})
-		}
-		pipeline = append(pipeline, bson.M{"$match": bson.M{"$all": amenityRegexes}})
-	}*/
 
 	if len(hostIds) > 0 {
 		pipeline = append(pipeline, bson.M{"$match": bson.M{"hostid": bson.M{"$in": hostIds}}})
