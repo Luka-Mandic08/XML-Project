@@ -31,17 +31,17 @@ func (store *GuestAccommodationGraphStore) CloseDriverConnection(ctx context.Con
 	store.driver.Close(ctx)
 }
 
-func (store *GuestAccommodationGraphStore) CreateGuestNode(guestNode *model.GuestNode) error {
+func (store *GuestAccommodationGraphStore) CreateGuestNode(guestId string) error {
 	ctx := context.Background()
 	session := store.driver.NewSession(ctx, neo4j.SessionConfig{DatabaseName: "neo4j"})
 	defer session.Close(ctx)
 
 	// ExecuteWrite for write transactions (Create/Update/Delete)
-	savedPerson, err := session.ExecuteWrite(ctx,
+	_, err := session.ExecuteWrite(ctx,
 		func(transaction neo4j.ManagedTransaction) (any, error) {
 			result, err := transaction.Run(ctx,
-				"CREATE (p:Person) SET p.born = $born, p.name = $name RETURN p.name + ', from node ' + id(p)",
-				map[string]any{"born": person.Born, "name": person.Name})
+				"CREATE (g:Guest) SET g.guestId = $guestId RETURN g.guestId + ', from node ' + id(g)",
+				map[string]any{"guestId": guestId})
 			if err != nil {
 				return nil, err
 			}
@@ -53,24 +53,22 @@ func (store *GuestAccommodationGraphStore) CreateGuestNode(guestNode *model.Gues
 			return nil, result.Err()
 		})
 	if err != nil {
-		pr.logger.Println("Error inserting Person:", err)
 		return err
 	}
-	pr.logger.Println(savedPerson.(string))
 	return nil
 }
 
-func (pr *PersonRepo) CreateConnectionBetweenPersons() error {
+func (store *GuestAccommodationGraphStore) CreateAccommodationNode(accommodationId string) error {
 	ctx := context.Background()
-	session := pr.driver.NewSession(ctx, neo4j.SessionConfig{DatabaseName: "neo4j"})
+	session := store.driver.NewSession(ctx, neo4j.SessionConfig{DatabaseName: "neo4j"})
 	defer session.Close(ctx)
 
 	// ExecuteWrite for write transactions (Create/Update/Delete)
-	savedPerson, err := session.ExecuteWrite(ctx,
+	_, err := session.ExecuteWrite(ctx,
 		func(transaction neo4j.ManagedTransaction) (any, error) {
 			result, err := transaction.Run(ctx,
-				"MATCH (a:Person), (b:Person) WHERE a.name = $nameOne AND b.name = $nameTwo CREATE (a)-[r:IS_FRIEND]->(b) RETURN type(r)",
-				map[string]any{"nameOne": "Luka", "nameTwo": "Pera"})
+				"CREATE (a:Accommodation) SET a.accommodationId = accommodationId RETURN a.accommodationId + ', from node ' + id(a)",
+				map[string]any{"accommodationId": accommodationId})
 			if err != nil {
 				return nil, err
 			}
@@ -82,9 +80,34 @@ func (pr *PersonRepo) CreateConnectionBetweenPersons() error {
 			return nil, result.Err()
 		})
 	if err != nil {
-		pr.logger.Println("Error inserting Person:", err)
 		return err
 	}
-	pr.logger.Println(savedPerson.(string))
+	return nil
+}
+
+func (store *GuestAccommodationGraphStore) CreateConnectionBetweenGuestAndAccommodation(accommodationRating *model.AccommodationRating) error {
+	ctx := context.Background()
+	session := store.driver.NewSession(ctx, neo4j.SessionConfig{DatabaseName: "neo4j"})
+	defer session.Close(ctx)
+
+	// ExecuteWrite for write transactions (Create/Update/Delete)
+	_, err := session.ExecuteWrite(ctx,
+		func(transaction neo4j.ManagedTransaction) (any, error) {
+			result, err := transaction.Run(ctx,
+				"MATCH (g:Guest), (a:Accommodation) WHERE g.guestId = $guestId AND a.accommodationId = $accommodationId CREATE (g)-[r:RATED {score:$score, date:$date}]->(a) RETURN type(r)",
+				map[string]any{"guestId": accommodationRating.GuestId, "accommodationId": accommodationRating.AccommodationId, "score": accommodationRating.Score, "date": accommodationRating.Date})
+			if err != nil {
+				return nil, err
+			}
+
+			if result.Next(ctx) {
+				return result.Record().Values[0], nil
+			}
+
+			return nil, result.Err()
+		})
+	if err != nil {
+		return err
+	}
 	return nil
 }

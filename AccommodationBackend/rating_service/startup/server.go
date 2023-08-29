@@ -30,10 +30,7 @@ func NewServer(config *Config) *Server {
 
 func (server *Server) Start() {
 	mongoClient := server.initMongoClient()
-	neo4jDriver, err := server.initNeo4jClient()
-	if err != nil {
-		panic("kurac")
-	}
+	neo4jDriver := server.initNeo4jClient()
 	guestAccommodationGraphStore := server.initGuestAccommodationGraphStore(neo4jDriver)
 	hostRatingStore := server.initHostRatingStore(mongoClient)
 	accommodationRatingStore := server.initAccommodationRatingStore(mongoClient)
@@ -51,16 +48,13 @@ func (server *Server) initMongoClient() *mongo.Client {
 	return client
 }
 
-func (server *Server) initNeo4jClient() (*neo4j.DriverWithContext, error) {
-	// Local instance
-	auth := neo4j.BasicAuth(server.config.GraphUsername, server.config.GraphPassword, "")
-
-	driver, err := neo4j.NewDriverWithContext(server.config.GraphUri, auth)
+func (server *Server) initNeo4jClient() *neo4j.DriverWithContext {
+	driver, err := persistence.GetDriver(server.config.GraphUsername, server.config.GraphPassword, server.config.GraphUri)
 	if err != nil {
-		return nil, err
+		log.Fatal(err)
 	}
 
-	return &driver, nil
+	return driver
 }
 
 func (server *Server) initGuestAccommodationGraphStore(driver *neo4j.DriverWithContext) repository.GuestAccommodationGraphStore {

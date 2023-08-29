@@ -59,7 +59,26 @@ func (service *RatingService) GetAverageScoreForAccommodation(accommodationId st
 }
 
 func (service *RatingService) InsertAccommodationRating(accommodationRating *model.AccommodationRating) (*model.AccommodationRating, error) {
-	return service.accommodationStore.Insert(accommodationRating)
+	result, err := service.accommodationStore.Insert(accommodationRating)
+	if err != nil {
+		service.accommodationStore.Delete(result.Id)
+		return nil, err
+	}
+	err = service.guestAccommodationGraphStore.CreateGuestNode(result.GuestId)
+	if err != nil {
+		service.accommodationStore.Delete(result.Id)
+		return nil, err
+	}
+	err = service.guestAccommodationGraphStore.CreateAccommodationNode(result.AccommodationId)
+	if err != nil {
+		service.accommodationStore.Delete(result.Id)
+		return nil, err
+	}
+	err = service.guestAccommodationGraphStore.CreateConnectionBetweenGuestAndAccommodation(result)
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
 }
 
 func (service *RatingService) UpdateAccommodationRating(accommodationRating *model.AccommodationRating) (*mongo.UpdateResult, error) {
