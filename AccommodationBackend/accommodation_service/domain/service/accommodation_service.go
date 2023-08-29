@@ -4,11 +4,11 @@ import (
 	"accommodation_service/domain/model"
 	"accommodation_service/domain/repository"
 	accommodation "common/proto/accommodation_service"
+	reservation "common/proto/reservation_service"
 	"errors"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"strconv"
-	"strings"
 	"time"
 )
 
@@ -129,7 +129,7 @@ func (service *AccommodationService) ChangeAvailability(availabilities []*model.
 	return nil
 }
 
-func (service *AccommodationService) Search(req *accommodation.SearchRequest) ([]*model.Accommodation, []float64, int, error) {
+func (service *AccommodationService) Search(req *accommodation.SearchRequest, hostIds *reservation.GetAllOutstandingHostsResponse) ([]*model.Accommodation, []float64, int, error) {
 	dateFrom := req.DateFrom.AsTime()
 	dateTo := req.DateTo.AsTime()
 	numberOfDays := 0
@@ -143,15 +143,15 @@ func (service *AccommodationService) Search(req *accommodation.SearchRequest) ([
 	var accommodations []*model.Accommodation
 	var realPrices []float64
 	for i, id := range ids {
-		id, _ := primitive.ObjectIDFromHex(id)
-		acc, _ := service.accommodationStore.GetById(id)
-		if acc.MaxGuests >= req.NumberOfGuests && acc.MinGuests <= req.NumberOfGuests {
-			if strings.Contains(strings.ToLower(acc.Address.City), strings.ToLower(req.City)) && strings.Contains(strings.ToLower(acc.Address.Country), strings.ToLower(req.Country)) {
-				accommodations = append(accommodations, acc)
-				realPrices = append(realPrices, prices[i])
-			}
+		objectId, _ := primitive.ObjectIDFromHex(id)
+		println("ACC: ", id, " PRICE: ", prices[i])
+		acc, _ := service.accommodationStore.GetForSearch(objectId, req, hostIds.GetIds())
+		if acc != nil && acc.CheckPrice(prices[i], req.MaxPrice, req.NumberOfGuests) && acc.ContainsAllAmenities(req.GetAmenities()) {
+			accommodations = append(accommodations, acc)
+			realPrices = append(realPrices, prices[i])
 		}
 	}
+
 	if len(accommodations) == 0 {
 		return nil, nil, 0, errors.New("no accommodations found")
 	}

@@ -63,6 +63,11 @@ func (store *AvailabilityStore) FindAndGroupAvailableDates(dateFrom, dateTo time
 				"sumQuantity": numberOfDays,
 			},
 		},
+		{
+			"$sort": bson.M{
+				"_id": 1, // Sorting by _id in ascending order
+			},
+		},
 	}
 
 	cursor, err := store.availabilities.Aggregate(context.TODO(), pipeline)

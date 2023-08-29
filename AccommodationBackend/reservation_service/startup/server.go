@@ -4,6 +4,7 @@ import (
 	accommodation "common/proto/accommodation_service"
 	rating "common/proto/rating_service"
 	reservation "common/proto/reservation_service"
+	user "common/proto/user_service"
 	saga "common/saga/messaging"
 	"common/saga/messaging/nats"
 	"fmt"
@@ -51,7 +52,8 @@ func (server *Server) Start() {
 	replyPublisher := server.initPublisher(server.config.CreateReservationReplySubject)
 	server.initCreateReservationHandler(reservationService, replyPublisher, commandSubscriber)
 
-	reservationHandler := server.initReservationHandler(reservationService)
+	userClient := persistence.NewUserClient(server.config.UserHost, server.config.UserPort)
+	reservationHandler := server.initReservationHandler(reservationService, userClient)
 
 	server.startGrpcServer(reservationHandler)
 }
@@ -109,8 +111,8 @@ func (server *Server) initCreateReservationHandler(service *service.ReservationS
 	}
 }
 
-func (server *Server) initReservationHandler(reservationService *service.ReservationService) *api.ReservationHandler {
-	return api.NewReservationHandler(reservationService)
+func (server *Server) initReservationHandler(reservationService *service.ReservationService, userClient user.UserServiceClient) *api.ReservationHandler {
+	return api.NewReservationHandler(reservationService, userClient)
 }
 
 func (server *Server) startGrpcServer(reservationHandler *api.ReservationHandler) {

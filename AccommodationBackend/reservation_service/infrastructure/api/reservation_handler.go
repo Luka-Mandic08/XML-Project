@@ -3,6 +3,7 @@ package api
 import (
 	accommodation "common/proto/accommodation_service"
 	pb "common/proto/reservation_service"
+	user "common/proto/user_service"
 	"context"
 	"errors"
 	"github.com/golang/protobuf/ptypes"
@@ -16,11 +17,13 @@ import (
 type ReservationHandler struct {
 	pb.UnimplementedReservationServiceServer
 	reservationService *service.ReservationService
+	userClient         user.UserServiceClient
 }
 
-func NewReservationHandler(reservationService *service.ReservationService) *ReservationHandler {
+func NewReservationHandler(reservationService *service.ReservationService, userClient user.UserServiceClient) *ReservationHandler {
 	return &ReservationHandler{
 		reservationService: reservationService,
+		userClient:         userClient,
 	}
 }
 
@@ -87,7 +90,7 @@ func (handler *ReservationHandler) GetAllByUserId(ctx context.Context, request *
 	if err != nil {
 		return nil, status.Error(codes.NotFound, "Unable to find reservations for user: id = "+request.UserId)
 	}
-	response := MapToGetAllByAccommodationIdResponse(past, future)
+	response := MapToGetAllByUserIdResponse(past, future)
 	return response, nil
 }
 
@@ -354,6 +357,30 @@ func (handler *ReservationHandler) GetAllByAccommodationId(ctx context.Context, 
 	if err != nil {
 		return nil, status.Error(codes.Aborted, "Error while reading reservations for accommodations")
 	}
-	response := MapToGetAllByAccommodationIdResponse(past, future)
+	var pastUsers []*user.GetForReservationResponse
+	for _, res := range past {
+		u, _ := handler.userClient.GetForReservation(ctx, &user.GetRequest{Id: res.UserId})
+		if u != nil {
+			pastUsers = append(pastUsers, u)
+		}
+		if u == nil {
+			pastUsers = append(pastUsers, &user.GetForReservationResponse{
+				Name:    "",
+				Surname: "",
+				Email:   "",
+			})
+		}
+	}
+	var futureUsers []*user.GetForReservationResponse
+	var cancellations []int32
+	for _, res := range future {
+		user, err := handler.userClient.GetForReservation(ctx, &user.GetRequest{Id: res.UserId})
+		if err != nil {
+			return nil, status.Error(codes.Aborted, "Error while fetching guest from user service")
+		}
+		futureUsers = append(futureUsers, user)
+		cancellations = append(cancellations, handler.reservationService.GetNumberOfCancelledReservationsForUser(res.UserId))
+	}
+	response := MapToGetAllByAccommodationIdResponse(past, future, pastUsers, futureUsers, cancellations)
 	return response, nil
 }

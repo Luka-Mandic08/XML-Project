@@ -91,3 +91,17 @@ func (handler *UserHandler) Delete(ctx context.Context, request *pb.DeleteReques
 	}
 	return &pb.DeleteResponse{Message: "User successfully deleted"}, nil
 }
+
+func (handler *UserHandler) GetForReservation(ctx context.Context, request *pb.GetRequest) (*pb.GetForReservationResponse, error) {
+	id := request.Id
+	objectId, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return nil, err
+	}
+	user, err := handler.service.Get(objectId)
+	if err == mongo.ErrNoDocuments {
+		return nil, status.Error(codes.NotFound, "Unable to find user")
+	}
+	mapped := MapUserToGetForReservationResponse(user)
+	return mapped, nil
+}

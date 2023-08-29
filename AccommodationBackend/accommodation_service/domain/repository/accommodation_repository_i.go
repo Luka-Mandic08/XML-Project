@@ -2,6 +2,7 @@ package repository
 
 import (
 	"accommodation_service/domain/model"
+	accommodation "common/proto/accommodation_service"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -16,4 +17,5 @@ type AccommodationStore interface {
 	GetAll(page int) ([]*model.Accommodation, error)
 	DeleteAllForHost(id string) (*mongo.DeleteResult, error)
 	GetAllForHostByAccommodationId(id primitive.ObjectID) ([]string, string, error)
+	GetForSearch(id primitive.ObjectID, req *accommodation.SearchRequest, hostIds []string) (*model.Accommodation, error)
 }

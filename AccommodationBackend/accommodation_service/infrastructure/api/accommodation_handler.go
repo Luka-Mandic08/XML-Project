@@ -81,7 +81,18 @@ func (handler *AccommodationHandler) CheckAvailability(ctx context.Context, requ
 }
 
 func (handler *AccommodationHandler) Search(ctx context.Context, request *accommodation.SearchRequest) (*accommodation.SearchResponse, error) {
-	accommodations, prices, numberOfDays, err := handler.service.Search(request)
+	var hostIds *reservation.GetAllOutstandingHostsResponse
+	var err error
+	if request.OwnedByProminentHost {
+		hostIds, err = handler.reservationClient.GetAllOutstandingHosts(ctx, &reservation.GetAllOutstandingHostsRequest{})
+		if err != nil {
+			return nil, status.Error(codes.Aborted, err.Error())
+		}
+		if len(hostIds.GetIds()) == 0 {
+			return nil, status.Error(codes.NotFound, "Could not find any accommodations because there are no outstanding hosts")
+		}
+	}
+	accommodations, prices, numberOfDays, err := handler.service.Search(request, hostIds)
 	if err != nil {
 		return nil, status.Error(codes.Aborted, err.Error())
 	}

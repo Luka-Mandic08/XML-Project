@@ -32,6 +32,10 @@ export function GuestReservations(props: GuestReservationsProps) {
         end: new Date(reservation.end.seconds * 1000),
         status: reservation.status,
         price: reservation.price,
+        guestEmail: '',
+        guestName: '',
+        guestSurname: '',
+        numberOfPreviousCancellations: -1,
       });
     });
     setUpcomingReservations(newUpcomingReservations);
@@ -46,6 +50,10 @@ export function GuestReservations(props: GuestReservationsProps) {
         end: new Date(reservation.end.seconds * 1000),
         status: reservation.status,
         price: reservation.price,
+        guestEmail: '',
+        guestName: '',
+        guestSurname: '',
+        numberOfPreviousCancellations: -1,
       });
     });
 

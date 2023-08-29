@@ -2,6 +2,7 @@ package repository
 
 import (
 	"accommodation_service/domain/model"
+	accommodation "common/proto/accommodation_service"
 	"context"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -155,4 +156,38 @@ func (store *AccommodationMongoDBStore) GetAllForHostByAccommodationId(id primit
 	}
 
 	return results, accommodation.HostId, nil
+}
+
+func (store *AccommodationMongoDBStore) GetForSearch(id primitive.ObjectID, req *accommodation.SearchRequest, hostIds []string) (*model.Accommodation, error) {
+	pipeline := []bson.M{
+		{
+			"$match": bson.M{
+				"_id":             id,
+				"address.city":    bson.M{"$regex": req.GetCity(), "$options": "i"},
+				"address.country": bson.M{"$regex": req.GetCountry(), "$options": "i"},
+				"minGuests":       bson.M{"$lte": req.GetNumberOfGuests()},
+				"maxGuests":       bson.M{"$gte": req.GetNumberOfGuests()},
+			},
+		},
+	}
+
+	if len(hostIds) > 0 {
+		pipeline = append(pipeline, bson.M{"$match": bson.M{"hostid": bson.M{"$in": hostIds}}})
+	}
+
+	cursor, err := store.accommodations.Aggregate(context.TODO(), pipeline)
+	if err != nil {
+		return nil, err
+	}
+
+	var results []*model.Accommodation
+	if err := cursor.All(context.TODO(), &results); err != nil {
+		return nil, err
+	}
+
+	if len(results) == 0 {
+		return nil, nil
+	}
+
+	return results[0], nil
 }

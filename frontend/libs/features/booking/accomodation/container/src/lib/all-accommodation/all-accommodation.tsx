@@ -55,6 +55,9 @@ export function AllAccommodation(props: AllAccommodationProps) {
       dateFrom: '',
       dateTo: '',
       numberOfGuests: '',
+      maxPrice: 0,
+      amenities: '',
+      ownedByProminentHost: false,
     },
   });
 
@@ -65,7 +68,6 @@ export function AllAccommodation(props: AllAccommodationProps) {
       return;
     }
     setSearchedAccomodationInfo(res);
-    setSearchPageNumber(searchPageNumber + 1);
     setSearchParameters(data);
   };
 
@@ -84,6 +86,7 @@ export function AllAccommodation(props: AllAccommodationProps) {
   }, [watch('dateFrom'), watch('dateTo'), watch('city'), watch('country'), watch('numberOfGuests')]);
 
   const loadMoreForSearch = async () => {
+    setSearchPageNumber(searchPageNumber + 1);
     console.log(getValues);
     const data = {
       city: getValues('city'),
@@ -100,7 +103,6 @@ export function AllAccommodation(props: AllAccommodationProps) {
       return;
     }
     setSearchedAccomodationInfo((prevAccomodations) => [...prevAccomodations, ...newAccomodations]);
-    setSearchPageNumber(searchPageNumber + 1);
   };
 
   return (
@@ -169,6 +171,35 @@ export function AllAccommodation(props: AllAccommodationProps) {
               <div className={styles.text}>Number of Guests</div>
             </label>
             <label className={styles.errorLabel}>{errors.numberOfGuests?.message}</label>
+          </div>
+          <div className={styles.break} />
+
+          <div className={styles.inputContainer}>
+            <input type="number" id="maxPrice" value={watch('maxPrice')} {...register('maxPrice')} />
+            <label className={styles.label} htmlFor="maxPrice" id="label-maxPrice">
+              <div className={styles.text}>Max Price</div>
+            </label>
+            <label className={styles.errorLabel}>{errors.maxPrice?.message}</label>
+          </div>
+
+          <div className={styles.lineContainer2}>
+            <div>
+              <Typography variant="h6" paddingTop={'8px'}>
+                Owned by outstanding host
+              </Typography>
+              <Typography variant="h6" color={'red'}>
+                <label className={styles.errorLabel}>{errors.ownedByProminentHost?.message}</label>
+              </Typography>
+            </div>
+            <input style={{ width: '48px', height: '48px' }} type="checkbox" id="ownedByProminentHost" {...register('ownedByProminentHost')} />
+          </div>
+
+          <div className={styles.inputContainer}>
+            <input type="text" id="amenities" value={watch('amenities')} {...register('amenities')} />
+            <label className={styles.label} htmlFor="amenities" id="label-amenities">
+              <div className={styles.text}>Amenities</div>
+            </label>
+            <label className={styles.errorLabel}>{errors.amenities?.message}</label>
           </div>
 
           <Button
