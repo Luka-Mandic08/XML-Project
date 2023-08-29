@@ -176,15 +176,29 @@ export async function UpdateAvailableDatesForAccommodation(data: any): Promise<s
 }
 
 export async function SearchAccommodation(data: any, pageNumber: number): Promise<SearchedAccommodationInfo[]> {
+  const newData = {
+    city: data.city,
+    country: data.country,
+    dateFrom: new Date(data.dateFrom),
+    dateTo: new Date(data.dateTo),
+    numberOfGuests: 1 * data.numberOfGuests,
+    maxPrice: 1 * data.maxPrice,
+    amenities: data.amenities !== '' ? data.amenities.split(',') : [],
+    ownedByProminentHost: data.ownedByProminentHost,
+  };
+  console.log(newData);
   return await axios({
     method: 'post',
     url: BookingBaseURL.URL + '/accommodation/search',
     data: {
-      city: data.city,
-      country: data.country,
-      dateFrom: new Date(data.dateFrom),
-      dateTo: new Date(data.dateTo),
-      numberOfGuests: data.numberOfGuests,
+      city: newData.city,
+      country: newData.country,
+      dateFrom: newData.dateFrom,
+      dateTo: newData.dateTo,
+      numberOfGuests: newData.numberOfGuests,
+      maxPrice: newData.maxPrice,
+      amenities: newData.amenities,
+      ownedByProminentHost: newData.ownedByProminentHost,
       pageNumber: pageNumber,
     },
   })

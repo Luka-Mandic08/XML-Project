@@ -159,36 +159,45 @@ func (store *AccommodationMongoDBStore) GetAllForHostByAccommodationId(id primit
 }
 
 func (store *AccommodationMongoDBStore) GetForSearch(id primitive.ObjectID, req *accommodation.SearchRequest, hostIds []string) (*model.Accommodation, error) {
-	amenityRegexes := make([]bson.M, len(req.Amenities))
-	for _, amenity := range req.Amenities {
-		regexPattern := bson.M{"$regex": amenity, "$options": "i"}
-		amenityRegexes = append(amenityRegexes, regexPattern)
-	}
-	var filter bson.M
-	if len(hostIds) == 0 {
-		filter = bson.M{
-			"_id": id,
-			"amenities": bson.M{
-				"$all": amenityRegexes,
+	pipeline := []bson.M{
+		{
+			"$match": bson.M{
+				"_id":             id,
+				"address.city":    bson.M{"$regex": req.GetCity(), "$options": "i"},
+				"address.country": bson.M{"$regex": req.GetCountry(), "$options": "i"},
+				"minGuests":       bson.M{"$lte": req.GetNumberOfGuests()},
+				"maxGuests":       bson.M{"$gte": req.GetNumberOfGuests()},
 			},
-			"address.city":    bson.M{"$regex": req.City, "$options": "i"},
-			"address.country": bson.M{"$regex": req.Country, "$options": "i"},
-			"minGuests":       bson.M{"$lte": req.GetNumberOfGuests()},
-			"maxGuests":       bson.M{"$gte": req.GetNumberOfGuests()},
-		}
+		},
 	}
+	//TODO: Make this work with for loop probably
+	/*if len(req.GetAmenities()) > 0 {
+		amenityRegexes := []bson.M{}
+		for _, amenity := range req.GetAmenities() {
+			println(amenity)
+			pattern := fmt.Sprintf(".%s.", regexp.QuoteMeta(amenity))
+			amenityRegexes = append(amenityRegexes, bson.M{"$regex": pattern, "$options": "i"})
+		}
+		pipeline = append(pipeline, bson.M{"$match": bson.M{"$all": amenityRegexes}})
+	}*/
+
 	if len(hostIds) > 0 {
-		filter = bson.M{
-			"_id": id,
-			"amenities": bson.M{
-				"$all": amenityRegexes,
-			},
-			"address.city":    bson.M{"$regex": req.City, "$options": "i"},
-			"address.country": bson.M{"$regex": req.Country, "$options": "i"},
-			"minGuests":       bson.M{"$lte": req.GetNumberOfGuests()},
-			"maxGuests":       bson.M{"$gte": req.GetNumberOfGuests()},
-			"hostid":          bson.M{"$in": hostIds},
-		}
+		pipeline = append(pipeline, bson.M{"$match": bson.M{"hostid": bson.M{"$in": hostIds}}})
 	}
-	return store.filterOne(filter)
+
+	cursor, err := store.accommodations.Aggregate(context.TODO(), pipeline)
+	if err != nil {
+		return nil, err
+	}
+
+	var results []*model.Accommodation
+	if err := cursor.All(context.TODO(), &results); err != nil {
+		return nil, err
+	}
+
+	if len(results) == 0 {
+		return nil, nil
+	}
+
+	return results[0], nil
 }

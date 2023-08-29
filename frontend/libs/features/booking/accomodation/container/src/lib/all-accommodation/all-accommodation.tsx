@@ -56,7 +56,7 @@ export function AllAccommodation(props: AllAccommodationProps) {
       dateTo: '',
       numberOfGuests: '',
       maxPrice: 0,
-      amenities: [],
+      amenities: '',
       ownedByProminentHost: false,
     },
   });
@@ -68,7 +68,6 @@ export function AllAccommodation(props: AllAccommodationProps) {
       return;
     }
     setSearchedAccomodationInfo(res);
-    setSearchPageNumber(searchPageNumber + 1);
     setSearchParameters(data);
   };
 
@@ -87,6 +86,7 @@ export function AllAccommodation(props: AllAccommodationProps) {
   }, [watch('dateFrom'), watch('dateTo'), watch('city'), watch('country'), watch('numberOfGuests')]);
 
   const loadMoreForSearch = async () => {
+    setSearchPageNumber(searchPageNumber + 1);
     console.log(getValues);
     const data = {
       city: getValues('city'),
@@ -103,7 +103,6 @@ export function AllAccommodation(props: AllAccommodationProps) {
       return;
     }
     setSearchedAccomodationInfo((prevAccomodations) => [...prevAccomodations, ...newAccomodations]);
-    setSearchPageNumber(searchPageNumber + 1);
   };
 
   return (
