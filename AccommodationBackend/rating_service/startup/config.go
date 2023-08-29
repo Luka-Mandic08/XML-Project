@@ -8,6 +8,9 @@ type Config struct {
 	RatingDBPort    string
 	ReservationHost string
 	ReservationPort string
+	GraphUri        string
+	GraphUsername   string
+	GraphPassword   string
 }
 
 func NewConfig() *Config {
@@ -17,5 +20,8 @@ func NewConfig() *Config {
 		RatingDBPort:    os.Getenv("RATING_DB_PORT"),
 		ReservationHost: os.Getenv("RESERVATION_SERVICE_HOST"),
 		ReservationPort: os.Getenv("RESERVATION_SERVICE_PORT"),
+		GraphUri:        os.Getenv("NEO4J_DB"),
+		GraphUsername:   os.Getenv("NEO4J_USERNAME"),
+		GraphPassword:   os.Getenv("NEO4J_PASS"),
 	}
 }

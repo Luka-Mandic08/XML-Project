@@ -2,6 +2,7 @@ package startup
 
 import (
 	"fmt"
+	"github.com/neo4j/neo4j-go-driver/v5/neo4j"
 	"log"
 	"net"
 	"rating_service/domain/repository"
@@ -29,9 +30,14 @@ func NewServer(config *Config) *Server {
 
 func (server *Server) Start() {
 	mongoClient := server.initMongoClient()
+	neo4jDriver, err := server.initNeo4jClient()
+	if err != nil {
+		panic("kurac")
+	}
+	guestAccommodationGraphStore := server.initGuestAccommodationGraphStore(neo4jDriver)
 	hostRatingStore := server.initHostRatingStore(mongoClient)
 	accommodationRatingStore := server.initAccommodationRatingStore(mongoClient)
-	ratingService := server.initRatingService(hostRatingStore, accommodationRatingStore)
+	ratingService := server.initRatingService(hostRatingStore, accommodationRatingStore, guestAccommodationGraphStore)
 	reservationClient := persistence.NewReservationClient(server.config.ReservationHost, server.config.ReservationPort)
 	ratingHandler := server.initRatingHandler(ratingService, reservationClient)
 	server.startGrpcServer(ratingHandler)
@@ -45,6 +51,22 @@ func (server *Server) initMongoClient() *mongo.Client {
 	return client
 }
 
+func (server *Server) initNeo4jClient() (*neo4j.DriverWithContext, error) {
+	// Local instance
+	auth := neo4j.BasicAuth(server.config.GraphUsername, server.config.GraphPassword, "")
+
+	driver, err := neo4j.NewDriverWithContext(server.config.GraphUri, auth)
+	if err != nil {
+		return nil, err
+	}
+
+	return &driver, nil
+}
+
+func (server *Server) initGuestAccommodationGraphStore(driver *neo4j.DriverWithContext) repository.GuestAccommodationGraphStore {
+	return repository.NewGuestAccommodationGraphStore(*driver)
+}
+
 func (server *Server) initHostRatingStore(client *mongo.Client) repository.HostRatingStore {
 	return repository.NewHostRatingMongoDBStore(client)
 }
@@ -53,8 +75,8 @@ func (server *Server) initAccommodationRatingStore(client *mongo.Client) reposit
 	return repository.NewAccommodationMongoDBStore(client)
 }
 
-func (server *Server) initRatingService(hostStore repository.HostRatingStore, accommodationStore repository.AccommodationRatingStore) *service.RatingService {
-	return service.NewRatingService(hostStore, accommodationStore)
+func (server *Server) initRatingService(hostStore repository.HostRatingStore, accommodationStore repository.AccommodationRatingStore, guestAccommodationGraphStore repository.GuestAccommodationGraphStore) *service.RatingService {
+	return service.NewRatingService(hostStore, accommodationStore, guestAccommodationGraphStore)
 }
 
 func (server *Server) initRatingHandler(service *service.RatingService, reservationClient reservation.ReservationServiceClient) *api.RatingHandler {

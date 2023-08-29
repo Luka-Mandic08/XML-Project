@@ -9,14 +9,16 @@ import (
 )
 
 type RatingService struct {
-	hostStore          repository.HostRatingStore
-	accommodationStore repository.AccommodationRatingStore
+	hostStore                    repository.HostRatingStore
+	accommodationStore           repository.AccommodationRatingStore
+	guestAccommodationGraphStore repository.GuestAccommodationGraphStore
 }
 
-func NewRatingService(hostStore repository.HostRatingStore, accommodationStore repository.AccommodationRatingStore) *RatingService {
+func NewRatingService(hostStore repository.HostRatingStore, accommodationStore repository.AccommodationRatingStore, guestAccommodationGraphStore repository.GuestAccommodationGraphStore) *RatingService {
 	return &RatingService{
-		hostStore:          hostStore,
-		accommodationStore: accommodationStore,
+		hostStore:                    hostStore,
+		accommodationStore:           accommodationStore,
+		guestAccommodationGraphStore: guestAccommodationGraphStore,
 	}
 }
 
