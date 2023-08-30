@@ -234,6 +234,7 @@ volumes:
   accommodationDb:
   reservationDb:
   ratingDb:
+  notificationDb:
 
 networks:
   network:
