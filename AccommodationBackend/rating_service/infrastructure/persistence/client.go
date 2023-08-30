@@ -18,15 +18,22 @@ func GetClient(host, port string) (*mongo.Client, error) {
 	return mongo.Connect(context.TODO(), options)
 }
 
-func GetDriver(username, password, uri string) (*neo4j.DriverWithContext, error) {
+func GetDriver(username string, password string, uri string) (neo4j.Driver, error) {
 	auth := neo4j.BasicAuth(username, password, "")
 
-	driver, err := neo4j.NewDriverWithContext(uri, auth)
+	driver, err := neo4j.NewDriver(uri, auth)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("could not create neo4j driver with context: %s", err.Error())
 	}
 
-	return &driver, nil
+	err = driver.VerifyConnectivity()
+	if err != nil {
+		println("could not establish connection with neo4j driver: ", err.Error())
+		return nil, fmt.Errorf("could not establish connection with neo4j driver: %s", err.Error())
+	}
+
+	println("Neo4J server address: ", driver.Target().Host)
+	return driver, nil
 }
 
 func NewReservationClient(host, port string) reservation.ReservationServiceClient {

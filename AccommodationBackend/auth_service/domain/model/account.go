@@ -11,13 +11,13 @@ type Account struct {
 	Password string             `bson:"password"`
 	Role     string             `bson:"role"`
 	UserId   string             `bson:"userid"`
-	APIKey   APIKey             `bson:"apikey"`
+	APIKey   APIKey             `bson:"apikey,omitempty"`
 }
 
 type APIKey struct {
-	Value       string    `bson:"value"`
-	ValidTo     time.Time `bson:"validTo"`
-	IsPermanent bool      `bson:"isPermanent"`
+	Value       string    `bson:"value,omitempty"`
+	ValidTo     time.Time `bson:"validTo,omitempty"`
+	IsPermanent bool      `bson:"isPermanent,omitempty"`
 }
 
 func (key *APIKey) IsValid() bool {

@@ -16,12 +16,16 @@ export function LinkApiKeyDialog(props: LinkApiKeyDialogProps) {
   const [apiKey, setApiKey] = useState<ApiKey>();
 
   useEffect(() => {
-    getApiKey();
-  }, []);
+    if (open && localStorage.getItem('role') === 'Guest') {
+      getApiKey();
+    }
+  }, [open]);
 
   const getApiKey = async () => {
     const res = await GetApiKey();
-    console.log(res);
+    if (!res) {
+      return;
+    }
     const newApiKey = {
       apiKeyValue: res.apiKeyValue,
       validTo: new Date(res.validTo.seconds * 1000),
@@ -43,7 +47,6 @@ export function LinkApiKeyDialog(props: LinkApiKeyDialogProps) {
   });
 
   const onSubmit = async (data: any) => {
-    console.log(data);
     await LinkToFlightsApp(data.username, data.password, apiKey!);
     onClose();
   };

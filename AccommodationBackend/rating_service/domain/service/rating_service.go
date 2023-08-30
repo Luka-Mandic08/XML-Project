@@ -60,24 +60,69 @@ func (service *RatingService) GetAverageScoreForAccommodation(accommodationId st
 
 func (service *RatingService) InsertAccommodationRating(accommodationRating *model.AccommodationRating) (*model.AccommodationRating, error) {
 	result, err := service.accommodationStore.Insert(accommodationRating)
+	if result != nil {
+		println("Accommodation rating created 0: ID - ", result.AccommodationId)
+	}
 	if err != nil {
-		service.accommodationStore.Delete(result.Id)
+		deleteResult, deleteErr := service.accommodationStore.Delete(result.Id)
+		if deleteResult.DeletedCount > 0 {
+			println("Accommodation rating deleted 0: ID - ", result.AccommodationId)
+		}
+		if deleteErr != nil {
+			println("Error occurred when deleting accommodation rating 0: ID - ", result.AccommodationId)
+			return nil, deleteErr
+		}
 		return nil, err
 	}
-	err = service.guestAccommodationGraphStore.CreateGuestNode(result.GuestId)
+	/*
+		err = service.guestAccommodationGraphStore.CreateGuestNode(result.GuestId)
+		if err != nil {
+			println("Could not create GuestNode", err.Error())
+			deleteResult, deleteErr := service.accommodationStore.Delete(result.Id)
+			if deleteResult.DeletedCount > 0 {
+				println("Accommodation rating deleted 1: ID - ", result.AccommodationId)
+			}
+			if deleteErr != nil {
+				println("Error occurred when deleting accommodation rating 1: ID - ", result.AccommodationId)
+				return nil, deleteErr
+			}
+			return nil, err
+		}
+
+		err = service.guestAccommodationGraphStore.CreateAccommodationNode(result.AccommodationId)
+		if err != nil {
+			println("Could not create AccommodationNode", err.Error())
+			deleteResult, deleteErr := service.accommodationStore.Delete(result.Id)
+			if deleteResult.DeletedCount > 0 {
+				println("Accommodation rating deleted 2: ID - ", result.AccommodationId)
+			}
+			if deleteErr != nil {
+				println("Error occurred when deleting accommodation rating 2: ID - ", result.AccommodationId)
+				return nil, deleteErr
+			}
+			return nil, err
+		}
+
+		err = service.guestAccommodationGraphStore.CreateConnectionBetweenGuestAndAccommodation(result)
+		if err != nil {
+			println("Could not create ConnectionBetweenGuestAndAccommodation", err.Error())
+			return nil, err
+		}
+	*/
+	err = service.guestAccommodationGraphStore.CreateOrUpdateGuestAccommodationConnection(result)
 	if err != nil {
-		service.accommodationStore.Delete(result.Id)
+		println("Could not create neo4j relation between nodes", err.Error())
+		deleteResult, deleteErr := service.accommodationStore.Delete(result.Id)
+		if deleteResult.DeletedCount > 0 {
+			println("Accommodation rating deleted: ID - ", result.AccommodationId)
+		}
+		if deleteErr != nil {
+			println("Error occurred when deleting accommodation rating: ID - ", result.AccommodationId)
+			return nil, deleteErr
+		}
 		return nil, err
 	}
-	err = service.guestAccommodationGraphStore.CreateAccommodationNode(result.AccommodationId)
-	if err != nil {
-		service.accommodationStore.Delete(result.Id)
-		return nil, err
-	}
-	err = service.guestAccommodationGraphStore.CreateConnectionBetweenGuestAndAccommodation(result)
-	if err != nil {
-		return nil, err
-	}
+
 	return result, nil
 }
 
