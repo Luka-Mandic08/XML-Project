@@ -7,7 +7,8 @@ package notification;
 import "google/protobuf/timestamp.proto";
 
 service NotificationService{
-  rpc GetAllNotificationsForHost(IdRequest) returns(GetAllNotificationsForHostResponse) {}
+  rpc GetAllNotificationsForHost(IdRequestHost) returns(GetAllNotificationsForHostResponse) {}
+  rpc GetAllNotificationsForGuest(IdRequestGuest) returns(GetAllNotificationsForHostResponse) {}
   rpc AcknowledgeNotification(Notification) returns(Notification) {}
   rpc InsertNotification(CreateNotification) returns(Notification) {}
 }
@@ -25,8 +26,12 @@ message CreateNotification {
   string hostId = 2;
 }
 
-message IdRequest {
+message IdRequestHost {
   string hostId = 1;
+}
+
+message IdRequestGuest {
+  string guestId = 1;
 }
 
 message GetAllNotificationsForHostResponse {

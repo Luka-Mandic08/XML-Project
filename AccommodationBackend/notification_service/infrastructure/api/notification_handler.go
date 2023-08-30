@@ -21,8 +21,18 @@ func NewNotificationHandler(service *service.NotificationService) *NotificationH
 	}
 }
 
-func (handler *NotificationHandler) GetAllNotificationsForHost(ctx context.Context, request *pb.IdRequest) (*pb.GetAllNotificationsForHostResponse, error) {
+func (handler *NotificationHandler) GetAllNotificationsForHost(ctx context.Context, request *pb.IdRequestHost) (*pb.GetAllNotificationsForHostResponse, error) {
 	notifications, err := handler.service.GetAllNotificationsForHost(request.HostId)
+	if err != nil {
+		return nil, status.Error(codes.Aborted, err.Error())
+	}
+
+	response := MapManyNotificationsToResponse(notifications)
+	return response, nil
+}
+
+func (handler *NotificationHandler) GetAllNotificationsForGuest(ctx context.Context, request *pb.IdRequestGuest) (*pb.GetAllNotificationsForHostResponse, error) {
+	notifications, err := handler.service.GetAllNotificationsForGuest(request.GuestId)
 	if err != nil {
 		return nil, status.Error(codes.Aborted, err.Error())
 	}

@@ -19,6 +19,10 @@ func (service *NotificationService) GetAllNotificationsForHost(hostId string) ([
 	return service.notificationStore.GetAllNotificationsForHost(hostId)
 }
 
+func (service *NotificationService) GetAllNotificationsForGuest(guestId string) ([]*model.Notification, error) {
+	return service.notificationStore.GetAllNotificationsForGuest(guestId)
+}
+
 func (service *NotificationService) InsertNotification(notification *model.Notification) (*model.Notification, error) {
 	return service.notificationStore.CreateNotification(notification)
 }

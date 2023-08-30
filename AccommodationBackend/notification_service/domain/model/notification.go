@@ -10,5 +10,6 @@ type Notification struct {
 	NotificationText string             `bson:"notificationText"`
 	IsAcknowledged   bool               `bson:"isAcknowledged"`
 	HostId           string             `bson:"hostId"`
+	GuestId          string             `bson:"hostId"`
 	DateCreated      time.Time          `bson:"dateCreated"`
 }

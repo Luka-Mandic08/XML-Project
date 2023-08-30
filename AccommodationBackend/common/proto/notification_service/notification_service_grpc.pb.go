@@ -19,16 +19,18 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	NotificationService_GetAllNotificationsForHost_FullMethodName = "/notification.NotificationService/GetAllNotificationsForHost"
-	NotificationService_AcknowledgeNotification_FullMethodName    = "/notification.NotificationService/AcknowledgeNotification"
-	NotificationService_InsertNotification_FullMethodName         = "/notification.NotificationService/InsertNotification"
+	NotificationService_GetAllNotificationsForHost_FullMethodName  = "/notification.NotificationService/GetAllNotificationsForHost"
+	NotificationService_GetAllNotificationsForGuest_FullMethodName = "/notification.NotificationService/GetAllNotificationsForGuest"
+	NotificationService_AcknowledgeNotification_FullMethodName     = "/notification.NotificationService/AcknowledgeNotification"
+	NotificationService_InsertNotification_FullMethodName          = "/notification.NotificationService/InsertNotification"
 )
 
 // NotificationServiceClient is the client API for NotificationService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type NotificationServiceClient interface {
-	GetAllNotificationsForHost(ctx context.Context, in *IdRequest, opts ...grpc.CallOption) (*GetAllNotificationsForHostResponse, error)
+	GetAllNotificationsForHost(ctx context.Context, in *IdRequestHost, opts ...grpc.CallOption) (*GetAllNotificationsForHostResponse, error)
+	GetAllNotificationsForGuest(ctx context.Context, in *IdRequestGuest, opts ...grpc.CallOption) (*GetAllNotificationsForHostResponse, error)
 	AcknowledgeNotification(ctx context.Context, in *Notification, opts ...grpc.CallOption) (*Notification, error)
 	InsertNotification(ctx context.Context, in *CreateNotification, opts ...grpc.CallOption) (*Notification, error)
 }
@@ -41,9 +43,18 @@ func NewNotificationServiceClient(cc grpc.ClientConnInterface) NotificationServi
 	return &notificationServiceClient{cc}
 }
 
-func (c *notificationServiceClient) GetAllNotificationsForHost(ctx context.Context, in *IdRequest, opts ...grpc.CallOption) (*GetAllNotificationsForHostResponse, error) {
+func (c *notificationServiceClient) GetAllNotificationsForHost(ctx context.Context, in *IdRequestHost, opts ...grpc.CallOption) (*GetAllNotificationsForHostResponse, error) {
 	out := new(GetAllNotificationsForHostResponse)
 	err := c.cc.Invoke(ctx, NotificationService_GetAllNotificationsForHost_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *notificationServiceClient) GetAllNotificationsForGuest(ctx context.Context, in *IdRequestGuest, opts ...grpc.CallOption) (*GetAllNotificationsForHostResponse, error) {
+	out := new(GetAllNotificationsForHostResponse)
+	err := c.cc.Invoke(ctx, NotificationService_GetAllNotificationsForGuest_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -72,7 +83,8 @@ func (c *notificationServiceClient) InsertNotification(ctx context.Context, in *
 // All implementations must embed UnimplementedNotificationServiceServer
 // for forward compatibility
 type NotificationServiceServer interface {
-	GetAllNotificationsForHost(context.Context, *IdRequest) (*GetAllNotificationsForHostResponse, error)
+	GetAllNotificationsForHost(context.Context, *IdRequestHost) (*GetAllNotificationsForHostResponse, error)
+	GetAllNotificationsForGuest(context.Context, *IdRequestGuest) (*GetAllNotificationsForHostResponse, error)
 	AcknowledgeNotification(context.Context, *Notification) (*Notification, error)
 	InsertNotification(context.Context, *CreateNotification) (*Notification, error)
 	mustEmbedUnimplementedNotificationServiceServer()
@@ -82,8 +94,11 @@ type NotificationServiceServer interface {
 type UnimplementedNotificationServiceServer struct {
 }
 
-func (UnimplementedNotificationServiceServer) GetAllNotificationsForHost(context.Context, *IdRequest) (*GetAllNotificationsForHostResponse, error) {
+func (UnimplementedNotificationServiceServer) GetAllNotificationsForHost(context.Context, *IdRequestHost) (*GetAllNotificationsForHostResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllNotificationsForHost not implemented")
+}
+func (UnimplementedNotificationServiceServer) GetAllNotificationsForGuest(context.Context, *IdRequestGuest) (*GetAllNotificationsForHostResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllNotificationsForGuest not implemented")
 }
 func (UnimplementedNotificationServiceServer) AcknowledgeNotification(context.Context, *Notification) (*Notification, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AcknowledgeNotification not implemented")
@@ -105,7 +120,7 @@ func RegisterNotificationServiceServer(s grpc.ServiceRegistrar, srv Notification
 }
 
 func _NotificationService_GetAllNotificationsForHost_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(IdRequest)
+	in := new(IdRequestHost)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -117,7 +132,25 @@ func _NotificationService_GetAllNotificationsForHost_Handler(srv interface{}, ct
 		FullMethod: NotificationService_GetAllNotificationsForHost_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NotificationServiceServer).GetAllNotificationsForHost(ctx, req.(*IdRequest))
+		return srv.(NotificationServiceServer).GetAllNotificationsForHost(ctx, req.(*IdRequestHost))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _NotificationService_GetAllNotificationsForGuest_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IdRequestGuest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NotificationServiceServer).GetAllNotificationsForGuest(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: NotificationService_GetAllNotificationsForGuest_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NotificationServiceServer).GetAllNotificationsForGuest(ctx, req.(*IdRequestGuest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -168,6 +201,10 @@ var NotificationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetAllNotificationsForHost",
 			Handler:    _NotificationService_GetAllNotificationsForHost_Handler,
+		},
+		{
+			MethodName: "GetAllNotificationsForGuest",
+			Handler:    _NotificationService_GetAllNotificationsForGuest_Handler,
 		},
 		{
 			MethodName: "AcknowledgeNotification",

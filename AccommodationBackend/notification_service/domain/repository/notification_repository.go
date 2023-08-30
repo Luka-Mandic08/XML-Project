@@ -24,12 +24,17 @@ func NewNotificationMongoDBStore(client *mongo.Client) NotificationStore {
 	}
 }
 
+func (store NotificationMongoDBStore) GetAllNotificationsForGuest(guestId string) ([]*model.Notification, error) {
+	filter := bson.M{"guestId": guestId}
+	return store.filter(filter)
+}
+
 func (store NotificationMongoDBStore) GetAllNotificationsForHost(hostId string) ([]*model.Notification, error) {
 	filter := bson.M{"hostId": hostId}
 	return store.filter(filter)
 }
 
-func (store NotificationMongoDBStore) AcknowledgeNotification(notification *model.Notification) (*mongo.UpdateResult, error) {
+func (store NotificationMongoDBStore) AcknowledgeNotification(notification *model.Notification) (*model.Notification, error) {
 	update := bson.D{{"$set",
 		bson.D{
 			{"notificationText", notification.NotificationText},
@@ -38,11 +43,11 @@ func (store NotificationMongoDBStore) AcknowledgeNotification(notification *mode
 			{"dateCreated", notification.NotificationText},
 		},
 	}}
-	result, err := store.notifications.UpdateByID(context.TODO(), notification.Id, update)
+	_, err := store.notifications.UpdateByID(context.TODO(), notification.Id, update)
 	if err != nil {
 		return nil, err
 	}
-	return result, nil
+	return notification, nil
 }
 
 func (store NotificationMongoDBStore) CreateNotification(notification *model.Notification) (*model.Notification, error) {

@@ -3,6 +3,7 @@ package services
 import (
 	accommodation "common/proto/accommodation_service"
 	auth "common/proto/auth_service"
+	notification "common/proto/notification_service"
 	rating "common/proto/rating_service"
 	reservation "common/proto/reservation_service"
 	user "common/proto/user_service"
@@ -49,6 +50,14 @@ func NewRatingClient(address string) rating.RatingServiceClient {
 		log.Fatalf("Failed to start gRPC connection to Catalogue service: %v", err)
 	}
 	return rating.NewRatingServiceClient(conn)
+}
+
+func NewNotificationClient(address string) notification.NotificationServiceClient {
+	conn, err := getConnection(address)
+	if err != nil {
+		log.Fatalf("Failed to start gRPC connection to Catalogue service: %v", err)
+	}
+	return notification.NewNotificationServiceClient(conn)
 }
 
 func getConnection(address string) (*grpc.ClientConn, error) {

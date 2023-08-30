@@ -52,6 +52,10 @@ func CreateRoutersAndSetRoutes(config *Config) *gin.Engine {
 	ratingClient := services.NewRatingClient(ratingServiceAddress)
 	ratingHandler := handler.NewRatingHandler(ratingClient)
 
+	notificationServiceAddress := fmt.Sprintf("%s:%s", config.NotificationHost, config.NotificationPort)
+	notificationClient := services.NewNotificationClient(notificationServiceAddress)
+	notificationHandler := handler.NewNotificationHandler(notificationClient)
+
 	corsMiddleware := cors.New(cors.Config{
 		AllowAllOrigins: true,
 		AllowMethods:    []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
@@ -114,6 +118,13 @@ func CreateRoutersAndSetRoutes(config *Config) *gin.Engine {
 	accommodationGroup.POST("/create", services.AuthorizeRole("Guest"), ratingHandler.CreateAccommodationRating)
 	accommodationGroup.PUT("/update", services.AuthorizeRole("Guest"), ratingHandler.UpdateAccommodationRating)
 	accommodationGroup.DELETE("/delete", services.AuthorizeRole("Guest"), ratingHandler.DeleteAccommodationRating)
+
+	notificationGroup := router.Group("/notification")
+	notificationGroup.Use(services.ValidateToken())
+	notificationGroup.GET("/host/:hostId", notificationHandler.GetAllNOtificationsForHost)
+	notificationGroup.GET("/guest/:guestId", notificationHandler.GetAllNOtificationsForGuest)
+	notificationGroup.POST("/create", notificationHandler.CreateNotification)
+	notificationGroup.PUT("/acknowledge", notificationHandler.AcknowledgeNotification)
 
 	return router
 }

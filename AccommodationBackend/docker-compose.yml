@@ -22,6 +22,8 @@ services:
       RESERVATION_SERVICE_PORT: ${RESERVATION_SERVICE_PORT}
       RATING_SERVICE_HOST: ${RATING_SERVICE_HOST}
       RATING_SERVICE_PORT: ${RATING_SERVICE_PORT}
+      NOTIFICATION_SERVICE_HOST: ${NOTIFICATION_SERVICE_HOST}
+      NOTIFICATION_SERVICE_PORT: ${NOTIFICATION_SERVICE_PORT}
     networks:
       - network
 
@@ -137,6 +139,22 @@ services:
     networks:
       - network
 
+  notification_service:
+    image: notification_service
+    container_name: notification_service
+    build:
+      context: .
+      dockerfile: ./notification_service/Dockerfile
+    restart: on-failure
+    environment:
+      NOTIFICATION_DB_HOST: ${NOTIFICATION_DB_HOST}
+      NOTIFICATION_DB_PORT: ${NOTIFICATION_DB_PORT}
+      NOTIFICATION_SERVICE_PORT: ${NOTIFICATION_SERVICE_PORT}
+    depends_on:
+      - notification_db
+    networks:
+      - network
+
   auth_db:
     image: mongo
     container_name: auth_db
@@ -189,6 +207,17 @@ services:
     restart: on-failure
     ports:
       - 5005:27017
+    networks:
+      - network
+
+  notification_db:
+    image: mongo
+    container_name: notification_db
+    volumes:
+      - notificationDb:/data/db
+    restart: on-failure
+    ports:
+      - 5006:27017
     networks:
       - network
 
