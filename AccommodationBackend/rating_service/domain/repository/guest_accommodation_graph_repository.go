@@ -164,41 +164,39 @@ func (store *GuestAccommodationGraphStore) CreateOrUpdateGuestAccommodationConne
 	return nil
 }
 
-func (store *GuestAccommodationGraphStore) RecommendAccommodationsForUser(guestId string) ([]string, error) {
+func (store *GuestAccommodationGraphStore) RecommendAccommodationsForGuest(guestId string) ([]string, error) {
 	session := store.driver.NewSession(neo4j.SessionConfig{})
 	defer session.Close()
 
 	query := `
-	MATCH (user:Guest)-[r:RATED]->(accommodation:Accommodation)
-	WITH user, accommodation, r.score AS userRating
-
-	MATCH (otherUser:Guest)-[otherR:RATED]->(accommodation)
-	WHERE otherUser <> user
-	WITH user, otherUser, COLLECT(DISTINCT accommodation) AS sharedAccommodations,
-	     COLLECT(DISTINCT otherR.score) AS otherRatings, userRating
-
-	WITH user, otherUser, sharedAccommodations, otherRatings, userRating,
-	     algo.similarity.pearson(userRating, otherRatings) AS similarity
-
-	MATCH (otherUser)-[r:RATED]->(recommended:Accommodation)
-	WHERE NOT recommended IN sharedAccommodations
-	WITH user, recommended, COLLECT(DISTINCT otherUser) AS similarUsers,
-	     COLLECT(DISTINCT r.score) AS recommendationScores
-
-	WITH user, recommended,
-	     REDUCE(s = 0, score IN recommendationScores | s + score) AS totalScore,
-	     SIZE(similarUsers) AS numSimilarUsers
-
-	MATCH (recommended)<-[r:RATED]-(similarUser:Guest)
-	WHERE r.score < 3 AND r.date >= datetime() - duration('P3M')
-	WITH user, recommended, totalScore, numSimilarUsers,
-	     COUNT(DISTINCT similarUser) AS lowRatingCount
-
-	WHERE lowRatingCount <= 5
+	MATCH (guest:Guest {guestId: "64ef06e805cdcb24e0f2180f"})-[r:RATED]->(accommodation:Accommodation)
+	WITH guest, accommodation, r.score AS userRating
+	
+	MATCH (otherGuest:Guest)-[otherR:RATED]->(accommodation)
+	WHERE otherGuest <> guest AND (otherR.score = userRating + 1 OR otherR.score = userRating - 1)
+	WITH otherGuest
+	
+	// Find accommodations rated by otherGuests with a score of 4 or more
+	MATCH (otherGuest)-[r:RATED]->(goodAccommodations:Accommodation)
+	WHERE r.score >= 4
+	WITH COLLECT(goodAccommodations) AS collectedGoodAccommodations
+	
+	// Find accommodations rated by any guest with a score of 2 or less
+	MATCH (badAccommodations:Accommodation)<-[r:RATED]-(:Guest)
+	WHERE r.score <= 2
+	WITH collectedGoodAccommodations, COLLECT(badAccommodations) AS collectedBadAccommodations
+	
+	// Filter out accommodations from collectedGoodAccommodations that match collectedBadAccommodations
+	WITH collectedGoodAccommodations, collectedBadAccommodations
+	UNWIND collectedGoodAccommodations AS goodAccommodation
+	WITH goodAccommodation, collectedBadAccommodations
+	WHERE NONE (badAccommodation IN collectedBadAccommodations WHERE badAccommodation = goodAccommodation)
+	LIMIT 10
+	RETURN goodAccommodation
+	
 
 	RETURN recommended, totalScore / numSimilarUsers AS recommendationScore
 	ORDER BY recommendationScore DESC
-	LIMIT 10
 	`
 
 	result, err := session.ReadTransaction(func(tx neo4j.Transaction) (interface{}, error) {
