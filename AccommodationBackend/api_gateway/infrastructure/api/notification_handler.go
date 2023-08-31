@@ -36,7 +36,7 @@ func (handler *NotificationHandler) GetAllNotificationsByUserIdAndType(ctx *gin.
 	ctx.JSON(http.StatusOK, response)
 }
 
-func (handler *NotificationHandler) CreateNotification(ctx *gin.Context) {
+func (handler *NotificationHandler) InsertNotification(ctx *gin.Context) {
 	var notificationReq notification.CreateNotification
 	raw, _ := ctx.GetRawData()
 	err := protojson.Unmarshal(raw, &notificationReq)
