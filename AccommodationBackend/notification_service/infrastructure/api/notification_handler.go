@@ -33,6 +33,7 @@ func (handler *NotificationHandler) GetAllNotificationsByUserIdAndType(ctx conte
 
 func (handler *NotificationHandler) InsertNotification(ctx context.Context, request *pb.CreateNotification) (*pb.Notification, error) {
 	notification := MapCreateRequestToNotification(request)
+	println(notification)
 	notification, err := handler.service.InsertNotification(notification)
 	if err != nil {
 		return nil, status.Error(codes.AlreadyExists, "Unable to insert notification into database")

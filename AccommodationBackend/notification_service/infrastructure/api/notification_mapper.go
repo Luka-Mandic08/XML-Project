@@ -3,7 +3,6 @@ package api
 import (
 	notification "common/proto/notification_service"
 	"github.com/golang/protobuf/ptypes"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"notification_service/domain/model"
 	"time"
 )
@@ -43,7 +42,6 @@ func MapNotificationToResponse(n *model.Notification) *notification.Notification
 
 func MapCreateRequestToNotification(n *notification.CreateNotification) *model.Notification {
 	var mappedNotification = model.Notification{
-		Id:               primitive.NewObjectID(),
 		NotificationText: n.NotificationText,
 		UserId:           n.UserId,
 		IsAcknowledged:   false,

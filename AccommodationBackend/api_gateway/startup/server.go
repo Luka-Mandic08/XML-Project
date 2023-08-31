@@ -123,6 +123,7 @@ func CreateRoutersAndSetRoutes(config *Config) *gin.Engine {
 	notificationGroup.Use(services.ValidateToken())
 	notificationGroup.GET("/all/:userId", notificationHandler.GetAllNotificationsByUserIdAndType)
 	notificationGroup.PUT("/acknowledge", notificationHandler.AcknowledgeNotification)
+	notificationGroup.POST("/create", notificationHandler.CreateNotification)
 	notificationGroup.GET("/selectedtypes", notificationHandler.GetSelectedNotificationTypesByUserId)
 	notificationGroup.PUT("/selectedtypes/update", notificationHandler.UpdateSelectedNotificationTypes)
 

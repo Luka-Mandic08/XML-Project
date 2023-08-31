@@ -319,14 +319,21 @@ func (service *ReservationService) GetAllByAccommodationId(id string) ([]*model.
 }
 
 func (service *ReservationService) CreateNotification(reservation *model.Reservation, notificationType string) {
+	println("Notification type: ", notificationType)
 	accommodationInfo, _ := service.AccommodationClient.GetById(context.TODO(), &accommodation.GetByIdRequest{Id: reservation.AccommodationId})
+	println(accommodationInfo.GetAccommodation())
 	if notificationType == "ReservationCanceled" {
 		guest, _ := service.userClient.Get(context.TODO(), &user.GetRequest{Id: reservation.UserId})
-		service.notificationClient.InsertNotification(context.TODO(), &notification.CreateNotification{
+		println(guest.GetName())
+		_, err := service.notificationClient.InsertNotification(context.TODO(), &notification.CreateNotification{
 			NotificationText: "Guest " + guest.GetName() + " " + guest.GetSurname() + " has canceled a reservation for " + string(reservation.NumberOfGuests) + " people at: " + accommodationInfo.GetAccommodation().GetName(),
 			UserId:           accommodationInfo.Accommodation.GetHostId(),
 			Type:             notificationType,
 		})
+		if err != nil {
+			println("Imam neki error placem: ", err.Error())
+			return
+		}
 	}
 	if notificationType == "ReservationDenied" {
 		service.notificationClient.InsertNotification(context.TODO(), &notification.CreateNotification{
