@@ -21,18 +21,8 @@ func NewNotificationHandler(service *service.NotificationService) *NotificationH
 	}
 }
 
-func (handler *NotificationHandler) GetAllNotificationsForHost(ctx context.Context, request *pb.IdRequestHost) (*pb.GetAllNotificationsForHostResponse, error) {
-	notifications, err := handler.service.GetAllNotificationsForHost(request.HostId)
-	if err != nil {
-		return nil, status.Error(codes.Aborted, err.Error())
-	}
-
-	response := MapManyNotificationsToResponse(notifications)
-	return response, nil
-}
-
-func (handler *NotificationHandler) GetAllNotificationsForGuest(ctx context.Context, request *pb.IdRequestGuest) (*pb.GetAllNotificationsForHostResponse, error) {
-	notifications, err := handler.service.GetAllNotificationsForGuest(request.GuestId)
+func (handler *NotificationHandler) GetAllNotificationsByUserIdAndType(ctx context.Context, request *pb.UserIdRequest) (*pb.GetAllNotificationsByUserIdAndTypeResponse, error) {
+	notifications, err := handler.service.GetAllNotificationsByUserIdAndType(request.GetUserId())
 	if err != nil {
 		return nil, status.Error(codes.Aborted, err.Error())
 	}
@@ -51,18 +41,58 @@ func (handler *NotificationHandler) InsertNotification(ctx context.Context, requ
 	return response, nil
 }
 
-func (handler *NotificationHandler) AcknowledgeNotification(ctx context.Context, request *pb.Notification) (*pb.Notification, error) {
+func (handler *NotificationHandler) AcknowledgeNotification(ctx context.Context, request *pb.IdRequest) (*pb.Notification, error) {
 	objectId, err := primitive.ObjectIDFromHex(request.Id)
 	if err != nil {
 		return nil, err
 	}
 
-	accommodationRating := MapToNotification(request, objectId)
-	result, err := handler.service.AcknowledgeNotification(accommodationRating)
+	result, err := handler.service.AcknowledgeNotification(objectId)
 	if err != nil {
-		return nil, status.Error(codes.Unknown, "Unable to update accommodation rating")
+		return nil, status.Error(codes.Unknown, "Unable to acknowledge notification")
 	}
 
 	response := MapNotificationToResponse(result)
 	return response, nil
+}
+
+func (handler *NotificationHandler) GetSelectedNotificationTypesByUserId(ctx context.Context, request *pb.UserIdRequest) (*pb.SelectedNotificationTypes, error) {
+	selectedNotificationTypes, err := handler.service.GetSelectedNotificationTypesByUserId(request.GetUserId())
+	if err != nil {
+		return nil, status.Error(codes.Aborted, err.Error())
+	}
+
+	response := MapSelectedNotificationTypesToResponse(selectedNotificationTypes)
+	return response, nil
+}
+
+func (handler *NotificationHandler) InsertSelectedNotificationTypes(ctx context.Context, request *pb.SelectedNotificationTypes) (*pb.MessageResponse, error) {
+	selectedNotificationTypes := MapRequestToSelectedNotificationTypes(request)
+	_, err := handler.service.InsertSelectedNotificationTypes(selectedNotificationTypes)
+	if err != nil {
+		return nil, status.Error(codes.AlreadyExists, "Unable to insert notification into database")
+	}
+	return &pb.MessageResponse{Message: "Successfully created SelectedNotificationTypes"}, nil
+}
+
+func (handler *NotificationHandler) UpdateSelectedNotificationTypes(ctx context.Context, request *pb.SelectedNotificationTypes) (*pb.SelectedNotificationTypes, error) {
+	result, err := handler.service.UpdateSelectedNotificationTypes(request.GetUserId(), request.GetSelectedTypes())
+	if err != nil {
+		return nil, status.Error(codes.Unknown, "Unable to acknowledge notification")
+	}
+
+	response := MapSelectedNotificationTypesToResponse(result)
+	return response, nil
+}
+
+func (handler *NotificationHandler) DeleteSelectedNotificationTypes(ctx context.Context, request *pb.UserIdRequest) (*pb.MessageResponse, error) {
+	result, err := handler.service.DeleteSelectedNotificationTypes(request.GetUserId())
+	if err != nil {
+		return nil, status.Error(codes.Unknown, "Unable to delete host rating.")
+	}
+	if result.DeletedCount == 0 {
+		return nil, status.Error(codes.NotFound, "Unable to find host rating")
+	}
+
+	return &pb.MessageResponse{Message: "SelectedNotificationTypes successfully deleted"}, nil
 }

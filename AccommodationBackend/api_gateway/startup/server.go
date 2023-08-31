@@ -121,10 +121,10 @@ func CreateRoutersAndSetRoutes(config *Config) *gin.Engine {
 
 	notificationGroup := router.Group("/notification")
 	notificationGroup.Use(services.ValidateToken())
-	notificationGroup.GET("/host/:hostId", notificationHandler.GetAllNOtificationsForHost)
-	notificationGroup.GET("/guest/:guestId", notificationHandler.GetAllNOtificationsForGuest)
-	notificationGroup.POST("/create", notificationHandler.CreateNotification)
+	notificationGroup.GET("/all/:userId", notificationHandler.GetAllNotificationsByUserIdAndType)
 	notificationGroup.PUT("/acknowledge", notificationHandler.AcknowledgeNotification)
+	notificationGroup.GET("/selectedtypes", notificationHandler.GetSelectedNotificationTypesByUserId)
+	notificationGroup.PUT("/selectedtypes/update", notificationHandler.UpdateSelectedNotificationTypes)
 
 	return router
 }

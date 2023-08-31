@@ -2,8 +2,10 @@ package startup
 
 import (
 	accommodation "common/proto/accommodation_service"
+	notification "common/proto/notification_service"
 	rating "common/proto/rating_service"
 	reservation "common/proto/reservation_service"
+	user "common/proto/user_service"
 	saga "common/saga/messaging"
 	"common/saga/messaging/nats"
 	"fmt"
@@ -44,8 +46,10 @@ func (server *Server) Start() {
 
 	accommodationClient := persistence.NewAccommodationClient(server.config.AccommodationHost, server.config.AccommodationPort)
 	ratingClient := persistence.NewRatingClient(server.config.RatingHost, server.config.RatingPort)
+	userClient := persistence.NewUserClient(server.config.UserHost, server.config.UserPort)
+	notificationClient := persistence.NewNotificationClient(server.config.NotificationHost, server.config.NotificationPort)
 
-	reservationService := server.initReservationService(reservationStore, *outstandingHostStore, createReservationOrchestrator, accommodationClient, ratingClient)
+	reservationService := server.initReservationService(reservationStore, *outstandingHostStore, createReservationOrchestrator, accommodationClient, ratingClient, userClient, notificationClient)
 
 	commandSubscriber := server.initSubscriber(server.config.CreateReservationCommandSubject, QUEUE_GROUP)
 	replyPublisher := server.initPublisher(server.config.CreateReservationReplySubject)
@@ -98,8 +102,8 @@ func (server *Server) initCreateReservationOrchestrator(publisher saga.Publisher
 	return orchestrator
 }
 
-func (server *Server) initReservationService(store repository.ReservationStore, outstandingHostStore repository.OutstandingHostMongoDBStore, reservationOrchestrator *service.CreateReservationOrchestrator, accommodationClient accommodation.AccommodationServiceClient, ratingClient rating.RatingServiceClient) *service.ReservationService {
-	return service.NewReservationService(store, outstandingHostStore, reservationOrchestrator, accommodationClient, ratingClient)
+func (server *Server) initReservationService(store repository.ReservationStore, outstandingHostStore repository.OutstandingHostMongoDBStore, reservationOrchestrator *service.CreateReservationOrchestrator, accommodationClient accommodation.AccommodationServiceClient, ratingClient rating.RatingServiceClient, userClient user.UserServiceClient, notificationClient notification.NotificationServiceClient) *service.ReservationService {
+	return service.NewReservationService(store, outstandingHostStore, reservationOrchestrator, accommodationClient, ratingClient, notificationClient, userClient)
 }
 
 func (server *Server) initCreateReservationHandler(service *service.ReservationService, publisher saga.Publisher, subscriber saga.Subscriber) {

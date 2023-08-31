@@ -28,7 +28,8 @@ func NewServer(config *Config) *Server {
 func (server *Server) Start() {
 	mongoClient := server.initMongoClient()
 	notificationStore := server.initNotificationStore(mongoClient)
-	notificationService := server.initNotificationService(notificationStore)
+	selectedNotificationTypesStore := server.initSelectedNotificationTypesStore(mongoClient)
+	notificationService := server.initNotificationService(notificationStore, selectedNotificationTypesStore)
 	notificationHandler := server.initNotificationHandler(notificationService)
 	server.startGrpcServer(notificationHandler)
 }
@@ -45,8 +46,12 @@ func (server *Server) initNotificationStore(client *mongo.Client) repository.Not
 	return repository.NewNotificationMongoDBStore(client)
 }
 
-func (server *Server) initNotificationService(notificationStore repository.NotificationStore) *service.NotificationService {
-	return service.NewNotificationService(notificationStore)
+func (server *Server) initSelectedNotificationTypesStore(client *mongo.Client) repository.SelectedNotificationTypesStore {
+	return repository.NewSelectedNotificationTypesMongoDBStore(client)
+}
+
+func (server *Server) initNotificationService(notificationStore repository.NotificationStore, selectedNotificationTypesStore repository.SelectedNotificationTypesStore) *service.NotificationService {
+	return service.NewNotificationService(notificationStore, selectedNotificationTypesStore)
 }
 
 func (server *Server) initNotificationHandler(service *service.NotificationService) *api.NotificationHandler {

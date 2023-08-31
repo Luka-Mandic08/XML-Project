@@ -5,11 +5,13 @@ import (
 	"time"
 )
 
+// NotificationTypes Type - ReservationCreated, ReservationCanceled, HostRated, AccommodationRated, ReservationApprovedOrDenied
+
 type Notification struct {
 	Id               primitive.ObjectID `bson:"_id,omitempty"`
 	NotificationText string             `bson:"notificationText"`
 	IsAcknowledged   bool               `bson:"isAcknowledged"`
-	HostId           string             `bson:"hostId"`
-	GuestId          string             `bson:"hostId"`
+	UserId           string             `bson:"userId"`
 	DateCreated      time.Time          `bson:"dateCreated"`
+	Type             string             `bson:"type"`
 }

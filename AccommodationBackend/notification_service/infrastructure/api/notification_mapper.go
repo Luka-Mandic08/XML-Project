@@ -8,65 +8,63 @@ import (
 	"time"
 )
 
-func MapHostRatingToResponse(r *model.Notification) *notification.Notification {
-	var mappedNotification = notification.Notification{
-		Id:               r.Id.Hex(),
-		NotificationText: r.NotificationText,
-		HostId:           r.HostId,
-		IsAcknowledged:   r.IsAcknowledged,
-	}
-	return &mappedNotification
-}
-
-func MapManyNotificationsToResponse(rs []*model.Notification) *notification.GetAllNotificationsForHostResponse {
+func MapManyNotificationsToResponse(ns []*model.Notification) *notification.GetAllNotificationsByUserIdAndTypeResponse {
 	var notifications []*notification.Notification
 
-	for _, r := range rs {
-		protoTimestamp, _ := ptypes.TimestampProto(r.DateCreated)
-		var mappedHostRating = notification.Notification{
-			Id:               r.Id.Hex(),
-			NotificationText: r.NotificationText,
-			HostId:           r.HostId,
-			IsAcknowledged:   r.IsAcknowledged,
+	for _, n := range ns {
+		protoTimestamp, _ := ptypes.TimestampProto(n.DateCreated)
+		var mappedNotification = notification.Notification{
+			Id:               n.Id.Hex(),
+			NotificationText: n.NotificationText,
+			UserId:           n.UserId,
+			IsAcknowledged:   n.IsAcknowledged,
 			DateCreated:      protoTimestamp,
+			Type:             n.Type,
 		}
-		notifications = append(notifications, &mappedHostRating)
+		notifications = append(notifications, &mappedNotification)
 	}
 
-	return &notification.GetAllNotificationsForHostResponse{Notifications: notifications}
+	return &notification.GetAllNotificationsByUserIdAndTypeResponse{Notifications: notifications}
 }
 
-func MapNotificationToResponse(r *model.Notification) *notification.Notification {
-	protoTimestamp, _ := ptypes.TimestampProto(r.DateCreated)
+func MapNotificationToResponse(n *model.Notification) *notification.Notification {
+	protoTimestamp, _ := ptypes.TimestampProto(n.DateCreated)
 
 	var mappedNotification = notification.Notification{
-		Id:               r.Id.Hex(),
-		NotificationText: r.NotificationText,
-		HostId:           r.HostId,
-		IsAcknowledged:   r.IsAcknowledged,
+		Id:               n.Id.Hex(),
+		NotificationText: n.NotificationText,
+		UserId:           n.UserId,
+		IsAcknowledged:   n.IsAcknowledged,
 		DateCreated:      protoTimestamp,
+		Type:             n.Type,
 	}
 	return &mappedNotification
 }
 
-func MapCreateRequestToNotification(r *notification.CreateNotification) *model.Notification {
+func MapCreateRequestToNotification(n *notification.CreateNotification) *model.Notification {
 	var mappedNotification = model.Notification{
 		Id:               primitive.NewObjectID(),
-		NotificationText: r.NotificationText,
-		HostId:           r.HostId,
+		NotificationText: n.NotificationText,
+		UserId:           n.UserId,
 		IsAcknowledged:   false,
 		DateCreated:      time.Now(),
+		Type:             n.Type,
 	}
 	return &mappedNotification
 }
 
-func MapToNotification(r *notification.Notification, objectId primitive.ObjectID) *model.Notification {
-	var mappedAccommodationRating = model.Notification{
-		Id:               objectId,
-		NotificationText: r.NotificationText,
-		HostId:           r.HostId,
-		IsAcknowledged:   false,
-		DateCreated:      r.DateCreated.AsTime(),
+func MapSelectedNotificationTypesToResponse(n *model.SelectedNotificationTypes) *notification.SelectedNotificationTypes {
+	var mappedSelectedNotificationType = notification.SelectedNotificationTypes{
+		UserId:        n.UserId,
+		SelectedTypes: n.SelectedTypes,
 	}
-	return &mappedAccommodationRating
+	return &mappedSelectedNotificationType
+}
+
+func MapRequestToSelectedNotificationTypes(n *notification.SelectedNotificationTypes) *model.SelectedNotificationTypes {
+	var mappedSelectedNotificationType = model.SelectedNotificationTypes{
+		UserId:        n.UserId,
+		SelectedTypes: n.SelectedTypes,
+	}
+	return &mappedSelectedNotificationType
 }

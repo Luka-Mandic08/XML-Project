@@ -15,7 +15,8 @@ type ReservationHandler struct {
 }
 
 func NewReservationHandler(client reservation.ReservationServiceClient) *ReservationHandler {
-	return &ReservationHandler{client: client}
+	return &ReservationHandler{
+		client: client}
 }
 
 func (handler *ReservationHandler) Get(ctx *gin.Context) {

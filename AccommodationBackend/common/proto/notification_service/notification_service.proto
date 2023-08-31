@@ -7,33 +7,48 @@ package notification;
 import "google/protobuf/timestamp.proto";
 
 service NotificationService{
-  rpc GetAllNotificationsForHost(IdRequestHost) returns(GetAllNotificationsForHostResponse) {}
-  rpc GetAllNotificationsForGuest(IdRequestGuest) returns(GetAllNotificationsForHostResponse) {}
-  rpc AcknowledgeNotification(Notification) returns(Notification) {}
+  rpc GetAllNotificationsByUserIdAndType(UserIdRequest) returns(GetAllNotificationsByUserIdAndTypeResponse) {}
+  rpc AcknowledgeNotification(IdRequest) returns(Notification) {}
   rpc InsertNotification(CreateNotification) returns(Notification) {}
+
+  rpc GetSelectedNotificationTypesByUserId(UserIdRequest) returns(SelectedNotificationTypes) {}
+  rpc InsertSelectedNotificationTypes(SelectedNotificationTypes) returns(MessageResponse) {}
+  rpc UpdateSelectedNotificationTypes(SelectedNotificationTypes) returns(SelectedNotificationTypes) {}
+  rpc DeleteSelectedNotificationTypes(UserIdRequest) returns(MessageResponse) {}
 }
 
 message Notification {
   string id = 1;
   string notificationText = 2;
   bool isAcknowledged = 3;
-  string hostId = 4;
+  string userId = 4;
   google.protobuf.Timestamp dateCreated = 5;
+  string type = 6;
+}
+
+message SelectedNotificationTypes{
+  string userId = 1;
+  repeated string selectedTypes = 2;
+}
+
+message MessageResponse{
+  string message = 1;
 }
 
 message CreateNotification {
   string notificationText = 1;
-  string hostId = 2;
+  string userId = 2;
+  string type = 3;
 }
 
-message IdRequestHost {
-  string hostId = 1;
+message IdRequest {
+  string id = 1;
 }
 
-message IdRequestGuest {
-  string guestId = 1;
+message UserIdRequest {
+  string userId = 1;
 }
 
-message GetAllNotificationsForHostResponse {
+message GetAllNotificationsByUserIdAndTypeResponse {
   repeated Notification notifications = 1;
 }

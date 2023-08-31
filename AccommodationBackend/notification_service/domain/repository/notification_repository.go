@@ -9,8 +9,9 @@ import (
 )
 
 const (
-	DATABASE               = "notification"
-	NOTIFICATIONCOLLECTION = "notification"
+	DATABASE                            = "notification"
+	NOTIFICATIONCOLLECTION              = "notification"
+	SELECTEDNOTIFICATIONTYPESCOLLECTION = "selected_notification_types"
 )
 
 type NotificationMongoDBStore struct {
@@ -24,33 +25,31 @@ func NewNotificationMongoDBStore(client *mongo.Client) NotificationStore {
 	}
 }
 
-func (store NotificationMongoDBStore) GetAllNotificationsForGuest(guestId string) ([]*model.Notification, error) {
-	filter := bson.M{"guestId": guestId}
+func (store *NotificationMongoDBStore) GetById(notificationId primitive.ObjectID) (*model.Notification, error) {
+	filter := bson.M{"_id": notificationId}
+	return store.filterOne(filter)
+}
+
+func (store *NotificationMongoDBStore) GetAllNotificationsByUserIdAndType(userId string, selectedTypes []string) ([]*model.Notification, error) {
+	filter := bson.M{"userId": userId, "type": bson.M{"$in": selectedTypes}}
 	return store.filter(filter)
 }
 
-func (store NotificationMongoDBStore) GetAllNotificationsForHost(hostId string) ([]*model.Notification, error) {
-	filter := bson.M{"hostId": hostId}
-	return store.filter(filter)
-}
-
-func (store NotificationMongoDBStore) AcknowledgeNotification(notification *model.Notification) (*model.Notification, error) {
+func (store *NotificationMongoDBStore) AcknowledgeNotification(notificationId primitive.ObjectID) (*model.Notification, error) {
 	update := bson.D{{"$set",
 		bson.D{
-			{"notificationText", notification.NotificationText},
-			{"hostId", notification.HostId},
 			{"isAcknowledged", true},
-			{"dateCreated", notification.NotificationText},
 		},
 	}}
-	_, err := store.notifications.UpdateByID(context.TODO(), notification.Id, update)
+	_, err := store.notifications.UpdateByID(context.TODO(), notificationId, update)
 	if err != nil {
 		return nil, err
 	}
+	notification, _ := store.GetById(notificationId)
 	return notification, nil
 }
 
-func (store NotificationMongoDBStore) CreateNotification(notification *model.Notification) (*model.Notification, error) {
+func (store *NotificationMongoDBStore) CreateNotification(notification *model.Notification) (*model.Notification, error) {
 	result, err := store.notifications.InsertOne(context.TODO(), notification)
 	if err != nil {
 		return nil, err
@@ -67,6 +66,12 @@ func (store *NotificationMongoDBStore) filter(filter interface{}) ([]*model.Noti
 		return nil, err
 	}
 	return store.decode(cursor)
+}
+
+func (store *NotificationMongoDBStore) filterOne(filter interface{}) (notification *model.Notification, err error) {
+	result := store.notifications.FindOne(context.TODO(), filter)
+	err = result.Decode(&notification)
+	return
 }
 
 func (store *NotificationMongoDBStore) decode(cursor *mongo.Cursor) (notifications []*model.Notification, err error) {
