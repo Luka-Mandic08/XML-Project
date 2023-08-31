@@ -61,8 +61,13 @@ func (o *CreateReservationOrchestrator) nextCommandType(reply events.CreateReser
 		return events.DeleteReservation
 
 	case events.UserExists:
-		return events.CheckAutomaticApproveReservation
+		return events.CheckUserAvailable
 	case events.UserNotExist:
+		return events.RevertAvailability
+
+	case events.UserAvailable:
+		return events.CheckAutomaticApproveReservation
+	case events.UserNotAvailable:
 		return events.RevertAvailability
 
 	case events.AutoApproveReservation:

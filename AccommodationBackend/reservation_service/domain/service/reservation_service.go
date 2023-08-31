@@ -9,6 +9,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"reservation_service/domain/model"
 	"reservation_service/domain/repository"
+	"time"
 )
 
 type ReservationService struct {
@@ -312,4 +313,15 @@ func (service *ReservationService) GetAllByAccommodationId(id string) ([]*model.
 func (service *ReservationService) GetNumberOfCancelledReservationsForUser(id string) int32 {
 	cancelledReservations, _ := service.store.GetAllCanceledByUserId(id)
 	return int32(len(cancelledReservations))
+}
+
+func (service *ReservationService) IsUserAvailable(userId string, start time.Time, end time.Time) (bool, error) {
+	reservationNum, err := service.store.IsUserAvailable(userId, start, end)
+	if err != nil {
+		return false, err
+	}
+	if reservationNum > 1 {
+		return false, err
+	}
+	return true, nil
 }

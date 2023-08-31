@@ -18,6 +18,7 @@ type CreateReservationCommandType int8
 const (
 	CheckAccommodationExists CreateReservationCommandType = iota
 	CheckAvailableAccommodation
+	CheckUserAvailable
 	CheckUserExists
 	CheckAutomaticApproveReservation
 	RevertAvailability
@@ -45,6 +46,9 @@ const (
 
 	UserExists
 	UserNotExist
+
+	UserAvailable
+	UserNotAvailable
 
 	AvailabilityReverted
 	AvailabilityNotReverted

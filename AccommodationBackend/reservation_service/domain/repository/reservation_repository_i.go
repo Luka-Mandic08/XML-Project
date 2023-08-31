@@ -24,4 +24,5 @@ type ReservationStore interface {
 	GetAllPastByAccommodationId(id string) ([]*model.Reservation, error)
 	GetAllFutureByAccommodationId(id string) ([]*model.Reservation, error)
 	GetAllCanceledByUserId(id string) ([]*model.Reservation, error)
+	IsUserAvailable(userId string, start time.Time, end time.Time) (int32, error)
 }

@@ -36,6 +36,20 @@ func (handler *CreateReservationCommandHandler) handle(command *events.CreateRes
 	reply := events.CreateReservationReply{Reservation: command.Reservation}
 
 	switch command.Type {
+	case events.CheckUserAvailable:
+		println("Command: events.CheckUserAvailable")
+		isAvailable, err := handler.reservationService.IsUserAvailable(command.Reservation.UserId, command.Reservation.Start, command.Reservation.End)
+		if err != nil {
+			reply.Type = events.UserNotAvailable
+			println("Reply: events.UserNotAvailable")
+		}
+		if isAvailable {
+			reply.Type = events.UserAvailable
+			println("Reply: events.UserAvailable")
+			break
+		}
+		reply.Type = events.UserNotAvailable
+		println("Reply: events.UserNotAvailable")
 	case events.CancelReservation:
 		println("Command: events.CancelReservation")
 		_, err := handler.reservationService.AutoCancel(id, command.Reservation.Price)

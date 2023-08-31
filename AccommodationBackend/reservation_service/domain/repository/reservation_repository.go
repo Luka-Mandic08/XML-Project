@@ -112,11 +112,11 @@ func (store *ReservationMongoDBStore) GetAllOverlapping(id string, statuses []st
 				"start": bson.M{"$gte": from, "$lte": to},
 			},
 			{
-				"End": bson.M{"$gte": from, "$lte": to},
+				"end": bson.M{"$gte": from, "$lte": to},
 			},
 			{
-				"Start": bson.M{"$lte": from},
-				"End":   bson.M{"$gte": to},
+				"start": bson.M{"$lte": from},
+				"end":   bson.M{"$gte": to},
 			},
 		},
 	}
@@ -184,4 +184,15 @@ func decodeReservations(cursor *mongo.Cursor) (reservations []*model.Reservation
 func (store *ReservationMongoDBStore) GetReservationsForAccommodationsByStatus(accommodationIds []string, status string) ([]*model.Reservation, error) {
 	filter := bson.M{"accommodation": bson.M{"$in": accommodationIds}, "status": status}
 	return store.filter(filter)
+}
+
+func (store *ReservationMongoDBStore) IsUserAvailable(userId string, start time.Time, end time.Time) (int32, error) {
+	filter := bson.M{
+		"user":  userId,
+		"start": bson.M{"$lte": end},
+		"end":   bson.M{"$gte": start},
+	}
+
+	found, err := store.filter(filter)
+	return int32(len(found)), err
 }
