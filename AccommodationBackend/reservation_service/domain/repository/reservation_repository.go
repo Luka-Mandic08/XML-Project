@@ -188,9 +188,10 @@ func (store *ReservationMongoDBStore) GetReservationsForAccommodationsByStatus(a
 
 func (store *ReservationMongoDBStore) IsUserAvailable(userId string, start time.Time, end time.Time) (int32, error) {
 	filter := bson.M{
-		"user":  userId,
-		"start": bson.M{"$lte": end},
-		"end":   bson.M{"$gte": start},
+		"user":   userId,
+		"start":  bson.M{"$lte": end},
+		"end":    bson.M{"$gte": start},
+		"status": bson.M{"$in": []string{"Approved", "Pending"}},
 	}
 
 	found, err := store.filter(filter)

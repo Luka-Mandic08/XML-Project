@@ -148,8 +148,8 @@ func (store *GuestAccommodationGraphStore) CreateOrUpdateGuestAccommodationConne
 
 			// Create connection between guest and accommodation
 			_, err = transaction.Run(
-				"MATCH (g:Guest), (a:Accommodation) WHERE g.guestId = $guestId AND a.accommodationId = $accommodationId CREATE (g)-[r:RATED {score:$score, date:$date}]->(a) RETURN r AS rel",
-				map[string]interface{}{"guestId": accommodationRating.GuestId, "accommodationId": accommodationRating.AccommodationId, "score": accommodationRating.Score, "date": accommodationRating.Date})
+				"MATCH (g:Guest), (a:Accommodation) WHERE g.guestId = $guestId AND a.accommodationId = $accommodationId CREATE (g)-[r:RATED {score:$score, date:$date, ratingId:$ratingId}]->(a) RETURN r AS rel",
+				map[string]interface{}{"guestId": accommodationRating.GuestId, "accommodationId": accommodationRating.AccommodationId, "score": accommodationRating.Score, "date": accommodationRating.Date, "ratingId": accommodationRating.Id.Hex()})
 			if err != nil {
 				return nil, err
 			}
@@ -223,4 +223,46 @@ func (store *GuestAccommodationGraphStore) RecommendAccommodationsForGuest(guest
 	}
 
 	return result.([]string), nil
+}
+
+func (store *GuestAccommodationGraphStore) DeleteGuestAndConnection(guestID, accommodationID, ratingId string) error {
+	session := store.driver.NewSession(neo4j.SessionConfig{})
+	defer session.Close()
+
+	_, err := session.WriteTransaction(
+		func(transaction neo4j.Transaction) (interface{}, error) {
+			// Delete the relationship between the guest and accommodation
+			_, err := transaction.Run(
+				"MATCH (g:Guest {guestId: $guestId})-[r:RATED {ratingId:$ratingId}]->(a:Accommodation {accommodationId: $accommodationId}) DELETE r",
+				map[string]interface{}{"guestId": guestID, "accommodationId": accommodationID, "ratingId": ratingId})
+			if err != nil {
+				return nil, err
+			}
+
+			// Check if the guest node is no longer connected to any accommodation
+			checkResult, err := transaction.Run(
+				"MATCH (g:Guest {guestId: $guestId}) WHERE NOT (g)-[:RATED]->() DELETE g",
+				map[string]interface{}{"guestId": guestID})
+			if err != nil {
+				return nil, err
+			}
+
+			// If the guest node is no longer connected to any accommodation, delete it
+			if checkResult.Next() {
+				_, err := transaction.Run(
+					"MATCH (g:Guest {guestId: $guestId}) DELETE g",
+					map[string]interface{}{"guestId": guestID})
+				if err != nil {
+					return nil, err
+				}
+			}
+
+			return nil, nil
+		})
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

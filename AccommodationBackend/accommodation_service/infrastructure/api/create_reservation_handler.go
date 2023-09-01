@@ -121,13 +121,13 @@ func (handler *CreateReservationCommandHandler) handle(command *events.CreateRes
 		}
 
 		accommodationAvailability := accommodation.CheckAvailabilityRequest{
-			Accommodationid: command.Reservation.Id,
+			Accommodationid: command.Reservation.AccommodationId,
 			DateFrom:        startDate,
 			DateTo:          endDate,
 			NumberOfGuests:  0,
 		}
 
-		id, err := primitive.ObjectIDFromHex(command.Reservation.Id)
+		id, err := primitive.ObjectIDFromHex(command.Reservation.AccommodationId)
 		if err != nil {
 			reply.Type = events.AvailabilityNotReverted
 			println("Reply: events.AvailabilityNotReverted")

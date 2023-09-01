@@ -12,6 +12,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"reservation_service/domain/service"
+	"time"
 )
 
 type ReservationHandler struct {
@@ -187,6 +188,11 @@ func (handler *ReservationHandler) Approve(ctx context.Context, request *pb.Appr
 	}
 	if reservation.Status == "Canceled" {
 		return nil, errors.New("Reservation alredy Canceled id: " + id)
+	}
+
+	// Check if reservation is in past
+	if reservation.Start.Before(time.Now()) {
+		return nil, errors.New("This reservation is in past!")
 	}
 
 	start, _ := ptypes.TimestampProto(reservation.Start)

@@ -240,5 +240,6 @@ func (handler *RatingHandler) DeleteAccommodationRating(ctx context.Context, req
 	if result.DeletedCount == 0 {
 		return nil, status.Error(codes.NotFound, "Unable to find host rating")
 	}
+
 	return &pb.DeletedResponse{Message: "Accommodation rating successfully deleted"}, nil
 }

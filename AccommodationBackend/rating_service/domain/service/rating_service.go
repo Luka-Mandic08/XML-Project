@@ -131,5 +131,20 @@ func (service *RatingService) UpdateAccommodationRating(accommodationRating *mod
 }
 
 func (service *RatingService) DeleteAccommodationRating(id primitive.ObjectID) (*mongo.DeleteResult, error) {
-	return service.accommodationStore.Delete(id)
+	ratingToDelete, err := service.GetAccommodationRatingById(id)
+	if err != nil {
+		return nil, err
+	}
+
+	deleteResult, err := service.accommodationStore.Delete(id)
+	if err != nil {
+		return nil, err
+	}
+
+	err = service.guestAccommodationGraphStore.DeleteGuestAndConnection(ratingToDelete.GuestId, ratingToDelete.AccommodationId, ratingToDelete.Id.Hex())
+	if err != nil {
+		return nil, err
+	}
+
+	return deleteResult, nil
 }
