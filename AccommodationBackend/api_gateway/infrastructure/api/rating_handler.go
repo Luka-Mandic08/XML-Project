@@ -2,7 +2,11 @@ package api
 
 import (
 	"api_gateway/infrastructure/services"
+	accommodation "common/proto/accommodation_service"
+	notification "common/proto/notification_service"
 	rating "common/proto/rating_service"
+	user "common/proto/user_service"
+	"context"
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -11,11 +15,19 @@ import (
 )
 
 type RatingHandler struct {
-	client rating.RatingServiceClient
+	client              rating.RatingServiceClient
+	notificationClient  notification.NotificationServiceClient
+	userClient          user.UserServiceClient
+	accommodationClient accommodation.AccommodationServiceClient
 }
 
-func NewRatingHandler(client rating.RatingServiceClient) *RatingHandler {
-	return &RatingHandler{client: client}
+func NewRatingHandler(client rating.RatingServiceClient, notificationClient notification.NotificationServiceClient, userClient user.UserServiceClient, accommodationClient accommodation.AccommodationServiceClient) *RatingHandler {
+	return &RatingHandler{
+		client:              client,
+		notificationClient:  notificationClient,
+		userClient:          userClient,
+		accommodationClient: accommodationClient,
+	}
 }
 
 func (handler *RatingHandler) GetHostRatingById(ctx *gin.Context) {
@@ -100,6 +112,17 @@ func (handler *RatingHandler) CreateHostRating(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
+
+	guestInfo, _ := handler.userClient.Get(context.TODO(), &user.GetRequest{Id: hostRating.GetGuestId()})
+	_, err = handler.notificationClient.InsertNotification(context.TODO(), &notification.CreateNotification{
+		NotificationText: "Guest " + guestInfo.GetName() + " " + guestInfo.GetSurname() + " has rated you with " + string(hostRating.GetScore()) + " starts.",
+		UserId:           hostRating.GetHostId(),
+		Type:             "HostRated",
+	})
+	if err != nil {
+		println("Unsuccessful notification creation: ", err.Error())
+	}
+
 	ctx.JSON(http.StatusOK, response)
 }
 
@@ -243,6 +266,18 @@ func (handler *RatingHandler) CreateAccommodationRating(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
+
+	guestInfo, _ := handler.userClient.Get(context.TODO(), &user.GetRequest{Id: accommodationRating.GetGuestId()})
+	accommodationInfo, _ := handler.accommodationClient.GetById(context.TODO(), &accommodation.GetByIdRequest{Id: accommodationRating.GetAccommodationId()})
+	_, err = handler.notificationClient.InsertNotification(context.TODO(), &notification.CreateNotification{
+		NotificationText: "Guest " + guestInfo.GetName() + " " + guestInfo.GetSurname() + " has rated you accommodation: " + accommodationInfo.GetAccommodation().GetName() + " with " + string(accommodationRating.GetScore()) + " starts.",
+		UserId:           accommodationInfo.GetAccommodation().GetHostId(),
+		Type:             "AccommodationRated",
+	})
+	if err != nil {
+		println("Unsuccessful notification creation: ", err.Error())
+	}
+
 	ctx.JSON(http.StatusOK, response)
 }
 

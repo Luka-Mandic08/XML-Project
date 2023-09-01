@@ -2,6 +2,7 @@ package persistence
 
 import (
 	accommodation "common/proto/accommodation_service"
+	notification "common/proto/notification_service"
 	rating "common/proto/rating_service"
 	user "common/proto/user_service"
 	"context"
@@ -44,6 +45,15 @@ func NewUserClient(host, port string) user.UserServiceClient {
 		log.Fatalf("Failed to start gRPC connection to User service: %v", err)
 	}
 	return user.NewUserServiceClient(conn)
+}
+
+func NewNotificationClient(host, port string) notification.NotificationServiceClient {
+	address := fmt.Sprintf("%s:%s", host, port)
+	conn, err := getConnection(address)
+	if err != nil {
+		log.Fatalf("Failed to start gRPC connection to Accommodation service: %v", err)
+	}
+	return notification.NewNotificationServiceClient(conn)
 }
 
 func getConnection(address string) (*grpc.ClientConn, error) {

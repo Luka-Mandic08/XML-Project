@@ -38,7 +38,6 @@ func CreateRoutersAndSetRoutes(config *Config) *gin.Engine {
 
 	authServiceAddress := fmt.Sprintf("%s:%s", config.AuthHost, config.AuthPort)
 	authClient := services.NewAuthClient(authServiceAddress)
-	authHandler := handler.NewAuthHandler(authClient, userClient)
 
 	accommodationServiceAddress := fmt.Sprintf("%s:%s", config.AccommodationHost, config.AccommodationPort)
 	accommodationClient := services.NewAccommodationClient(accommodationServiceAddress)
@@ -50,7 +49,13 @@ func CreateRoutersAndSetRoutes(config *Config) *gin.Engine {
 
 	ratingServiceAddress := fmt.Sprintf("%s:%s", config.RatingHost, config.RatingPort)
 	ratingClient := services.NewRatingClient(ratingServiceAddress)
-	ratingHandler := handler.NewRatingHandler(ratingClient)
+
+	notificationServiceAddress := fmt.Sprintf("%s:%s", config.NotificationHost, config.NotificationPort)
+	notificationClient := services.NewNotificationClient(notificationServiceAddress)
+
+	notificationHandler := handler.NewNotificationHandler(notificationClient)
+	authHandler := handler.NewAuthHandler(authClient, userClient, notificationClient)
+	ratingHandler := handler.NewRatingHandler(ratingClient, notificationClient, userClient, accommodationClient)
 
 	corsMiddleware := cors.New(cors.Config{
 		AllowAllOrigins: true,
@@ -114,6 +119,14 @@ func CreateRoutersAndSetRoutes(config *Config) *gin.Engine {
 	accommodationGroup.POST("/create", services.AuthorizeRole("Guest"), ratingHandler.CreateAccommodationRating)
 	accommodationGroup.PUT("/update", services.AuthorizeRole("Guest"), ratingHandler.UpdateAccommodationRating)
 	accommodationGroup.DELETE("/delete", services.AuthorizeRole("Guest"), ratingHandler.DeleteAccommodationRating)
+
+	notificationGroup := router.Group("/notification")
+	notificationGroup.Use(services.ValidateToken())
+	notificationGroup.GET("/all/:userId", notificationHandler.GetAllNotificationsByUserIdAndType)
+	notificationGroup.PUT("/acknowledge", notificationHandler.AcknowledgeNotification)
+	notificationGroup.POST("/create", notificationHandler.InsertNotification)
+	notificationGroup.GET("/selectedtypes", notificationHandler.GetSelectedNotificationTypesByUserId)
+	notificationGroup.PUT("/selectedtypes/update", notificationHandler.UpdateSelectedNotificationTypes)
 
 	return router
 }

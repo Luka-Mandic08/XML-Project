@@ -1,0 +1,54 @@
+syntax = "proto3";
+
+option go_package = "common/notification";
+
+package notification;
+
+import "google/protobuf/timestamp.proto";
+
+service NotificationService{
+  rpc GetAllNotificationsByUserIdAndType(UserIdRequest) returns(GetAllNotificationsByUserIdAndTypeResponse) {}
+  rpc AcknowledgeNotification(IdRequest) returns(Notification) {}
+  rpc InsertNotification(CreateNotification) returns(Notification) {}
+
+  rpc GetSelectedNotificationTypesByUserId(UserIdRequest) returns(SelectedNotificationTypes) {}
+  rpc InsertSelectedNotificationTypes(SelectedNotificationTypes) returns(MessageResponse) {}
+  rpc UpdateSelectedNotificationTypes(SelectedNotificationTypes) returns(SelectedNotificationTypes) {}
+  rpc DeleteSelectedNotificationTypes(UserIdRequest) returns(MessageResponse) {}
+}
+
+message Notification {
+  string id = 1;
+  string notificationText = 2;
+  bool isAcknowledged = 3;
+  string userId = 4;
+  google.protobuf.Timestamp dateCreated = 5;
+  string type = 6;
+}
+
+message SelectedNotificationTypes{
+  string userId = 1;
+  repeated string selectedTypes = 2;
+}
+
+message MessageResponse{
+  string message = 1;
+}
+
+message CreateNotification {
+  string notificationText = 1;
+  string userId = 2;
+  string type = 3;
+}
+
+message IdRequest {
+  string id = 1;
+}
+
+message UserIdRequest {
+  string userId = 1;
+}
+
+message GetAllNotificationsByUserIdAndTypeResponse {
+  repeated Notification notifications = 1;
+}

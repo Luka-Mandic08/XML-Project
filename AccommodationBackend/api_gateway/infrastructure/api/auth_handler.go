@@ -5,6 +5,7 @@ import (
 	"api_gateway/domain/model"
 	"api_gateway/infrastructure/services"
 	auth "common/proto/auth_service"
+	notification "common/proto/notification_service"
 	user "common/proto/user_service"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
@@ -15,12 +16,13 @@ import (
 )
 
 type AuthHandler struct {
-	authClient auth.AuthServiceClient
-	userClient user.UserServiceClient
+	authClient         auth.AuthServiceClient
+	userClient         user.UserServiceClient
+	notificationClient notification.NotificationServiceClient
 }
 
-func NewAuthHandler(authClient auth.AuthServiceClient, userClient user.UserServiceClient) *AuthHandler {
-	return &AuthHandler{authClient: authClient, userClient: userClient}
+func NewAuthHandler(authClient auth.AuthServiceClient, userClient user.UserServiceClient, notificationClient notification.NotificationServiceClient) *AuthHandler {
+	return &AuthHandler{authClient: authClient, userClient: userClient, notificationClient: notificationClient}
 }
 
 func (handler *AuthHandler) Login(ctx *gin.Context) {
@@ -103,6 +105,34 @@ func (handler *AuthHandler) Register(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
+	var selectedTypes []string
+	if registerDto.Role == "Guest" {
+		selectedTypes = append(selectedTypes, "ReservationApprovedOrDenied")
+	}
+	if registerDto.Role == "Host" {
+		selectedTypes = append(selectedTypes, "ReservationCreated", "ReservationCanceled", "HostRated", "AccommodationRated", "OutstandingHostStatus")
+	}
+	_, err = handler.notificationClient.InsertSelectedNotificationTypes(ctx, &notification.SelectedNotificationTypes{
+		UserId:        userResponse.Id,
+		SelectedTypes: selectedTypes,
+	})
+	if err != nil {
+		handler.authClient.Delete(ctx, &auth.DeleteRequest{Id: response.Id})
+		handler.userClient.Delete(ctx, &user.DeleteRequest{Id: userResponse.Id, Role: registerDto.Role})
+		grpcError, ok := status.FromError(err)
+		if ok {
+			switch grpcError.Code() {
+			case codes.AlreadyExists:
+				ctx.JSON(http.StatusConflict, grpcError.Message())
+				return
+			default:
+				ctx.JSON(http.StatusBadRequest, grpcError.Message())
+				return
+			}
+		}
+		ctx.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
 	ctx.JSON(http.StatusCreated, response)
 }
 
@@ -163,6 +193,18 @@ func (handler *AuthHandler) Delete(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
+
+	_, err = handler.notificationClient.DeleteSelectedNotificationTypes(ctx, &notification.UserIdRequest{UserId: id})
+	if err != nil {
+		grpcError, ok := status.FromError(err)
+		if ok {
+			ctx.JSON(http.StatusBadRequest, grpcError.Message())
+			return
+		}
+		ctx.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+
 	ctx.JSON(http.StatusOK, response)
 }
 
