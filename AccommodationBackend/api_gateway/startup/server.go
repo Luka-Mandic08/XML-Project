@@ -38,7 +38,6 @@ func CreateRoutersAndSetRoutes(config *Config) *gin.Engine {
 
 	authServiceAddress := fmt.Sprintf("%s:%s", config.AuthHost, config.AuthPort)
 	authClient := services.NewAuthClient(authServiceAddress)
-	authHandler := handler.NewAuthHandler(authClient, userClient)
 
 	accommodationServiceAddress := fmt.Sprintf("%s:%s", config.AccommodationHost, config.AccommodationPort)
 	accommodationClient := services.NewAccommodationClient(accommodationServiceAddress)
@@ -50,11 +49,13 @@ func CreateRoutersAndSetRoutes(config *Config) *gin.Engine {
 
 	ratingServiceAddress := fmt.Sprintf("%s:%s", config.RatingHost, config.RatingPort)
 	ratingClient := services.NewRatingClient(ratingServiceAddress)
-	ratingHandler := handler.NewRatingHandler(ratingClient)
 
 	notificationServiceAddress := fmt.Sprintf("%s:%s", config.NotificationHost, config.NotificationPort)
 	notificationClient := services.NewNotificationClient(notificationServiceAddress)
+
 	notificationHandler := handler.NewNotificationHandler(notificationClient)
+	authHandler := handler.NewAuthHandler(authClient, userClient, notificationClient)
+	ratingHandler := handler.NewRatingHandler(ratingClient, notificationClient, userClient, accommodationClient)
 
 	corsMiddleware := cors.New(cors.Config{
 		AllowAllOrigins: true,

@@ -260,7 +260,14 @@ func (service *ReservationService) ChangeOutstandingHostStatus(status bool, host
 	if !status {
 		response, _ := service.outstandingHostStore.Delete(id)
 		if response.DeletedCount == 1 {
-			//TODO Send notification to host
+			_, err = service.notificationClient.InsertNotification(context.TODO(), &notification.CreateNotification{
+				NotificationText: "You have lost the status of outstanding host.",
+				UserId:           hostId,
+				Type:             "OutstandingHostStatus",
+			})
+			if err != nil {
+				println("Unsuccessful notification creation: ", err.Error())
+			}
 		}
 	}
 	if status {
@@ -269,7 +276,14 @@ func (service *ReservationService) ChangeOutstandingHostStatus(status bool, host
 			return err
 		}
 		if response {
-			//TODO Send notification to host
+			_, err = service.notificationClient.InsertNotification(context.TODO(), &notification.CreateNotification{
+				NotificationText: "You have gained the status of outstanding host.",
+				UserId:           hostId,
+				Type:             "OutstandingHostStatus",
+			})
+			if err != nil {
+				println("Unsuccessful notification creation: ", err.Error())
+			}
 		}
 	}
 	return nil

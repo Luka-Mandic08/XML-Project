@@ -13,7 +13,7 @@ type SelectedNotificationTypesMongoDBStore struct {
 }
 
 func NewSelectedNotificationTypesMongoDBStore(client *mongo.Client) SelectedNotificationTypesStore {
-	selectedTypes := client.Database(DATABASE).Collection(NOTIFICATIONCOLLECTION)
+	selectedTypes := client.Database(DATABASE).Collection(SELECTEDNOTIFICATIONTYPESCOLLECTION)
 	return &SelectedNotificationTypesMongoDBStore{
 		selectedTypes: selectedTypes,
 	}
