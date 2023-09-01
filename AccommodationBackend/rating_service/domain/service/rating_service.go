@@ -9,14 +9,16 @@ import (
 )
 
 type RatingService struct {
-	hostStore          repository.HostRatingStore
-	accommodationStore repository.AccommodationRatingStore
+	hostStore                    repository.HostRatingStore
+	accommodationStore           repository.AccommodationRatingStore
+	guestAccommodationGraphStore repository.GuestAccommodationGraphStore
 }
 
-func NewRatingService(hostStore repository.HostRatingStore, accommodationStore repository.AccommodationRatingStore) *RatingService {
+func NewRatingService(hostStore repository.HostRatingStore, accommodationStore repository.AccommodationRatingStore, guestAccommodationGraphStore repository.GuestAccommodationGraphStore) *RatingService {
 	return &RatingService{
-		hostStore:          hostStore,
-		accommodationStore: accommodationStore,
+		hostStore:                    hostStore,
+		accommodationStore:           accommodationStore,
+		guestAccommodationGraphStore: guestAccommodationGraphStore,
 	}
 }
 
@@ -57,7 +59,71 @@ func (service *RatingService) GetAverageScoreForAccommodation(accommodationId st
 }
 
 func (service *RatingService) InsertAccommodationRating(accommodationRating *model.AccommodationRating) (*model.AccommodationRating, error) {
-	return service.accommodationStore.Insert(accommodationRating)
+	result, err := service.accommodationStore.Insert(accommodationRating)
+	if result != nil {
+		println("Accommodation rating created 0: ID - ", result.AccommodationId)
+	}
+	if err != nil {
+		deleteResult, deleteErr := service.accommodationStore.Delete(result.Id)
+		if deleteResult.DeletedCount > 0 {
+			println("Accommodation rating deleted 0: ID - ", result.AccommodationId)
+		}
+		if deleteErr != nil {
+			println("Error occurred when deleting accommodation rating 0: ID - ", result.AccommodationId)
+			return nil, deleteErr
+		}
+		return nil, err
+	}
+	/*
+		err = service.guestAccommodationGraphStore.CreateGuestNode(result.GuestId)
+		if err != nil {
+			println("Could not create GuestNode", err.Error())
+			deleteResult, deleteErr := service.accommodationStore.Delete(result.Id)
+			if deleteResult.DeletedCount > 0 {
+				println("Accommodation rating deleted 1: ID - ", result.AccommodationId)
+			}
+			if deleteErr != nil {
+				println("Error occurred when deleting accommodation rating 1: ID - ", result.AccommodationId)
+				return nil, deleteErr
+			}
+			return nil, err
+		}
+
+		err = service.guestAccommodationGraphStore.CreateAccommodationNode(result.AccommodationId)
+		if err != nil {
+			println("Could not create AccommodationNode", err.Error())
+			deleteResult, deleteErr := service.accommodationStore.Delete(result.Id)
+			if deleteResult.DeletedCount > 0 {
+				println("Accommodation rating deleted 2: ID - ", result.AccommodationId)
+			}
+			if deleteErr != nil {
+				println("Error occurred when deleting accommodation rating 2: ID - ", result.AccommodationId)
+				return nil, deleteErr
+			}
+			return nil, err
+		}
+
+		err = service.guestAccommodationGraphStore.CreateConnectionBetweenGuestAndAccommodation(result)
+		if err != nil {
+			println("Could not create ConnectionBetweenGuestAndAccommodation", err.Error())
+			return nil, err
+		}
+	*/
+	err = service.guestAccommodationGraphStore.CreateOrUpdateGuestAccommodationConnection(result)
+	if err != nil {
+		println("Could not create neo4j relation between nodes", err.Error())
+		deleteResult, deleteErr := service.accommodationStore.Delete(result.Id)
+		if deleteResult.DeletedCount > 0 {
+			println("Accommodation rating deleted: ID - ", result.AccommodationId)
+		}
+		if deleteErr != nil {
+			println("Error occurred when deleting accommodation rating: ID - ", result.AccommodationId)
+			return nil, deleteErr
+		}
+		return nil, err
+	}
+
+	return result, nil
 }
 
 func (service *RatingService) UpdateAccommodationRating(accommodationRating *model.AccommodationRating) (*mongo.UpdateResult, error) {
