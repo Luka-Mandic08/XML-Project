@@ -52,6 +52,9 @@ export function BookingNavBar(props: BookingNavBarProps) {
               <Button onClick={() => navigate(BookingAppRoutes.HomeHost)} color="inherit" sx={{ textTransform: 'none', marginRight: '30px' }}>
                 My Accomodation
               </Button>
+              <Button onClick={() => navigate(BookingAppRoutes.Notifications)} color="inherit" sx={{ textTransform: 'none', marginRight: '30px' }}>
+                Notifications
+              </Button>
               <Button onClick={() => navigate(BookingAppRoutes.Profile)} color="inherit" sx={{ textTransform: 'none', marginRight: '30px' }}>
                 Profile
               </Button>
@@ -64,6 +67,9 @@ export function BookingNavBar(props: BookingNavBarProps) {
             <>
               <Button onClick={() => navigate(BookingAppRoutes.GuestReservations)} color="inherit" sx={{ textTransform: 'none', marginRight: '30px' }}>
                 Reservations
+              </Button>
+              <Button onClick={() => navigate(BookingAppRoutes.Notifications)} color="inherit" sx={{ textTransform: 'none', marginRight: '30px' }}>
+                Notifications
               </Button>
               <Button onClick={() => navigate(BookingAppRoutes.Profile)} color="inherit" sx={{ textTransform: 'none', marginRight: '30px' }}>
                 Profile
