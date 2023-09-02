@@ -259,6 +259,7 @@ export function AllAccommodation(props: AllAccommodationProps) {
             {searchedAccomodationInfo?.map((accomodation, key) => (
               <SearchedAccommodationCard searchedAccomodationInfo={accomodation} />
             ))}
+            {searchedAccomodationInfo?.length === 0 && <Typography variant="h5">No accomodations found</Typography>}
           </div>
           <Grid container justifyContent={'center'} marginTop={'2rem'}>
             {searchShouldLoadMore && (
