@@ -52,12 +52,10 @@ export function LinkApiKeyDialog(props: LinkApiKeyDialogProps) {
   };
 
   const createPermanentApiKey = async () => {
-    const res = await CreateApiKey(true);
-    console.log(res);
+    await CreateApiKey(true);
   };
   const createTemporaryApiKey = async () => {
-    const res = await CreateApiKey(false);
-    console.log(res);
+    await CreateApiKey(false);
   };
 
   const handleClose = () => {

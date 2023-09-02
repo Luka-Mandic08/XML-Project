@@ -87,7 +87,6 @@ export function AccomodationComments(props: AccomodationCommentsProps) {
   };
 
   function editComment(comment: AccommodationRating) {
-    console.log(comment);
     if (props.showAccommodationComments) {
       EditAccommodationRating(comment);
     } else {

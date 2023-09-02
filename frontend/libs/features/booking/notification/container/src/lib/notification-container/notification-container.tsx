@@ -70,8 +70,6 @@ export function NotificationContainer(props: NotificationContainerProps) {
 
   const handleSave = () => {
     const truePreferences = Object.keys(notificationPreferences).filter((key) => (notificationPreferences as any)[key] === true);
-    console.log('Izabrane opcije:', truePreferences);
-
     UpdateNotificationPreferences(truePreferences);
   };
 

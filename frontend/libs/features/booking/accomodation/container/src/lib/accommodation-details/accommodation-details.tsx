@@ -4,7 +4,6 @@ import Carousel from 'react-material-ui-carousel';
 import { Divider, Grid, Paper, Rating, Typography } from '@mui/material';
 import AccomodationComments from '../accomodation-comments/accomodation-comments';
 import { useLocation } from 'react-router-dom';
-import { useEffect } from 'react';
 
 /* eslint-disable-next-line */
 export interface AccommodationDetailsProps {
@@ -15,10 +14,6 @@ export function AccommodationDetails(props: AccommodationDetailsProps) {
   const selectedAccommodation = useSelectedAccommodationStore((state) => state.selectedAccommodation);
   const userRole = localStorage.getItem('role');
   const location = useLocation();
-
-  useEffect(() => {
-    console.log(location.pathname);
-  }, []);
 
   return (
     <>

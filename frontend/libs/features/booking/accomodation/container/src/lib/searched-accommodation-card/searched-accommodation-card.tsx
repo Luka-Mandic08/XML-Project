@@ -33,6 +33,7 @@ export function SearchedAccommodationCard(props: SearchedAccommodationCardProps)
 
           <Grid container justifyContent={'center'}>
             {props.searchedAccomodationInfo.images !== undefined && (
+              // eslint-disable-next-line jsx-a11y/img-redundant-alt
               <img src={props.searchedAccomodationInfo.images[0]} alt="Accomodation image" className={styles.imageContainer} />
             )}
           </Grid>

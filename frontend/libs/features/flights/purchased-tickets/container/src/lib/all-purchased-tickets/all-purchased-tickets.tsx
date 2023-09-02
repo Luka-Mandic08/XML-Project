@@ -16,7 +16,19 @@ export function AllFlights(props: AllPurchasedTicketsProps) {
         setFlights(result);
       })
       .catch((error) => {
-        console.error(error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Something went wrong, please try again',
+          showConfirmButton: false,
+          position: 'bottom-right',
+          timer: 3000,
+          timerProgressBar: true,
+          backdrop: 'none',
+          width: 300,
+          background: '#212121',
+          color: 'white',
+        });
       });
   }, []);
 

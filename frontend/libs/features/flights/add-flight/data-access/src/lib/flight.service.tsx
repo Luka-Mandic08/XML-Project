@@ -2,8 +2,6 @@ import { BaseURL, NewFlight } from '@frontend/models';
 import axios from 'axios';
 
 export async function AddNewFlight(flight: NewFlight) {
-  console.log(flight);
-
   await axios({
     method: 'POST',
     url: BaseURL.URL + '/flight/add',
@@ -20,8 +18,6 @@ export async function AddNewFlight(flight: NewFlight) {
 }
 
 export async function DeleteFlight(flightId: string) {
-  console.log(flightId);
-
   await axios({
     method: 'delete',
     url: BaseURL.URL + '/flight/' + flightId,

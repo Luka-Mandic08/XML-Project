@@ -33,7 +33,6 @@ export async function GetHostRatings(hostId: any): Promise<any> {
     url: BookingBaseURL.URL + '/rating/host/all/' + hostId,
   })
     .then((response) => {
-      console.log(response.data.hostRatings);
       return response.data.hostRatings;
     })
     .catch((err) => {
@@ -202,7 +201,6 @@ export async function GetAllAccomodation(pageNumber: number): Promise<Accommodat
     url: BookingBaseURL.URL + '/accommodation/all/' + pageNumber,
   })
     .then((response) => {
-      console.log(response.data.accommodations);
       return response.data.accommodations;
     })
     .catch((err) => {
@@ -355,7 +353,6 @@ export async function SearchAccommodation(data: any, pageNumber: number): Promis
     amenities: data.amenities !== '' ? data.amenities.split(',') : [],
     ownedByProminentHost: data.ownedByProminentHost,
   };
-  console.log(newData);
   return await axios({
     method: 'post',
     url: BookingBaseURL.URL + '/accommodation/search',

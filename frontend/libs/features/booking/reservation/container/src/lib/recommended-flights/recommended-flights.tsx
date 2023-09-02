@@ -6,7 +6,7 @@ import { Flight, SearchFlightsDTO } from '@frontend/models';
 import { useState } from 'react';
 import { FlightItem } from '@frontend/features/flights/home/container';
 import { SearchFlights } from '@frontend/features/flights/home/data-access';
-import { start } from 'repl';
+import Swal from 'sweetalert2';
 
 /* eslint-disable-next-line */
 export interface RecommendedFlightsProps {}
@@ -42,15 +42,25 @@ export function RecommendedFlights(props: RecommendedFlightsProps) {
     startDto.setFields(data.startDate, data.startLocation, data.startDestination, parseInt(data.startNumberOfTickets));
     endDto.setFields(data.endDate, data.endLocation, data.endDestination, parseInt(data.endNumberOfTickets));
 
-    console.log(startDto, endDto);
-
     SearchFlights(startDto)
       .then((result) => {
         if (result !== '') setStartFlights(result);
         else setStartFlights([]);
       })
       .catch((error) => {
-        console.error(error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Something went wrong, please try again',
+          showConfirmButton: false,
+          position: 'bottom-right',
+          timer: 3000,
+          timerProgressBar: true,
+          backdrop: 'none',
+          width: 300,
+          background: '#212121',
+          color: 'white',
+        });
       });
 
     SearchFlights(endDto)
@@ -59,7 +69,19 @@ export function RecommendedFlights(props: RecommendedFlightsProps) {
         else setEndFlights([]);
       })
       .catch((error) => {
-        console.error(error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Something went wrong, please try again',
+          showConfirmButton: false,
+          position: 'bottom-right',
+          timer: 3000,
+          timerProgressBar: true,
+          backdrop: 'none',
+          width: 300,
+          background: '#212121',
+          color: 'white',
+        });
       });
   };
 

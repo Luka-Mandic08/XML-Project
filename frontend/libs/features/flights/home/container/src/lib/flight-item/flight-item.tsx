@@ -29,7 +29,6 @@ export function FlightItem(props: FlightItemProps) {
 
   const handleBuyTicketClick = () => {
     setIsBuyTicketDialogOpen(true);
-    console.log(amount);
   };
 
   const handleBuyTicketClose = () => {

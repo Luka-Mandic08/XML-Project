@@ -78,6 +78,7 @@ export function App() {
         <Route path={SharedRoutes.Login} element={<LoginPage isBookingApp={true} />} />
         <Route path={BookingAppRoutes.Register} element={<RegisterPage />} />
         <Route path={BookingAppRoutes.HomeGuest} element={<AllAccommodation />} />
+
         <Route element={<PrivateRoutes userRole="Guest" />}>
           <Route path={BookingAppRoutes.GuestReservations} element={<GuestReservations />} />
           <Route path={BookingAppRoutes.MakeReservation} element={<MakeReservation />} />

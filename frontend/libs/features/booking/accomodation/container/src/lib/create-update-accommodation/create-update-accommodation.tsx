@@ -1,4 +1,4 @@
-import { AccommodationCreateUpdateDTO, BookingAppRoutes, BookingBaseURL } from '@frontend/models';
+import { AccommodationCreateUpdateDTO, BookingAppRoutes } from '@frontend/models';
 import styles from './create-update-accommodation.module.css';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { Grid, Paper, Typography, IconButton, Button } from '@mui/material';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import { CreateUpdateAccommodationFunction } from '@frontend/features/booking/accomodation/data';
+import Swal from 'sweetalert2';
 
 /* eslint-disable-next-line */
 export interface CreateUpdateAccommodationProps {}
@@ -68,9 +69,13 @@ export function CreateUpdateAccommodation(props: CreateUpdateAccommodationProps)
       setImagesBase64((prevImages: any) => [...prevImages, reader.result]);
     };
     reader.onerror = (error) => {
-      console.error('Base64 conversion error:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Something went wrong! Base64 conversion error!',
+      });
     };
-    resetImages(); // Reset the form after submission
+    resetImages();
   };
 
   const deleteImages = (id: number) => {

@@ -13,7 +13,6 @@ export function NavBar(props: NavBarProps) {
 
   useEffect(() => {
     setRole(localStorage.getItem('role')!);
-    console.log(role);
   }, [role, navigate]);
 
   const logout = () => {

@@ -2,7 +2,7 @@
 import { AccommodationDetails, AccomodationComments, AvailabilityCalendar } from '@frontend/features/booking/accomodation/container';
 import styles from './make-reservation.module.css';
 import { useSelectedAccommodationStore } from '@frontend/features/booking/store/container';
-import { Paper, Typography, Button, Grid } from '@mui/material';
+import { Paper, Typography, Button } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { RateAccommodationOrHostForm } from '@frontend/features/booking/rating/container';
 import { HostDetails } from '@frontend/features/booking/profile/container';
@@ -28,13 +28,10 @@ export function MakeReservation(props: MakeReservationProps) {
   });
 
   const onSubmitAvailabilityDates = async (data: any) => {
-    console.log(data);
     data.startDate = new Date(data.startDate);
     data.endDate = new Date(data.endDate);
     data.userId = localStorage.getItem('userId');
-    console.log(data);
-    const res = await MakeReservationFunction(data);
-    console.log(res);
+    await MakeReservationFunction(data);
   };
 
   return (

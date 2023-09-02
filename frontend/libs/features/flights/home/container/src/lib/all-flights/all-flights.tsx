@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import FlightItem from '../flight-item/flight-item';
 import styles from './all-flights.module.css';
 import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 /* eslint-disable-next-line */
 export interface AllFlightsProps {}
@@ -16,25 +17,25 @@ export function AllFlights(props: AllFlightsProps) {
   const [destination, setDestination] = useState('');
   const [tickets, setTickets] = useState('');
 
-  /*useEffect(() => {
-    const fetchData = async () => {
-      const data = await GetAllFlights();
-      setFlights(data)
-    }
-  
-    // call the function
-    fetchData()
-      // make sure to catch any error
-      .catch(console.error);
-      .catch(console.error);
-  }, [flights])*/
   useEffect(() => {
     GetAllFlights()
       .then((result) => {
         setFlights(result);
       })
       .catch((error) => {
-        console.error(error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Something went wrong, please try again',
+          showConfirmButton: false,
+          position: 'bottom-right',
+          timer: 3000,
+          timerProgressBar: true,
+          backdrop: 'none',
+          width: 300,
+          background: '#212121',
+          color: 'white',
+        });
       });
   }, []);
 
@@ -52,7 +53,19 @@ export function AllFlights(props: AllFlightsProps) {
         else setFlights([]);
       })
       .catch((error) => {
-        console.error(error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Something went wrong, please try again',
+          showConfirmButton: false,
+          position: 'bottom-right',
+          timer: 3000,
+          timerProgressBar: true,
+          backdrop: 'none',
+          width: 300,
+          background: '#212121',
+          color: 'white',
+        });
       });
   }
 
@@ -66,7 +79,19 @@ export function AllFlights(props: AllFlightsProps) {
         setFlights(result);
       })
       .catch((error) => {
-        console.error(error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Something went wrong, please try again',
+          showConfirmButton: false,
+          position: 'bottom-right',
+          timer: 3000,
+          timerProgressBar: true,
+          backdrop: 'none',
+          width: 300,
+          background: '#212121',
+          color: 'white',
+        });
       });
   }
 

@@ -1,14 +1,12 @@
 import { GetAllAccomodation, SearchAccommodation } from '@frontend/features/booking/accomodation/data';
 import { AccommodationInfo, SearchedAccommodationInfo } from '@frontend/models';
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import AccommodationCard from '../accomodation-card/accomodation-card';
 import SearchedAccommodationCard from '../searched-accommodation-card/searched-accommodation-card';
 import styles from './all-accommodation.module.css';
 import { Grid, Button, Typography } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { useSearchParametersStore } from '@frontend/features/booking/store/container';
-import { get } from 'http';
 
 /* eslint-disable-next-line */
 export interface AllAccommodationProps {}
@@ -23,8 +21,6 @@ export function AllAccommodation(props: AllAccommodationProps) {
   const [searchPageNumber, setSearchPageNumber] = useState<number>(1);
   const [searchShouldLoadMore, setSearchShouldLoadMore] = useState<boolean>(true);
   const setSearchParameters = useSearchParametersStore((state) => state.setSearchParameters);
-
-  const navigate = useNavigate();
 
   useEffect(() => {
     getAllAccomodation();
@@ -83,11 +79,11 @@ export function AllAccommodation(props: AllAccommodationProps) {
     setSearchPageNumber(1);
     setSearchedAccomodationInfo([]);
     setSearchShouldLoadMore(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [watch('dateFrom'), watch('dateTo'), watch('city'), watch('country'), watch('numberOfGuests')]);
 
   const loadMoreForSearch = async () => {
     setSearchPageNumber(searchPageNumber + 1);
-    console.log(getValues);
     const data = {
       city: getValues('city'),
       country: getValues('country'),
@@ -95,7 +91,6 @@ export function AllAccommodation(props: AllAccommodationProps) {
       dateTo: getValues('dateTo'),
       numberOfGuests: getValues('numberOfGuests'),
     };
-    console.log(data);
     const newAccomodations = await SearchAccommodation(data, searchPageNumber);
     if (newAccomodations === undefined) {
       setSearchPageNumber(searchPageNumber - 1);

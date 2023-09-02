@@ -33,12 +33,9 @@ export function MakeReservationDialog(props: MakeReservationDialogProps) {
   });
 
   const onSubmit = async (data: any) => {
-    console.log(data);
     data.startDate = new Date(data.startDate);
     data.endDate = new Date(data.endDate);
-    console.log(data);
     const res = await MakeReservationFunction(data);
-    console.log(res);
     if (res) {
       navigate(BookingAppRoutes.GuestReservations);
     }

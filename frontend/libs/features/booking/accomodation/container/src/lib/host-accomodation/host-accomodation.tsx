@@ -1,4 +1,4 @@
-import { Button, Container, Grid, Typography } from '@mui/material';
+import { Button, Grid, Typography } from '@mui/material';
 import styles from './host-accomodation.module.css';
 import { GetAccomodationForHost } from '@frontend/features/booking/accomodation/data';
 import { AccommodationInfo, BookingAppRoutes } from '@frontend/models';
@@ -20,7 +20,6 @@ export function HostAccomodation(props: HostAccomodationProps) {
 
   const getAccomodationForHost = async () => {
     setAccomodationInfo(await GetAccomodationForHost());
-    console.log(accomodationInfo);
   };
 
   const newAccommodation = () => {
