@@ -125,7 +125,7 @@ func CreateRoutersAndSetRoutes(config *Config) *gin.Engine {
 	notificationGroup.GET("/all/:userId", notificationHandler.GetAllNotificationsByUserIdAndType)
 	notificationGroup.PUT("/acknowledge", notificationHandler.AcknowledgeNotification)
 	notificationGroup.POST("/create", notificationHandler.InsertNotification)
-	notificationGroup.GET("/selectedtypes", notificationHandler.GetSelectedNotificationTypesByUserId)
+	notificationGroup.GET("/selectedtypes/:userId", notificationHandler.GetSelectedNotificationTypesByUserId)
 	notificationGroup.PUT("/selectedtypes/update", notificationHandler.UpdateSelectedNotificationTypes)
 
 	return router

@@ -79,13 +79,14 @@ export function NotificationContainer(props: NotificationContainerProps) {
     });
 
     GetNotificationPreferences().then((data) => {
+      console.log(data);
       setNotificationPreferences({
-        ReservationCreated: data?.includes('ReservationCreated') ?? false,
-        ReservationCanceled: data?.includes('ReservationCanceled') ?? false,
-        HostRated: data?.includes('HostRated') ?? false,
-        AccommodationRated: data?.includes('AccommodationRated') ?? false,
-        OutstandingHostStatus: data?.includes('OutstandingHostStatus') ?? false,
-        ReservationApprovedOrDenied: data?.includes('ReservationApprovedOrDenied') ?? false,
+        ReservationCreated: data.selectedTypes?.includes('ReservationCreated') ?? false,
+        ReservationCanceled: data.selectedTypes?.includes('ReservationCanceled') ?? false,
+        HostRated: data.selectedTypes?.includes('HostRated') ?? false,
+        AccommodationRated: data.selectedTypes?.includes('AccommodationRated') ?? false,
+        OutstandingHostStatus: data.selectedTypes?.includes('OutstandingHostStatus') ?? false,
+        ReservationApprovedOrDenied: data.selectedTypes?.includes('ReservationApprovedOrDenied') ?? false,
       });
     });
   }, []);

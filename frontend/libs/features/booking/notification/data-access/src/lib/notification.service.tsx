@@ -32,12 +32,11 @@ export async function GetNotificationPreferences(): Promise<any> {
   console.log(userId);
   return await axios({
     method: 'get',
-    url: BookingBaseURL.URL + '/notification/selectedtypes',
-    data: { userId: userId },
+    url: BookingBaseURL.URL + '/notification/selectedtypes/' + userId,
   })
     .then((response) => {
       console.log(response);
-      return response.data.notifications;
+      return response.data;
     })
     .catch((err) => {
       Swal.fire({
