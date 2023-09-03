@@ -25,44 +25,45 @@ export function App() {
   useEffect(() => {
     const intervalId = setInterval(() => {
       const userId = localStorage.getItem('userId');
-      axios
-        .get(BookingBaseURL.URL + '/notification/all/' + userId)
-        .then((response) => {
-          const criticalEvents = response.data;
-          if (criticalEvents.length !== 0) {
-            console.warn(criticalEvents);
-            criticalEvents.forEach((notification: any, index: number) => {
-              setTimeout(() => {
-                console.log(notification);
-                Swal.fire({
-                  icon: 'info',
-                  title: 'Notification',
-                  html: '<div style="max-height: 400px; overflow: auto;">' + notification.notificationText + '</div>',
-                  showConfirmButton: false,
-                  position: 'bottom-right',
-                  timer: 4000,
-                  timerProgressBar: true,
-                  backdrop: 'none',
-                  width: 300,
-                  background: '#212121',
-                  color: 'white',
-                });
-
-                axios
-                  .put(BookingBaseURL.URL + '/notification/acknowledge', { id: notification.id })
-                  .then((ackResponse) => {
-                    console.log('Notification acknowledged:', ackResponse.data);
-                  })
-                  .catch((ackError) => {
-                    console.error('Error acknowledging notification:', ackError);
-                  });
-              }, index * 5000);
-            });
-          }
-        })
-        .catch((error) => {
-          console.error(error);
-        });
+      if (userId !== null && userId !== undefined) {
+        axios
+          .get(BookingBaseURL.URL + '/notification/all/' + userId)
+          .then((response) => {
+            const criticalEvents = response.data.notifications;
+            if (criticalEvents.length !== 0) {
+              criticalEvents?.forEach((notification: any, index: number) => {
+                if (!notification.isAcknowledged) {
+                  setTimeout(() => {
+                    Swal.fire({
+                      icon: 'info',
+                      title: 'Notification',
+                      html: '<div style="max-height: 400px; overflow: auto;">' + notification.notificationText + '</div>',
+                      showConfirmButton: false,
+                      position: 'bottom-right',
+                      timer: 4000,
+                      timerProgressBar: true,
+                      backdrop: 'none',
+                      width: 300,
+                      background: '#212121',
+                      color: 'white',
+                    });
+                    axios
+                      .put(BookingBaseURL.URL + '/notification/acknowledge', { id: notification.id })
+                      .then((ackResponse) => {
+                        console.log('Notification acknowledged:', ackResponse.data);
+                      })
+                      .catch((ackError) => {
+                        console.error('Error acknowledging notification:', ackError);
+                      });
+                  }, index * 5000);
+                }
+              });
+            }
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      }
     }, 20000);
 
     return () => {

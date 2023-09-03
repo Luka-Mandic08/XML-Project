@@ -29,12 +29,14 @@ export async function GetNotifications(): Promise<any> {
 }
 export async function GetNotificationPreferences(): Promise<any> {
   const userId = localStorage.getItem('userId');
+  console.log(userId);
   return await axios({
     method: 'get',
     url: BookingBaseURL.URL + '/notification/selectedtypes',
     data: { userId: userId },
   })
     .then((response) => {
+      console.log(response);
       return response.data.notifications;
     })
     .catch((err) => {

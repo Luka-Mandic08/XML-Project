@@ -151,7 +151,7 @@ export function NotificationContainer(props: NotificationContainerProps) {
             <TableContainer component={Paper}>
               <TableHead>
                 <TableRow sx={{ maxWidth: '900px' }}>
-                  <StyledTableCell align="center" colSpan={3} sx={{ mt: 10, mb: 2, width: '1100px' }}>
+                  <StyledTableCell align="center" colSpan={3} sx={{ mt: 10, mb: 2, width: '1300px' }}>
                     <Typography variant="h4">Notifications</Typography>
                   </StyledTableCell>
                 </TableRow>
@@ -159,9 +159,9 @@ export function NotificationContainer(props: NotificationContainerProps) {
               <TableBody>
                 {notifications?.map((notification, idx) => (
                   <StyledTableRow key={idx} sx={{ width: '900px' }}>
-                    <StyledTableCell>{notification.notificationText}</StyledTableCell>
+                    <StyledTableCell sx={{ width: '700px' }}>{notification.notificationText}</StyledTableCell>
                     <StyledTableCell>{notification.type}</StyledTableCell>
-                    <StyledTableCell>{notification.dateCreated}</StyledTableCell>
+                    <StyledTableCell>{new Date(notification.dateCreated.seconds * 1000).toDateString()}</StyledTableCell>
                   </StyledTableRow>
                 ))}
               </TableBody>
