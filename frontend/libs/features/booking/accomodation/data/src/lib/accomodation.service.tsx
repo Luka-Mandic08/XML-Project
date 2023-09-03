@@ -412,3 +412,29 @@ export async function GetAccommodationById(id: string): Promise<AccommodationInf
       });
     });
 }
+
+export async function GetAllRecommendedAccomodation(): Promise<AccommodationInfo[]> {
+  return await axios({
+    method: 'get',
+    url: BookingBaseURL.URL + '/accommodation/recommended/' + localStorage.getItem('userId'),
+  })
+    .then((response) => {
+      console.log(response);
+      return response.data;
+    })
+    .catch((err) => {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Something went wrong, please try again\n' + err.message,
+        showConfirmButton: false,
+        position: 'bottom-right',
+        timer: 3000,
+        timerProgressBar: true,
+        backdrop: 'none',
+        width: 300,
+        background: '#212121',
+        color: 'white',
+      });
+    });
+}

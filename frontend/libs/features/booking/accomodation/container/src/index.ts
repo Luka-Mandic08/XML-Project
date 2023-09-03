@@ -1,3 +1,4 @@
+export * from './lib/recommended-accommodations/recommended-accommodations';
 export * from './lib/accomodation-comments/accomodation-comments';
 export * from './lib/update-accommodation-availability/update-accommodation-availability';
 export * from './lib/accommodation-details/accommodation-details';

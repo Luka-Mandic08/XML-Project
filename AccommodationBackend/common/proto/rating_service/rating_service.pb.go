@@ -706,6 +706,108 @@ func (x *CreateAccommodationRatingRequest) GetDate() *timestamppb.Timestamp {
 	return nil
 }
 
+type RecommendedAccommodationsResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	RecommendedAccommodations []*RecommendedAccommodation `protobuf:"bytes,1,rep,name=recommendedAccommodations,proto3" json:"recommendedAccommodations,omitempty"`
+}
+
+func (x *RecommendedAccommodationsResponse) Reset() {
+	*x = RecommendedAccommodationsResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_rating_service_rating_service_proto_msgTypes[11]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *RecommendedAccommodationsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RecommendedAccommodationsResponse) ProtoMessage() {}
+
+func (x *RecommendedAccommodationsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_rating_service_rating_service_proto_msgTypes[11]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RecommendedAccommodationsResponse.ProtoReflect.Descriptor instead.
+func (*RecommendedAccommodationsResponse) Descriptor() ([]byte, []int) {
+	return file_rating_service_rating_service_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *RecommendedAccommodationsResponse) GetRecommendedAccommodations() []*RecommendedAccommodation {
+	if x != nil {
+		return x.RecommendedAccommodations
+	}
+	return nil
+}
+
+type RecommendedAccommodation struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	AccommodationId string  `protobuf:"bytes,1,opt,name=accommodationId,proto3" json:"accommodationId,omitempty"`
+	AverageScore    float32 `protobuf:"fixed32,2,opt,name=averageScore,proto3" json:"averageScore,omitempty"`
+}
+
+func (x *RecommendedAccommodation) Reset() {
+	*x = RecommendedAccommodation{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_rating_service_rating_service_proto_msgTypes[12]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *RecommendedAccommodation) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RecommendedAccommodation) ProtoMessage() {}
+
+func (x *RecommendedAccommodation) ProtoReflect() protoreflect.Message {
+	mi := &file_rating_service_rating_service_proto_msgTypes[12]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RecommendedAccommodation.ProtoReflect.Descriptor instead.
+func (*RecommendedAccommodation) Descriptor() ([]byte, []int) {
+	return file_rating_service_rating_service_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *RecommendedAccommodation) GetAccommodationId() string {
+	if x != nil {
+		return x.AccommodationId
+	}
+	return ""
+}
+
+func (x *RecommendedAccommodation) GetAverageScore() float32 {
+	if x != nil {
+		return x.AverageScore
+	}
+	return 0
+}
+
 var File_rating_service_rating_service_proto protoreflect.FileDescriptor
 
 var file_rating_service_rating_service_proto_rawDesc = []byte{
@@ -794,8 +896,23 @@ var file_rating_service_rating_service_proto_rawDesc = []byte{
 	0x04, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x63, 0x6f, 0x6d, 0x6d, 0x65, 0x6e, 0x74, 0x12, 0x2e,
 	0x0a, 0x04, 0x64, 0x61, 0x74, 0x65, 0x18, 0x05, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1a, 0x2e, 0x67,
 	0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x54,
-	0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x52, 0x04, 0x64, 0x61, 0x74, 0x65, 0x32, 0xf2,
-	0x07, 0x0a, 0x0d, 0x52, 0x61, 0x74, 0x69, 0x6e, 0x67, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65,
+	0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x52, 0x04, 0x64, 0x61, 0x74, 0x65, 0x22, 0x83,
+	0x01, 0x0a, 0x21, 0x52, 0x65, 0x63, 0x6f, 0x6d, 0x6d, 0x65, 0x6e, 0x64, 0x65, 0x64, 0x41, 0x63,
+	0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x64, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x52, 0x65, 0x73, 0x70,
+	0x6f, 0x6e, 0x73, 0x65, 0x12, 0x5e, 0x0a, 0x19, 0x72, 0x65, 0x63, 0x6f, 0x6d, 0x6d, 0x65, 0x6e,
+	0x64, 0x65, 0x64, 0x41, 0x63, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x64, 0x61, 0x74, 0x69, 0x6f, 0x6e,
+	0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x20, 0x2e, 0x72, 0x61, 0x74, 0x69, 0x6e, 0x67,
+	0x2e, 0x52, 0x65, 0x63, 0x6f, 0x6d, 0x6d, 0x65, 0x6e, 0x64, 0x65, 0x64, 0x41, 0x63, 0x63, 0x6f,
+	0x6d, 0x6d, 0x6f, 0x64, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x19, 0x72, 0x65, 0x63, 0x6f, 0x6d,
+	0x6d, 0x65, 0x6e, 0x64, 0x65, 0x64, 0x41, 0x63, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x64, 0x61, 0x74,
+	0x69, 0x6f, 0x6e, 0x73, 0x22, 0x68, 0x0a, 0x18, 0x52, 0x65, 0x63, 0x6f, 0x6d, 0x6d, 0x65, 0x6e,
+	0x64, 0x65, 0x64, 0x41, 0x63, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x64, 0x61, 0x74, 0x69, 0x6f, 0x6e,
+	0x12, 0x28, 0x0a, 0x0f, 0x61, 0x63, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x64, 0x61, 0x74, 0x69, 0x6f,
+	0x6e, 0x49, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0f, 0x61, 0x63, 0x63, 0x6f, 0x6d,
+	0x6d, 0x6f, 0x64, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x49, 0x64, 0x12, 0x22, 0x0a, 0x0c, 0x61, 0x76,
+	0x65, 0x72, 0x61, 0x67, 0x65, 0x53, 0x63, 0x6f, 0x72, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x02,
+	0x52, 0x0c, 0x61, 0x76, 0x65, 0x72, 0x61, 0x67, 0x65, 0x53, 0x63, 0x6f, 0x72, 0x65, 0x32, 0xdd,
+	0x08, 0x0a, 0x0d, 0x52, 0x61, 0x74, 0x69, 0x6e, 0x67, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65,
 	0x12, 0x3c, 0x0a, 0x11, 0x47, 0x65, 0x74, 0x48, 0x6f, 0x73, 0x74, 0x52, 0x61, 0x74, 0x69, 0x6e,
 	0x67, 0x42, 0x79, 0x49, 0x64, 0x12, 0x11, 0x2e, 0x72, 0x61, 0x74, 0x69, 0x6e, 0x67, 0x2e, 0x49,
 	0x64, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x12, 0x2e, 0x72, 0x61, 0x74, 0x69, 0x6e,
@@ -858,8 +975,15 @@ var file_rating_service_rating_service_proto_rawDesc = []byte{
 	0x67, 0x12, 0x15, 0x2e, 0x72, 0x61, 0x74, 0x69, 0x6e, 0x67, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74,
 	0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x17, 0x2e, 0x72, 0x61, 0x74, 0x69, 0x6e,
 	0x67, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x64, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
-	0x65, 0x22, 0x00, 0x42, 0x0f, 0x5a, 0x0d, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x2f, 0x72, 0x61,
-	0x74, 0x69, 0x6e, 0x67, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x65, 0x22, 0x00, 0x12, 0x69, 0x0a, 0x27, 0x47, 0x65, 0x74, 0x41, 0x6c, 0x6c, 0x52, 0x65, 0x63,
+	0x6f, 0x6d, 0x6d, 0x65, 0x6e, 0x64, 0x65, 0x64, 0x41, 0x63, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x64,
+	0x61, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x46, 0x6f, 0x72, 0x47, 0x75, 0x65, 0x73, 0x74, 0x12, 0x11,
+	0x2e, 0x72, 0x61, 0x74, 0x69, 0x6e, 0x67, 0x2e, 0x49, 0x64, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
+	0x74, 0x1a, 0x29, 0x2e, 0x72, 0x61, 0x74, 0x69, 0x6e, 0x67, 0x2e, 0x52, 0x65, 0x63, 0x6f, 0x6d,
+	0x6d, 0x65, 0x6e, 0x64, 0x65, 0x64, 0x41, 0x63, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x64, 0x61, 0x74,
+	0x69, 0x6f, 0x6e, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x42, 0x0f,
+	0x5a, 0x0d, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x2f, 0x72, 0x61, 0x74, 0x69, 0x6e, 0x67, 0x62,
+	0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -874,7 +998,7 @@ func file_rating_service_rating_service_proto_rawDescGZIP() []byte {
 	return file_rating_service_rating_service_proto_rawDescData
 }
 
-var file_rating_service_rating_service_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
+var file_rating_service_rating_service_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
 var file_rating_service_rating_service_proto_goTypes = []interface{}{
 	(*HostRating)(nil),                              // 0: rating.HostRating
 	(*AccommodationRating)(nil),                     // 1: rating.AccommodationRating
@@ -887,44 +1011,49 @@ var file_rating_service_rating_service_proto_goTypes = []interface{}{
 	(*GetAllRatingsForAccommodationResponse)(nil),   // 8: rating.GetAllRatingsForAccommodationResponse
 	(*GetAverageScoreForAccommodationResponse)(nil), // 9: rating.GetAverageScoreForAccommodationResponse
 	(*CreateAccommodationRatingRequest)(nil),        // 10: rating.CreateAccommodationRatingRequest
-	(*timestamppb.Timestamp)(nil),                   // 11: google.protobuf.Timestamp
+	(*RecommendedAccommodationsResponse)(nil),       // 11: rating.RecommendedAccommodationsResponse
+	(*RecommendedAccommodation)(nil),                // 12: rating.RecommendedAccommodation
+	(*timestamppb.Timestamp)(nil),                   // 13: google.protobuf.Timestamp
 }
 var file_rating_service_rating_service_proto_depIdxs = []int32{
-	11, // 0: rating.HostRating.date:type_name -> google.protobuf.Timestamp
-	11, // 1: rating.AccommodationRating.date:type_name -> google.protobuf.Timestamp
+	13, // 0: rating.HostRating.date:type_name -> google.protobuf.Timestamp
+	13, // 1: rating.AccommodationRating.date:type_name -> google.protobuf.Timestamp
 	0,  // 2: rating.GetAllRatingsForHostResponse.hostRatings:type_name -> rating.HostRating
-	11, // 3: rating.CreateHostRatingRequest.date:type_name -> google.protobuf.Timestamp
+	13, // 3: rating.CreateHostRatingRequest.date:type_name -> google.protobuf.Timestamp
 	1,  // 4: rating.GetAllRatingsForAccommodationResponse.accommodationRatings:type_name -> rating.AccommodationRating
-	11, // 5: rating.CreateAccommodationRatingRequest.date:type_name -> google.protobuf.Timestamp
-	2,  // 6: rating.RatingService.GetHostRatingById:input_type -> rating.IdRequest
-	2,  // 7: rating.RatingService.GetAllRatingsForHost:input_type -> rating.IdRequest
-	2,  // 8: rating.RatingService.GetAverageScoreForHost:input_type -> rating.IdRequest
-	5,  // 9: rating.RatingService.CreateHostRating:input_type -> rating.CreateHostRatingRequest
-	0,  // 10: rating.RatingService.UpdateHostRating:input_type -> rating.HostRating
-	6,  // 11: rating.RatingService.DeleteHostRating:input_type -> rating.DeleteRequest
-	2,  // 12: rating.RatingService.GetAccommodationRatingById:input_type -> rating.IdRequest
-	2,  // 13: rating.RatingService.GetAllRatingsForAccommodation:input_type -> rating.IdRequest
-	2,  // 14: rating.RatingService.GetAverageScoreForAccommodation:input_type -> rating.IdRequest
-	10, // 15: rating.RatingService.CreateAccommodationRating:input_type -> rating.CreateAccommodationRatingRequest
-	1,  // 16: rating.RatingService.UpdateAccommodationRating:input_type -> rating.AccommodationRating
-	6,  // 17: rating.RatingService.DeleteAccommodationRating:input_type -> rating.DeleteRequest
-	0,  // 18: rating.RatingService.GetHostRatingById:output_type -> rating.HostRating
-	3,  // 19: rating.RatingService.GetAllRatingsForHost:output_type -> rating.GetAllRatingsForHostResponse
-	4,  // 20: rating.RatingService.GetAverageScoreForHost:output_type -> rating.GetAverageScoreForHostResponse
-	0,  // 21: rating.RatingService.CreateHostRating:output_type -> rating.HostRating
-	0,  // 22: rating.RatingService.UpdateHostRating:output_type -> rating.HostRating
-	7,  // 23: rating.RatingService.DeleteHostRating:output_type -> rating.DeletedResponse
-	1,  // 24: rating.RatingService.GetAccommodationRatingById:output_type -> rating.AccommodationRating
-	8,  // 25: rating.RatingService.GetAllRatingsForAccommodation:output_type -> rating.GetAllRatingsForAccommodationResponse
-	9,  // 26: rating.RatingService.GetAverageScoreForAccommodation:output_type -> rating.GetAverageScoreForAccommodationResponse
-	1,  // 27: rating.RatingService.CreateAccommodationRating:output_type -> rating.AccommodationRating
-	1,  // 28: rating.RatingService.UpdateAccommodationRating:output_type -> rating.AccommodationRating
-	7,  // 29: rating.RatingService.DeleteAccommodationRating:output_type -> rating.DeletedResponse
-	18, // [18:30] is the sub-list for method output_type
-	6,  // [6:18] is the sub-list for method input_type
-	6,  // [6:6] is the sub-list for extension type_name
-	6,  // [6:6] is the sub-list for extension extendee
-	0,  // [0:6] is the sub-list for field type_name
+	13, // 5: rating.CreateAccommodationRatingRequest.date:type_name -> google.protobuf.Timestamp
+	12, // 6: rating.RecommendedAccommodationsResponse.recommendedAccommodations:type_name -> rating.RecommendedAccommodation
+	2,  // 7: rating.RatingService.GetHostRatingById:input_type -> rating.IdRequest
+	2,  // 8: rating.RatingService.GetAllRatingsForHost:input_type -> rating.IdRequest
+	2,  // 9: rating.RatingService.GetAverageScoreForHost:input_type -> rating.IdRequest
+	5,  // 10: rating.RatingService.CreateHostRating:input_type -> rating.CreateHostRatingRequest
+	0,  // 11: rating.RatingService.UpdateHostRating:input_type -> rating.HostRating
+	6,  // 12: rating.RatingService.DeleteHostRating:input_type -> rating.DeleteRequest
+	2,  // 13: rating.RatingService.GetAccommodationRatingById:input_type -> rating.IdRequest
+	2,  // 14: rating.RatingService.GetAllRatingsForAccommodation:input_type -> rating.IdRequest
+	2,  // 15: rating.RatingService.GetAverageScoreForAccommodation:input_type -> rating.IdRequest
+	10, // 16: rating.RatingService.CreateAccommodationRating:input_type -> rating.CreateAccommodationRatingRequest
+	1,  // 17: rating.RatingService.UpdateAccommodationRating:input_type -> rating.AccommodationRating
+	6,  // 18: rating.RatingService.DeleteAccommodationRating:input_type -> rating.DeleteRequest
+	2,  // 19: rating.RatingService.GetAllRecommendedAccommodationsForGuest:input_type -> rating.IdRequest
+	0,  // 20: rating.RatingService.GetHostRatingById:output_type -> rating.HostRating
+	3,  // 21: rating.RatingService.GetAllRatingsForHost:output_type -> rating.GetAllRatingsForHostResponse
+	4,  // 22: rating.RatingService.GetAverageScoreForHost:output_type -> rating.GetAverageScoreForHostResponse
+	0,  // 23: rating.RatingService.CreateHostRating:output_type -> rating.HostRating
+	0,  // 24: rating.RatingService.UpdateHostRating:output_type -> rating.HostRating
+	7,  // 25: rating.RatingService.DeleteHostRating:output_type -> rating.DeletedResponse
+	1,  // 26: rating.RatingService.GetAccommodationRatingById:output_type -> rating.AccommodationRating
+	8,  // 27: rating.RatingService.GetAllRatingsForAccommodation:output_type -> rating.GetAllRatingsForAccommodationResponse
+	9,  // 28: rating.RatingService.GetAverageScoreForAccommodation:output_type -> rating.GetAverageScoreForAccommodationResponse
+	1,  // 29: rating.RatingService.CreateAccommodationRating:output_type -> rating.AccommodationRating
+	1,  // 30: rating.RatingService.UpdateAccommodationRating:output_type -> rating.AccommodationRating
+	7,  // 31: rating.RatingService.DeleteAccommodationRating:output_type -> rating.DeletedResponse
+	11, // 32: rating.RatingService.GetAllRecommendedAccommodationsForGuest:output_type -> rating.RecommendedAccommodationsResponse
+	20, // [20:33] is the sub-list for method output_type
+	7,  // [7:20] is the sub-list for method input_type
+	7,  // [7:7] is the sub-list for extension type_name
+	7,  // [7:7] is the sub-list for extension extendee
+	0,  // [0:7] is the sub-list for field type_name
 }
 
 func init() { file_rating_service_rating_service_proto_init() }
@@ -1065,6 +1194,30 @@ func file_rating_service_rating_service_proto_init() {
 				return nil
 			}
 		}
+		file_rating_service_rating_service_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*RecommendedAccommodationsResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_rating_service_rating_service_proto_msgTypes[12].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*RecommendedAccommodation); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -1072,7 +1225,7 @@ func file_rating_service_rating_service_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_rating_service_rating_service_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   11,
+			NumMessages:   13,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

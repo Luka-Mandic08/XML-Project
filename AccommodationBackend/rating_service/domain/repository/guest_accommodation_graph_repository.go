@@ -25,85 +25,6 @@ func (store *GuestAccommodationGraphStore) CheckConnection() {
 	println("Neo4J server address: ", store.driver.Target().Host)
 }
 
-/*
-	func (store *GuestAccommodationGraphStore) CreateGuestNode(newGuestId string) error {
-		session := store.driver.NewSession(neo4j.SessionConfig{})
-		defer session.Close()
-
-		// ExecuteWrite for write transactions (Create/Update/Delete)
-		_, err := session.WriteTransaction(
-			func(transaction neo4j.Transaction) (interface{}, error) {
-				result, err := transaction.Run(
-					"CREATE (g:Guest {guestId: $newGuestId})",
-					map[string]interface{}{"newGuestId": newGuestId})
-				if err != nil {
-					return nil, err
-				}
-
-				if result.Next() {
-					return result.Record().Values[0], nil
-				}
-
-				return nil, result.Err()
-			})
-		if err != nil {
-			return err
-		}
-		return nil
-	}
-
-	func (store *GuestAccommodationGraphStore) CreateAccommodationNode(newAccommodationId string) error {
-		session := store.driver.NewSession(neo4j.SessionConfig{})
-		defer session.Close()
-
-		// ExecuteWrite for write transactions (Create/Update/Delete)
-		_, err := session.WriteTransaction(
-			func(transaction neo4j.Transaction) (interface{}, error) {
-				result, err := transaction.Run(
-					"CREATE (a:Accommodation {accommodationId: $newAccommodationId})",
-					map[string]interface{}{"$newAccommodationId": newAccommodationId})
-				if err != nil {
-					return nil, err
-				}
-
-				if result.Next() {
-					return result.Record().Values[0], nil
-				}
-
-				return nil, result.Err()
-			})
-		if err != nil {
-			return err
-		}
-		return nil
-	}
-
-	func (store *GuestAccommodationGraphStore) CreateConnectionBetweenGuestAndAccommodation(accommodationRating *model.AccommodationRating) error {
-		session := store.driver.NewSession(neo4j.SessionConfig{})
-		defer session.Close()
-
-		// ExecuteWrite for write transactions (Create/Update/Delete)
-		_, err := session.WriteTransaction(
-			func(transaction neo4j.Transaction) (any, error) {
-				result, err := transaction.Run(
-					"MATCH (g:Guest), (a:Accommodation) WHERE g.guestId = $guestId AND a.accommodationId = $accommodationId CREATE (g)-[r:RATED {score:$score, date:$date}]->(a) RETURN r AS rel",
-					map[string]any{"guestId": accommodationRating.GuestId, "accommodationId": accommodationRating.AccommodationId, "score": accommodationRating.Score, "date": accommodationRating.Date})
-				if err != nil {
-					return nil, err
-				}
-
-				if result.Next() {
-					return result.Record().Values[0], nil
-				}
-
-				return nil, result.Err()
-			})
-		if err != nil {
-			return err
-		}
-		return nil
-	}
-*/
 func (store *GuestAccommodationGraphStore) CreateOrUpdateGuestAccommodationConnection(accommodationRating *model.AccommodationRating) error {
 	session := store.driver.NewSession(neo4j.SessionConfig{})
 	defer session.Close()
@@ -146,12 +67,30 @@ func (store *GuestAccommodationGraphStore) CreateOrUpdateGuestAccommodationConne
 				}
 			}
 
-			// Create connection between guest and accommodation
-			_, err = transaction.Run(
-				"MATCH (g:Guest), (a:Accommodation) WHERE g.guestId = $guestId AND a.accommodationId = $accommodationId CREATE (g)-[r:RATED {score:$score, date:$date, ratingId:$ratingId}]->(a) RETURN r AS rel",
-				map[string]interface{}{"guestId": accommodationRating.GuestId, "accommodationId": accommodationRating.AccommodationId, "score": accommodationRating.Score, "date": accommodationRating.Date, "ratingId": accommodationRating.Id.Hex()})
+			// Check if a relationship between guest and accommodation exists
+			relationshipResult, err := transaction.Run(
+				"MATCH (g:Guest {guestId: $guestId})-[r:RATED]->(a:Accommodation {accommodationId: $accommodationId}) RETURN r",
+				map[string]interface{}{"guestId": accommodationRating.GuestId, "accommodationId": accommodationRating.AccommodationId})
 			if err != nil {
 				return nil, err
+			}
+
+			// Create or update the relationship
+			if relationshipResult.Next() {
+				_, err := transaction.Run(
+					"MATCH (g:Guest {guestId: $guestId})-[r:RATED]->(a:Accommodation {accommodationId: $accommodationId}) SET r.score = $score, r.date = $date, r.ratingId = $ratingId",
+					map[string]interface{}{"guestId": accommodationRating.GuestId, "accommodationId": accommodationRating.AccommodationId, "score": accommodationRating.Score, "date": accommodationRating.Date, "ratingId": accommodationRating.Id.Hex()})
+				if err != nil {
+					return nil, err
+				}
+			} else {
+				// Create the relationship if it doesn't exist
+				_, err := transaction.Run(
+					"MATCH (g:Guest), (a:Accommodation) WHERE g.guestId = $guestId AND a.accommodationId = $accommodationId CREATE (g)-[r:RATED {score:$score, date:$date, ratingId:$ratingId}]->(a) RETURN r AS rel",
+					map[string]interface{}{"guestId": accommodationRating.GuestId, "accommodationId": accommodationRating.AccommodationId, "score": accommodationRating.Score, "date": accommodationRating.Date, "ratingId": accommodationRating.Id.Hex()})
+				if err != nil {
+					return nil, err
+				}
 			}
 
 			return nil, nil
@@ -169,9 +108,9 @@ func (store *GuestAccommodationGraphStore) RecommendAccommodationsForGuest(guest
 	defer session.Close()
 
 	query := `
-	MATCH (guest:Guest {guestId: "64ef06e805cdcb24e0f2180f"})-[r:RATED]->(accommodation:Accommodation)
+	MATCH (guest:Guest {guestId: $guestId})-[r:RATED]->(accommodation:Accommodation)
 	WITH guest, accommodation, r.score AS userRating
-	
+
 	MATCH (otherGuest:Guest)-[otherR:RATED]->(accommodation)
 	WHERE otherGuest <> guest AND (otherR.score = userRating + 1 OR otherR.score = userRating - 1)
 	WITH otherGuest
@@ -182,7 +121,7 @@ func (store *GuestAccommodationGraphStore) RecommendAccommodationsForGuest(guest
 	WITH COLLECT(goodAccommodations) AS collectedGoodAccommodations
 	
 	// Find accommodations rated by any guest with a score of 2 or less
-	MATCH (badAccommodations:Accommodation)<-[r:RATED]-(:Guest)
+	OPTIONAL MATCH (badAccommodations:Accommodation)<-[r:RATED]-(:Guest)
 	WHERE r.score <= 2
 	WITH collectedGoodAccommodations, COLLECT(badAccommodations) AS collectedBadAccommodations
 	
@@ -190,15 +129,11 @@ func (store *GuestAccommodationGraphStore) RecommendAccommodationsForGuest(guest
 	WITH collectedGoodAccommodations, collectedBadAccommodations
 	UNWIND collectedGoodAccommodations AS goodAccommodation
 	WITH goodAccommodation, collectedBadAccommodations
-	WHERE NONE (badAccommodation IN collectedBadAccommodations WHERE badAccommodation = goodAccommodation)
-	LIMIT 10
-	RETURN goodAccommodation
+	WHERE NOT goodAccommodation IN collectedBadAccommodations
 	
-
-	RETURN recommended, totalScore / numSimilarUsers AS recommendationScore
-	ORDER BY recommendationScore DESC
+	RETURN goodAccommodation
 	`
-
+	//TODO: query works on neo4j browser, type? error here!
 	result, err := session.ReadTransaction(func(tx neo4j.Transaction) (interface{}, error) {
 		queryResult, err := tx.Run(query, map[string]interface{}{
 			"guestId": guestId,

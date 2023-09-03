@@ -13,6 +13,7 @@ import {
   AllAccommodation,
   CreateUpdateAccommodation,
   HostAccomodation,
+  RecommendedAccommodations,
   UpdateAccommodationAvailability,
 } from '@frontend/features/booking/accomodation/container';
 import { AccommodationReservations, GuestReservations, MakeReservation, RecommendedFlights } from '@frontend/features/booking/reservation/container';
@@ -84,6 +85,7 @@ export function App() {
           <Route path={BookingAppRoutes.GuestReservations} element={<GuestReservations />} />
           <Route path={BookingAppRoutes.MakeReservation} element={<MakeReservation />} />
           <Route path={BookingAppRoutes.RecommendedFlights} element={<RecommendedFlights />} />
+          <Route path={BookingAppRoutes.RecommendedAccommodations} element={<RecommendedAccommodations />} />
         </Route>
 
         <Route element={<PrivateRoutes userRole="Host" />}>

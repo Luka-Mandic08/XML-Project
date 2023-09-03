@@ -20,6 +20,8 @@ service RatingService{
   rpc CreateAccommodationRating(CreateAccommodationRatingRequest) returns(AccommodationRating) {}
   rpc UpdateAccommodationRating(AccommodationRating) returns(AccommodationRating) {}
   rpc DeleteAccommodationRating(DeleteRequest) returns(DeletedResponse) {}
+
+  rpc GetAllRecommendedAccommodationsForGuest(IdRequest) returns(RecommendedAccommodationsResponse) {}
 }
 
 message HostRating {
@@ -85,4 +87,12 @@ message CreateAccommodationRatingRequest {
   int32  score   = 3;
   string comment = 4;
   google.protobuf.Timestamp date = 5;
+}
+
+message RecommendedAccommodationsResponse{
+  repeated RecommendedAccommodation recommendedAccommodations = 1;
+}
+message RecommendedAccommodation{
+  string accommodationId = 1;
+  float averageScore = 2;
 }

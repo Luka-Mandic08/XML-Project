@@ -243,3 +243,14 @@ func (handler *RatingHandler) DeleteAccommodationRating(ctx context.Context, req
 
 	return &pb.DeletedResponse{Message: "Accommodation rating successfully deleted"}, nil
 }
+
+func (handler *RatingHandler) GetAllRecommendedAccommodationsForGuest(ctx context.Context, request *pb.IdRequest) (*pb.RecommendedAccommodationsResponse, error) {
+	accommodationIds, err := handler.service.GetRecommendedAccommodations(request.Id)
+	if err != nil {
+		return nil, status.Error(codes.Aborted, err.Error())
+	}
+
+	response := MapManyRecommendedAccommodationsToResponse(accommodationIds)
+
+	return response, nil
+}

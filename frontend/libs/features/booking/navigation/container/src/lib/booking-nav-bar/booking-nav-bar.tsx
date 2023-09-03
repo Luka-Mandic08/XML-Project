@@ -65,6 +65,9 @@ export function BookingNavBar(props: BookingNavBarProps) {
           )}
           {role === 'Guest' && (
             <>
+              <Button onClick={() => navigate(BookingAppRoutes.RecommendedAccommodations)} color="inherit" sx={{ textTransform: 'none', marginRight: '30px' }}>
+                Recommended Accommodations
+              </Button>
               <Button onClick={() => navigate(BookingAppRoutes.GuestReservations)} color="inherit" sx={{ textTransform: 'none', marginRight: '30px' }}>
                 Reservations
               </Button>

@@ -22,6 +22,7 @@ export const BookingAppRoutes = {
   HostComments: '/host-comments',
   RecommendedFlights: '/flights/recommended',
   Notifications: '/notifications',
+  RecommendedAccommodations: '/accommodation/recommended',
 };
 
 export const SharedRoutes = {

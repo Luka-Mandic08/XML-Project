@@ -91,6 +91,7 @@ func CreateRoutersAndSetRoutes(config *Config) *gin.Engine {
 	accommodationGroup.POST("/checkAvailability", accommodationHandler.CheckAvailability)
 	accommodationGroup.GET("/all/host/:hostId", accommodationHandler.GetAllByHostId)
 	accommodationGroup.PUT("/availability", accommodationHandler.GetAvailabilities)
+	accommodationGroup.GET("/recommended/:guestId", ratingHandler.GetAllRecommendedAccommodationsForGuest)
 
 	reservationGroup := router.Group("/reservation")
 	reservationGroup.Use(services.ValidateToken())

@@ -130,3 +130,17 @@ func CompareAverageRatings(old, new float32) (bool, bool) {
 	}
 	return false, false
 }
+
+func MapManyRecommendedAccommodationsToResponse(rs []model.RecommendedAccommodation) *rating.RecommendedAccommodationsResponse {
+	var accommodations []*rating.RecommendedAccommodation
+
+	for _, r := range rs {
+		var mappedRecommendedAccommodations = rating.RecommendedAccommodation{
+			AccommodationId: r.AccommodationID,
+			AverageScore:    r.AverageScore,
+		}
+		accommodations = append(accommodations, &mappedRecommendedAccommodations)
+	}
+
+	return &rating.RecommendedAccommodationsResponse{RecommendedAccommodations: accommodations}
+}

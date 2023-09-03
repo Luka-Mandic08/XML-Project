@@ -4,6 +4,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"rating_service/domain/model"
 	"rating_service/domain/repository"
+	"sort"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -61,57 +62,15 @@ func (service *RatingService) GetAverageScoreForAccommodation(accommodationId st
 func (service *RatingService) InsertAccommodationRating(accommodationRating *model.AccommodationRating) (*model.AccommodationRating, error) {
 	result, err := service.accommodationStore.Insert(accommodationRating)
 	if result != nil {
-		println("Accommodation rating created 0: ID - ", result.AccommodationId)
+		println("Accommodation rating created: ID - ", result.AccommodationId)
 	}
 	if err != nil {
-		deleteResult, deleteErr := service.accommodationStore.Delete(result.Id)
-		if deleteResult.DeletedCount > 0 {
-			println("Accommodation rating deleted 0: ID - ", result.AccommodationId)
-		}
-		if deleteErr != nil {
-			println("Error occurred when deleting accommodation rating 0: ID - ", result.AccommodationId)
-			return nil, deleteErr
-		}
 		return nil, err
 	}
-	/*
-		err = service.guestAccommodationGraphStore.CreateGuestNode(result.GuestId)
-		if err != nil {
-			println("Could not create GuestNode", err.Error())
-			deleteResult, deleteErr := service.accommodationStore.Delete(result.Id)
-			if deleteResult.DeletedCount > 0 {
-				println("Accommodation rating deleted 1: ID - ", result.AccommodationId)
-			}
-			if deleteErr != nil {
-				println("Error occurred when deleting accommodation rating 1: ID - ", result.AccommodationId)
-				return nil, deleteErr
-			}
-			return nil, err
-		}
 
-		err = service.guestAccommodationGraphStore.CreateAccommodationNode(result.AccommodationId)
-		if err != nil {
-			println("Could not create AccommodationNode", err.Error())
-			deleteResult, deleteErr := service.accommodationStore.Delete(result.Id)
-			if deleteResult.DeletedCount > 0 {
-				println("Accommodation rating deleted 2: ID - ", result.AccommodationId)
-			}
-			if deleteErr != nil {
-				println("Error occurred when deleting accommodation rating 2: ID - ", result.AccommodationId)
-				return nil, deleteErr
-			}
-			return nil, err
-		}
-
-		err = service.guestAccommodationGraphStore.CreateConnectionBetweenGuestAndAccommodation(result)
-		if err != nil {
-			println("Could not create ConnectionBetweenGuestAndAccommodation", err.Error())
-			return nil, err
-		}
-	*/
 	err = service.guestAccommodationGraphStore.CreateOrUpdateGuestAccommodationConnection(result)
 	if err != nil {
-		println("Could not create neo4j relation between nodes", err.Error())
+		println("Error occurred in graph database: ", err.Error())
 		deleteResult, deleteErr := service.accommodationStore.Delete(result.Id)
 		if deleteResult.DeletedCount > 0 {
 			println("Accommodation rating deleted: ID - ", result.AccommodationId)
@@ -127,7 +86,33 @@ func (service *RatingService) InsertAccommodationRating(accommodationRating *mod
 }
 
 func (service *RatingService) UpdateAccommodationRating(accommodationRating *model.AccommodationRating) (*mongo.UpdateResult, error) {
-	return service.accommodationStore.Update(accommodationRating)
+	oldRating, _ := service.GetAccommodationRatingById(accommodationRating.Id)
+
+	result, err := service.accommodationStore.Update(accommodationRating)
+	if result.ModifiedCount == 1 {
+		println("Accommodation rating updated: ID - ", accommodationRating.Id.Hex())
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	updatedResult, _ := service.GetAccommodationRatingById(accommodationRating.Id)
+
+	err = service.guestAccommodationGraphStore.CreateOrUpdateGuestAccommodationConnection(updatedResult)
+	if err != nil {
+		println("Error occurred in graph database: ", err.Error())
+		revertResult, err := service.accommodationStore.Update(oldRating) //revert change
+		if revertResult.ModifiedCount == 1 {
+			println("Accommodation rating reverted: ID - ", accommodationRating.Id.Hex())
+		}
+		if err != nil {
+			println("Error occurred when reverting accommodation rating: ID - ", accommodationRating.Id.Hex())
+			return nil, err
+		}
+		return nil, err
+	}
+
+	return result, nil
 }
 
 func (service *RatingService) DeleteAccommodationRating(id primitive.ObjectID) (*mongo.DeleteResult, error) {
@@ -147,4 +132,40 @@ func (service *RatingService) DeleteAccommodationRating(id primitive.ObjectID) (
 	}
 
 	return deleteResult, nil
+}
+
+func (service *RatingService) GetRecommendedAccommodations(guestId string) ([]model.RecommendedAccommodation, error) {
+	accommodationIds, err := service.guestAccommodationGraphStore.RecommendAccommodationsForGuest(guestId)
+	if err != nil {
+		return nil, err
+	}
+
+	recommendedAccommodations := make([]model.RecommendedAccommodation, 0)
+
+	// Iterate through the recommended accommodation IDs and get their average scores
+	for _, accommodationId := range accommodationIds {
+		averageScore, err := service.GetAverageScoreForAccommodation(accommodationId)
+		if err != nil {
+			// Handle the error if needed
+			continue
+		}
+
+		// Add the accommodation ID and average score to the slice
+		recommendedAccommodations = append(recommendedAccommodations, model.RecommendedAccommodation{
+			AccommodationID: accommodationId,
+			AverageScore:    averageScore,
+		})
+	}
+
+	// Sort the recommended accommodations by score in descending order
+	sort.SliceStable(recommendedAccommodations, func(i, j int) bool {
+		return recommendedAccommodations[i].AverageScore > recommendedAccommodations[j].AverageScore
+	})
+
+	// Return only the top 10 recommended accommodations
+	if len(recommendedAccommodations) > 10 {
+		return recommendedAccommodations[:10], nil
+	}
+
+	return recommendedAccommodations, nil
 }

@@ -13,3 +13,8 @@ type AccommodationRating struct {
 	Comment         string             `bson:"comment"`
 	Date            time.Time          `bson:"date"`
 }
+
+type RecommendedAccommodation struct {
+	AccommodationID string
+	AverageScore    float32
+}

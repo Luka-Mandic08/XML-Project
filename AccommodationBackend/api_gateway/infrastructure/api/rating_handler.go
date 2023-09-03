@@ -338,3 +338,29 @@ func (handler *RatingHandler) DeleteAccommodationRating(ctx *gin.Context) {
 	}
 	ctx.JSON(http.StatusOK, response)
 }
+
+func (handler *RatingHandler) GetAllRecommendedAccommodationsForGuest(ctx *gin.Context) {
+	id := ctx.Param("guestId")
+	request := rating.IdRequest{Id: id}
+	response, err := handler.client.GetAllRecommendedAccommodationsForGuest(ctx, &request)
+	if err != nil {
+		grpcError, ok := status.FromError(err)
+		if ok {
+			switch grpcError.Code() {
+			case codes.AlreadyExists:
+				ctx.JSON(http.StatusConflict, grpcError.Message())
+				return
+			}
+		}
+		ctx.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+	var accommodationsResponse = make([]accommodation.Accommodation, 0)
+	for _, r := range response.RecommendedAccommodations {
+		accommodationInfo, _ := handler.accommodationClient.GetById(context.TODO(), &accommodation.GetByIdRequest{Id: r.AccommodationId})
+		accommodationInfo.GetAccommodation().Rating = r.AverageScore
+		accommodationsResponse = append(accommodationsResponse, *accommodationInfo.GetAccommodation())
+	}
+
+	ctx.JSON(http.StatusOK, accommodationsResponse)
+}
