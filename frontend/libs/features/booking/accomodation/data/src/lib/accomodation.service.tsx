@@ -350,7 +350,7 @@ export async function SearchAccommodation(data: any, pageNumber: number): Promis
     dateTo: new Date(data.dateTo),
     numberOfGuests: 1 * data.numberOfGuests,
     maxPrice: 1 * data.maxPrice,
-    amenities: data.amenities !== '' ? data.amenities.split(',') : [],
+    amenities: data.amenities !== '' ? data.amenities?.split(',') : [],
     ownedByProminentHost: data.ownedByProminentHost,
   };
   return await axios({

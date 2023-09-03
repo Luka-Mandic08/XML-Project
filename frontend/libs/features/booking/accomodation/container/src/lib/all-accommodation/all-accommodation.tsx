@@ -60,7 +60,7 @@ export function AllAccommodation(props: AllAccommodationProps) {
   const onSubmit = async (data: any) => {
     setSearched(true);
     const res = await SearchAccommodation(data, searchPageNumber);
-    if (res === undefined) {
+    if (res === undefined || res.length === 0) {
       return;
     }
     setSearchedAccomodationInfo(res);
@@ -120,7 +120,7 @@ export function AllAccommodation(props: AllAccommodationProps) {
               value={watch('dateFrom')}
               {...register('dateFrom', {
                 required: 'This field is required.',
-                min: { value: new Date().toISOString().split('T')[0], message: 'Minimum date is today.' },
+                min: { value: new Date().toISOString()?.split('T')[0], message: 'Minimum date is today.' },
               })}
             />
             <label className={styles.label} htmlFor="dateFrom" id="label-dateFrom">
