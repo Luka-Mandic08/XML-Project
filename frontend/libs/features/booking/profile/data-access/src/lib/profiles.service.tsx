@@ -172,7 +172,7 @@ export async function UpdateProfileInformation(data: UpdatePersonalData): Promis
 export async function DeleteAccount(): Promise<void> {
   await axios({
     method: 'delete',
-    url: BookingBaseURL.URL + '/auth/delete/' + localStorage.getItem('userId'),
+    url: BookingBaseURL.URL + '/auth/delete/' + localStorage.getItem('role') + '/' + localStorage.getItem('userId'),
   })
     .then((response) => {
       Swal.fire({
@@ -188,12 +188,14 @@ export async function DeleteAccount(): Promise<void> {
         background: '#212121',
         color: 'white',
       });
+      localStorage.clear();
+      window.location.href = '/';
     })
     .catch((err) => {
       Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'Something went wrong, please try again\n' + err.message,
+        icon: 'info',
+        title: 'Delete account',
+        text: 'You cannot delete your account because you have active bookings.',
         showConfirmButton: false,
         position: 'bottom-right',
         timer: 3000,

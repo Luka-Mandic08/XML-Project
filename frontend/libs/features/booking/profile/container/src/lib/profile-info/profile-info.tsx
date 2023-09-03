@@ -1,4 +1,4 @@
-import { UpdatePersonalData, UpdateCredentials } from '@frontend/models';
+import { UpdatePersonalData, UpdateCredentials, BookingAppRoutes } from '@frontend/models';
 import { Button, Paper, Rating, Typography } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import styles from './profile-info.module.css';
@@ -11,6 +11,8 @@ import {
   UpdateProfileInformation,
 } from '@frontend/features/booking/profile/data-access';
 import LinkApiKeyDialog from '../link-api-key-dialog/link-api-key-dialog';
+import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 /* eslint-disable-next-line */
 export interface ProfileInfoProps {}
@@ -36,6 +38,7 @@ export function ProfileInfo(props: ProfileInfoProps) {
   });
 
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     GetAccountInformation().then((data) => {
@@ -112,8 +115,6 @@ export function ProfileInfo(props: ProfileInfoProps) {
 
   const deleteAccount = async () => {
     await DeleteAccount();
-    localStorage.clear();
-    window.location.href = '/';
   };
 
   const openLinkAPIKeyDialog = () => {
@@ -167,9 +168,9 @@ export function ProfileInfo(props: ProfileInfoProps) {
 
       {localStorage.getItem('role') === 'Host' && (
         <div className={styles.ratingContainer}>
-          <Typography variant="h4">Rating: {userInfo.rating}</Typography>
-          <Rating name="half-rating-read" value={userInfo.rating} precision={0.1} readOnly size="large" />
-          <Typography variant="h5">{userInfo.isOutstanding ? 'Outstanding host' : ''}</Typography>
+          <Typography variant="h4">Rating: {userInfo?.rating}</Typography>
+          <Rating name="half-rating-read" value={userInfo?.rating} precision={0.1} readOnly size="large" />
+          <Typography variant="h5">{userInfo?.isOutstanding ? 'Outstanding host' : ''}</Typography>
         </div>
       )}
 

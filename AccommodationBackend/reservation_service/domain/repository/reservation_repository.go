@@ -80,13 +80,13 @@ func (store *ReservationMongoDBStore) Update(reservation *model.Reservation) (*m
 }
 
 func (store *ReservationMongoDBStore) GetActiveByUserId(id string) ([]*model.Reservation, error) {
-	statuses := []string{"Accepted", "Pending"}
+	statuses := []string{"Approved", "Pending"}
 	today := time.Now()
 	filter := bson.M{"user": id, "status": bson.M{"$in": statuses}, "end": bson.M{"$gt": today}}
 	return store.filter(filter)
 }
 func (store *ReservationMongoDBStore) GetActiveForAccommodations(ids []string) ([]*model.Reservation, error) {
-	statuses := []string{"Accepted", "Pending"}
+	statuses := []string{"Approved", "Pending"}
 	today := time.Now()
 	filter := bson.M{"accommodation": bson.M{"$in": ids}, "status": bson.M{"$in": statuses}, "end": bson.M{"$gt": today}}
 	return store.filter(filter)

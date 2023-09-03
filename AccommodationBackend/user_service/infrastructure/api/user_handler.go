@@ -102,6 +102,10 @@ func (handler *UserHandler) GetForReservation(ctx context.Context, request *pb.G
 	if err == mongo.ErrNoDocuments {
 		return nil, status.Error(codes.NotFound, "Unable to find user")
 	}
+	if user == nil {
+		return nil, status.Error(codes.NotFound, "Unable to find user")
+	}
+
 	mapped := MapUserToGetForReservationResponse(user)
 	return mapped, nil
 }

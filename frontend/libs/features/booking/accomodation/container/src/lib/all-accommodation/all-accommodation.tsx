@@ -80,7 +80,16 @@ export function AllAccommodation(props: AllAccommodationProps) {
     setSearchedAccomodationInfo([]);
     setSearchShouldLoadMore(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [watch('dateFrom'), watch('dateTo'), watch('city'), watch('country'), watch('numberOfGuests')]);
+  }, [
+    watch('dateFrom'),
+    watch('dateTo'),
+    watch('city'),
+    watch('country'),
+    watch('numberOfGuests'),
+    watch('maxPrice'),
+    watch('amenities'),
+    watch('ownedByProminentHost'),
+  ]);
 
   const loadMoreForSearch = async () => {
     setSearchPageNumber(searchPageNumber + 1);

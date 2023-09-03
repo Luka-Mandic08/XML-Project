@@ -371,9 +371,9 @@ func (handler *ReservationHandler) GetAllByAccommodationId(ctx context.Context, 
 		}
 		if u == nil {
 			pastUsers = append(pastUsers, &user.GetForReservationResponse{
-				Name:    "",
-				Surname: "",
-				Email:   "",
+				Name:    "[Deleted]",
+				Surname: "[Deleted]",
+				Email:   "[Deleted]",
 			})
 		}
 	}

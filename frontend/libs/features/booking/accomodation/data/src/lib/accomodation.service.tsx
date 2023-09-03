@@ -329,7 +329,7 @@ export async function UpdateAvailableDatesForAccommodation(data: any): Promise<s
       Swal.fire({
         icon: 'error',
         title: 'Error',
-        text: 'Something went wrong, please try again\n' + err.message,
+        text: 'Something went wrong, please try again.\n' + err.response.data,
         showConfirmButton: false,
         position: 'bottom-right',
         timer: 3000,
@@ -375,7 +375,7 @@ export async function SearchAccommodation(data: any, pageNumber: number): Promis
       Swal.fire({
         icon: 'error',
         title: 'Error',
-        text: 'Something went wrong, please try again\n' + err.message,
+        text: 'Something went wrong, please try again.\n' + err.response.data,
         showConfirmButton: false,
         position: 'bottom-right',
         timer: 3000,
