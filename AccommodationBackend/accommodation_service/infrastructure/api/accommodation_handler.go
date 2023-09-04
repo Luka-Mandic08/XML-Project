@@ -111,6 +111,10 @@ func (handler *AccommodationHandler) GetAllByHostId(ctx context.Context, request
 	}
 
 	mapped, _ := MapAccommodations(accommodations)
+	for _, acc := range mapped.GetAccommodations() {
+		response, _ := handler.ratingClient.GetAverageScoreForAccommodation(ctx, &rating.IdRequest{Id: acc.GetId()})
+		acc.Rating = response.GetScore()
+	}
 
 	return mapped, nil
 }

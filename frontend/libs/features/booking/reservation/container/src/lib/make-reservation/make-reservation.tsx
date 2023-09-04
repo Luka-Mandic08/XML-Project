@@ -92,7 +92,7 @@ export function MakeReservation(props: MakeReservationProps) {
                     value={watch('numberOfGuests')}
                     {...register('numberOfGuests', {
                       required: 'This field is required.',
-                      min: { value: 1, message: 'Number of guests must be at least 1.' },
+                      min: { value: selectedAccommodation.minGuests, message: 'Number of guests must be at least equal to minimum number of guests.' },
                       max: { value: selectedAccommodation.maxGuests, message: 'Number of guests must be less or equal than maximum number of guests.' },
                     })}
                   />

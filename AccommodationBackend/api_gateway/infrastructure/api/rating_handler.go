@@ -12,6 +12,7 @@ import (
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/encoding/protojson"
 	"net/http"
+	"strconv"
 )
 
 type RatingHandler struct {
@@ -115,7 +116,7 @@ func (handler *RatingHandler) CreateHostRating(ctx *gin.Context) {
 
 	guestInfo, _ := handler.userClient.Get(context.TODO(), &user.GetRequest{Id: hostRating.GetGuestId()})
 	_, err = handler.notificationClient.InsertNotification(context.TODO(), &notification.CreateNotification{
-		NotificationText: "Guest " + guestInfo.GetName() + " " + guestInfo.GetSurname() + " has rated you with " + string(hostRating.GetScore()) + " starts.",
+		NotificationText: "Guest " + guestInfo.GetName() + " " + guestInfo.GetSurname() + " has rated you with " + strconv.Itoa(int(hostRating.GetScore())) + " starts.",
 		UserId:           hostRating.GetHostId(),
 		Type:             "HostRated",
 	})
@@ -270,7 +271,7 @@ func (handler *RatingHandler) CreateAccommodationRating(ctx *gin.Context) {
 	guestInfo, _ := handler.userClient.Get(context.TODO(), &user.GetRequest{Id: accommodationRating.GetGuestId()})
 	accommodationInfo, _ := handler.accommodationClient.GetById(context.TODO(), &accommodation.GetByIdRequest{Id: accommodationRating.GetAccommodationId()})
 	_, err = handler.notificationClient.InsertNotification(context.TODO(), &notification.CreateNotification{
-		NotificationText: "Guest " + guestInfo.GetName() + " " + guestInfo.GetSurname() + " has rated you accommodation: " + accommodationInfo.GetAccommodation().GetName() + " with " + string(accommodationRating.GetScore()) + " starts.",
+		NotificationText: "Guest " + guestInfo.GetName() + " " + guestInfo.GetSurname() + " has rated you accommodation: " + accommodationInfo.GetAccommodation().GetName() + " with " + strconv.Itoa(int(accommodationRating.GetScore())) + " starts.",
 		UserId:           accommodationInfo.GetAccommodation().GetHostId(),
 		Type:             "AccommodationRated",
 	})

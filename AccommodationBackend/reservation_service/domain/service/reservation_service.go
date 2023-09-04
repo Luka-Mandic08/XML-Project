@@ -11,6 +11,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"reservation_service/domain/model"
 	"reservation_service/domain/repository"
+	"strconv"
 	"time"
 )
 
@@ -223,6 +224,114 @@ func (service *ReservationService) Cancel(id primitive.ObjectID) (*model.Reserva
 	return reservation, nil
 }
 
+func (service *ReservationService) GetOutstandingHost(hostId string) (*model.OutstandingHost, error) {
+	id, _ := primitive.ObjectIDFromHex(hostId)
+	return service.outstandingHostStore.Get(id)
+}
+
+func (service *ReservationService) GetAllOutstandingHosts() ([]*model.OutstandingHost, error) {
+	return service.outstandingHostStore.GetAll()
+}
+
+func (service *ReservationService) GetAllOverlapping(request reservation.GetAllForDateRangeRequest) ([]*model.Reservation, error) {
+	return service.store.GetAllOverlapping(request.GetAccommodationId(), []string{"Approved", "Pending"}, request.GetFrom().AsTime(), request.GetTo().AsTime())
+}
+
+func (service *ReservationService) GetAllByAccommodationId(id string) ([]*model.Reservation, []*model.Reservation, error) {
+	past, err := service.store.GetAllPastByAccommodationId(id)
+	if err != nil {
+		return nil, nil, err
+	}
+	future, err := service.store.GetAllFutureByAccommodationId(id)
+	if err != nil {
+		return nil, nil, err
+	}
+	return past, future, nil
+}
+
+func (service *ReservationService) GetNumberOfCancelledReservationsForUser(id string) int32 {
+	cancelledReservations, _ := service.store.GetAllCanceledByUserId(id)
+	return int32(len(cancelledReservations))
+}
+
+func (service *ReservationService) IsUserAvailable(userId string, start time.Time, end time.Time) (bool, error) {
+	reservationNum, err := service.store.IsUserAvailable(userId, start, end)
+	if err != nil {
+		return false, err
+	}
+	if reservationNum > 1 {
+		return false, err
+	}
+	return true, nil
+}
+
+func (service *ReservationService) CreateNotification(reservation *model.Reservation, notificationType string) {
+	println("Notification type: ", notificationType)
+	accommodationInfo, _ := service.AccommodationClient.GetById(context.TODO(), &accommodation.GetByIdRequest{Id: reservation.AccommodationId})
+	println(accommodationInfo.GetAccommodation())
+	if notificationType == "ReservationCanceled" {
+		guest, _ := service.userClient.Get(context.TODO(), &user.GetRequest{Id: reservation.UserId})
+		println(guest.GetName())
+		_, err := service.notificationClient.InsertNotification(context.TODO(), &notification.CreateNotification{
+			NotificationText: "Guest " + guest.GetName() + " " + guest.GetSurname() + " has canceled a reservation for " + strconv.Itoa(int(reservation.NumberOfGuests)) + " people at: " + accommodationInfo.GetAccommodation().GetName(),
+			UserId:           accommodationInfo.Accommodation.GetHostId(),
+			Type:             notificationType,
+		})
+		if err != nil {
+			println("Imam neki error placem: ", err.Error())
+			return
+		}
+	}
+	if notificationType == "ReservationDenied" {
+		service.notificationClient.InsertNotification(context.TODO(), &notification.CreateNotification{
+			NotificationText: "Your reservation at " + accommodationInfo.GetAccommodation().GetName() + " has been denied.",
+			UserId:           reservation.UserId,
+			Type:             "ReservationApprovedOrDenied",
+		})
+	}
+	if notificationType == "ReservationApproved" {
+		service.notificationClient.InsertNotification(context.TODO(), &notification.CreateNotification{
+			NotificationText: "Your reservation at " + accommodationInfo.GetAccommodation().GetName() + " has been approved.",
+			UserId:           reservation.UserId,
+			Type:             "ReservationApprovedOrDenied",
+		})
+	}
+	if notificationType == "ReservationPending" {
+		guest, _ := service.userClient.Get(context.TODO(), &user.GetRequest{Id: reservation.UserId})
+		service.notificationClient.InsertNotification(context.TODO(), &notification.CreateNotification{
+			NotificationText: "Guest " + guest.GetName() + " " + guest.GetSurname() + " has created a pending reservation for " + strconv.Itoa(int(reservation.NumberOfGuests)) + " people at: " + accommodationInfo.GetAccommodation().GetName(),
+			UserId:           accommodationInfo.Accommodation.GetHostId(),
+			Type:             "ReservationCreated",
+		})
+	}
+	if notificationType == "ReservationCreated" {
+		guest, _ := service.userClient.Get(context.TODO(), &user.GetRequest{Id: reservation.UserId})
+		service.notificationClient.InsertNotification(context.TODO(), &notification.CreateNotification{
+			NotificationText: "Guest " + guest.GetName() + " " + guest.GetSurname() + " has created an auto approved reservation for " + strconv.Itoa(int(reservation.NumberOfGuests)) + " people at: " + accommodationInfo.GetAccommodation().GetName(),
+			UserId:           accommodationInfo.Accommodation.GetHostId(),
+			Type:             "ReservationCreated",
+		})
+	}
+}
+
+func (service *ReservationService) UpdateOutstandingHostStatus(reservation *model.Reservation) {
+	accResponse, err := service.AccommodationClient.GetAllForHostByAccommodationId(context.TODO(), &accommodation.GetByIdRequest{Id: reservation.AccommodationId})
+	if err != nil {
+		return
+	}
+	ratingResponse, err := service.ratingClient.GetAverageScoreForHost(context.TODO(), &rating.IdRequest{Id: accResponse.GetHostId()})
+	if err != nil {
+		return
+	}
+	if ratingResponse.GetScore() <= 4.7 {
+		service.ChangeOutstandingHostStatus(false, accResponse.HostId)
+		return
+	}
+	shouldBeOutstanding, _ := service.CheckOutstandingHostStatus(accResponse.AccommodationIds)
+	service.ChangeOutstandingHostStatus(shouldBeOutstanding, accResponse.HostId)
+	return
+}
+
 func (service *ReservationService) CheckOutstandingHostStatus(accommodationIds []string) (bool, error) {
 	approvedReservation, err := service.store.GetReservationsForAccommodationsByStatus(accommodationIds, "Approved")
 	if err != nil {
@@ -288,112 +397,4 @@ func (service *ReservationService) ChangeOutstandingHostStatus(status bool, host
 		}
 	}
 	return nil
-}
-
-func (service *ReservationService) GetOutstandingHost(hostId string) (*model.OutstandingHost, error) {
-	id, _ := primitive.ObjectIDFromHex(hostId)
-	return service.outstandingHostStore.Get(id)
-}
-
-func (service *ReservationService) GetAllOutstandingHosts() ([]*model.OutstandingHost, error) {
-	return service.outstandingHostStore.GetAll()
-}
-
-func (service *ReservationService) GetAllOverlapping(request reservation.GetAllForDateRangeRequest) ([]*model.Reservation, error) {
-	return service.store.GetAllOverlapping(request.GetAccommodationId(), []string{"Approved", "Pending"}, request.GetFrom().AsTime(), request.GetTo().AsTime())
-}
-
-func (service *ReservationService) UpdateOutstandingHostStatus(reservation *model.Reservation) {
-	accResponse, err := service.AccommodationClient.GetAllForHostByAccommodationId(context.TODO(), &accommodation.GetByIdRequest{Id: reservation.AccommodationId})
-	if err != nil {
-		return
-	}
-	ratingResponse, err := service.ratingClient.GetAverageScoreForHost(context.TODO(), &rating.IdRequest{Id: accResponse.GetHostId()})
-	if err != nil {
-		return
-	}
-	if ratingResponse.GetScore() <= 4.7 {
-		service.ChangeOutstandingHostStatus(false, accResponse.HostId)
-		return
-	}
-	shouldBeOutstanding, _ := service.CheckOutstandingHostStatus(accResponse.AccommodationIds)
-	service.ChangeOutstandingHostStatus(shouldBeOutstanding, accResponse.HostId)
-	return
-}
-
-func (service *ReservationService) GetAllByAccommodationId(id string) ([]*model.Reservation, []*model.Reservation, error) {
-	past, err := service.store.GetAllPastByAccommodationId(id)
-	if err != nil {
-		return nil, nil, err
-	}
-	future, err := service.store.GetAllFutureByAccommodationId(id)
-	if err != nil {
-		return nil, nil, err
-	}
-	return past, future, nil
-}
-
-func (service *ReservationService) GetNumberOfCancelledReservationsForUser(id string) int32 {
-	cancelledReservations, _ := service.store.GetAllCanceledByUserId(id)
-	return int32(len(cancelledReservations))
-}
-
-func (service *ReservationService) IsUserAvailable(userId string, start time.Time, end time.Time) (bool, error) {
-	reservationNum, err := service.store.IsUserAvailable(userId, start, end)
-	if err != nil {
-		return false, err
-	}
-	if reservationNum > 1 {
-		return false, err
-	}
-	return true, nil
-}
-
-func (service *ReservationService) CreateNotification(reservation *model.Reservation, notificationType string) {
-	println("Notification type: ", notificationType)
-	accommodationInfo, _ := service.AccommodationClient.GetById(context.TODO(), &accommodation.GetByIdRequest{Id: reservation.AccommodationId})
-	println(accommodationInfo.GetAccommodation())
-	if notificationType == "ReservationCanceled" {
-		guest, _ := service.userClient.Get(context.TODO(), &user.GetRequest{Id: reservation.UserId})
-		println(guest.GetName())
-		_, err := service.notificationClient.InsertNotification(context.TODO(), &notification.CreateNotification{
-			NotificationText: "Guest " + guest.GetName() + " " + guest.GetSurname() + " has canceled a reservation for " + string(reservation.NumberOfGuests) + " people at: " + accommodationInfo.GetAccommodation().GetName(),
-			UserId:           accommodationInfo.Accommodation.GetHostId(),
-			Type:             notificationType,
-		})
-		if err != nil {
-			println("Imam neki error placem: ", err.Error())
-			return
-		}
-	}
-	if notificationType == "ReservationDenied" {
-		service.notificationClient.InsertNotification(context.TODO(), &notification.CreateNotification{
-			NotificationText: "Your reservation at " + accommodationInfo.GetAccommodation().GetName() + " has been denied.",
-			UserId:           reservation.UserId,
-			Type:             "ReservationApprovedOrDenied",
-		})
-	}
-	if notificationType == "ReservationApproved" {
-		service.notificationClient.InsertNotification(context.TODO(), &notification.CreateNotification{
-			NotificationText: "Your reservation at " + accommodationInfo.GetAccommodation().GetName() + " has been approved.",
-			UserId:           reservation.UserId,
-			Type:             "ReservationApprovedOrDenied",
-		})
-	}
-	if notificationType == "ReservationPending" {
-		guest, _ := service.userClient.Get(context.TODO(), &user.GetRequest{Id: reservation.UserId})
-		service.notificationClient.InsertNotification(context.TODO(), &notification.CreateNotification{
-			NotificationText: "Guest " + guest.GetName() + " " + guest.GetSurname() + " has created a pending reservation for " + string(reservation.NumberOfGuests) + " people at: " + accommodationInfo.GetAccommodation().GetName(),
-			UserId:           accommodationInfo.Accommodation.GetHostId(),
-			Type:             "ReservationCreated",
-		})
-	}
-	if notificationType == "ReservationCreated" {
-		guest, _ := service.userClient.Get(context.TODO(), &user.GetRequest{Id: reservation.UserId})
-		service.notificationClient.InsertNotification(context.TODO(), &notification.CreateNotification{
-			NotificationText: "Guest " + guest.GetName() + " " + guest.GetSurname() + " has created an auto approved reservation for " + string(reservation.NumberOfGuests) + " people at: " + accommodationInfo.GetAccommodation().GetName(),
-			UserId:           accommodationInfo.Accommodation.GetHostId(),
-			Type:             "ReservationCreated",
-		})
-	}
 }
