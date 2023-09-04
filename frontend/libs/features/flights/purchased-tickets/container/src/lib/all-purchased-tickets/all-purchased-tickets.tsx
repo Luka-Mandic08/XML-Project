@@ -3,6 +3,7 @@ import { Grid, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import PurchasedTicketItem from '../purchased-ticket-item/purchased-ticket-item';
 import { GetAllPurchasedTickets } from '@frontend/features/flights/purchased-tickets/data-access';
+import Swal from 'sweetalert2';
 
 /* eslint-disable-next-line */
 export interface AllPurchasedTicketsProps {}
