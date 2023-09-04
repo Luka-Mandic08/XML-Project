@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"fmt"
 	"github.com/neo4j/neo4j-go-driver/v5/neo4j"
 	"rating_service/domain/model"
 )
@@ -69,8 +68,8 @@ func (store *GuestAccommodationGraphStore) CreateOrUpdateGuestAccommodationConne
 
 			// Check if a relationship between guest and accommodation exists
 			relationshipResult, err := transaction.Run(
-				"MATCH (g:Guest {guestId: $guestId})-[r:RATED]->(a:Accommodation {accommodationId: $accommodationId}) RETURN r",
-				map[string]interface{}{"guestId": accommodationRating.GuestId, "accommodationId": accommodationRating.AccommodationId})
+				"MATCH (g:Guest {guestId: $guestId})-[r:RATED {ratingId: $ratingId}]->(a:Accommodation {accommodationId: $accommodationId}) RETURN r",
+				map[string]interface{}{"guestId": accommodationRating.GuestId, "accommodationId": accommodationRating.AccommodationId, "ratingId": accommodationRating.Id.Hex()})
 			if err != nil {
 				return nil, err
 			}
@@ -131,9 +130,10 @@ func (store *GuestAccommodationGraphStore) RecommendAccommodationsForGuest(guest
 	WITH goodAccommodation, collectedBadAccommodations
 	WHERE NOT goodAccommodation IN collectedBadAccommodations
 	
-	RETURN goodAccommodation
+	WITH DISTINCT(goodAccommodation) AS distinctGoodAccommodations
+
+	RETURN distinctGoodAccommodations.accommodationId
 	`
-	//TODO: query works on neo4j browser, type? error here!
 	result, err := session.ReadTransaction(func(tx neo4j.Transaction) (interface{}, error) {
 		queryResult, err := tx.Run(query, map[string]interface{}{
 			"guestId": guestId,
@@ -142,12 +142,13 @@ func (store *GuestAccommodationGraphStore) RecommendAccommodationsForGuest(guest
 			return nil, err
 		}
 
-		var recommendations []string
+		recommendations := make([]string, 0)
 		for queryResult.Next() {
 			record := queryResult.Record()
-			recommendation := fmt.Sprintf("Recommended Accommodation: %s, Score: %f",
-				record.Values[0].(string), record.Values[1].(float64))
-			recommendations = append(recommendations, recommendation)
+			recommendation, ok := record.Get("distinctGoodAccommodations.accommodationId")
+			if ok {
+				recommendations = append(recommendations, recommendation.(string))
+			}
 		}
 
 		return recommendations, nil
