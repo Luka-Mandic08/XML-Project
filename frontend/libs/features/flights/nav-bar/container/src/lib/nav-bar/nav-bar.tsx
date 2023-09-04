@@ -38,9 +38,14 @@ export function NavBar(props: NavBarProps) {
             eFlight
           </Typography>
           {role === null && (
-            <Button onClick={() => navigate(AppRoutes.Login)} color="inherit" sx={{ textTransform: 'none' }}>
-              Login
-            </Button>
+            <>
+              <Button onClick={() => navigate(AppRoutes.Login)} color="inherit" sx={{ textTransform: 'none' }}>
+                Login
+              </Button>
+              <Button onClick={() => navigate(AppRoutes.Register)} color="inherit" sx={{ textTransform: 'none' }}>
+                Register
+              </Button>
+            </>
           )}
           {role === 'USER' && (
             <>
