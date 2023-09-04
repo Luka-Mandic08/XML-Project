@@ -34,7 +34,7 @@ export function AllFlights(props: AllPurchasedTicketsProps) {
   }, []);
 
   return (
-    <Grid container direction="row" justifyContent="center" sx={{ border: '3px solid #212121', margin: '0', padding: '1.25rem' }}>
+    <Grid container direction="row" justifyContent="center" sx={{ margin: '0', padding: '1.25rem' }}>
       <Grid item xs={10}>
         <Typography variant="h4">My tickets</Typography>
       </Grid>

@@ -75,9 +75,11 @@ export function LinkApiKeyDialog(props: LinkApiKeyDialogProps) {
               <Typography variant="h5" align="left">
                 You have an APIKey
               </Typography>
-              <Typography variant="h5" align="left">
-                Valid to: {apiKey.validTo.toDateString()}
-              </Typography>
+              {!apiKey.isPermanent && (
+                <Typography variant="h5" align="left">
+                  Valid to: {apiKey.validTo.toDateString()}
+                </Typography>
+              )}
               <Typography variant="h5" align="left">
                 {apiKey.isPermanent ? 'Permanent' : 'Temporary'}
               </Typography>
